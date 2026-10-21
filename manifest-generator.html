@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manifest Generator — SingleCase Outlook Add-in</title>
+  <link rel="icon" type="image/png" href="images/SingleCaseLogo 2 500x500.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #00204a;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header img {
+      height: 28px;
+      width: 28px;
+      border-radius: 6px;
+    }
+    .header-title {
+      color: rgba(255,255,255,0.9);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Language toggle ── */
+    .lang-toggle {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lang-sep {
+      color: rgba(255,255,255,0.25);
+      font-size: 13px;
+      line-height: 1;
+    }
+    .lang-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.5);
+      border-radius: 5px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lang-btn:hover { color: #fff; border-color: rgba(255,255,255,0.45); }
+    .lang-btn.active { color: #fff; border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.1); }
+
+    /* ── Main ── */
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 20px 64px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.09);
+      padding: 40px 44px 44px;
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .card-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #00204a;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .card-subtitle {
+      font-size: 13.5px;
+      color: rgba(17,24,39,0.5);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* ── URL hint image ── */
+    .url-hint {
+      margin-bottom: 24px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(0,32,74,0.1);
+    }
+    .url-hint img {
+      width: 100%;
+      display: block;
+    }
+    .url-hint-caption {
+      background: rgba(0, 32, 74, 0.04);
+      border-top: 1px solid rgba(0,32,74,0.07);
+      font-size: 11.5px;
+      color: rgba(17,24,39,0.5);
+      padding: 7px 12px;
+    }
+
+    /* ── URL input ── */
+    .field-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #00204a;
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      flex: 1;
+      height: 48px;
+      border: 1.5px solid rgba(0,32,74,0.2);
+      border-radius: 10px;
+      padding: 0 16px;
+      font-size: 14px;
+      color: #00204a;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      background: #fff;
+      width: 100%;
+    }
+    input[type="text"]::placeholder,
+    input[type="email"]::placeholder { color: rgba(0,32,74,0.3); }
+    input[type="text"]:focus,
+    input[type="email"]:focus {
+      border-color: #00204a;
+      box-shadow: 0 0 0 3px rgba(0,32,74,0.1);
+    }
+
+    select {
+      flex: 1;
+      height: 64px;
+      border: 1.5px solid rgba(0,32,74,0.2);
+      border-radius: 12px;
+      padding: 0 20px;
+      font-size: 16px;
+      color: #00204a;
+      outline: none;
+      background: #fff;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300204a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+    select:focus {
+      border-color: #00204a;
+      box-shadow: 0 0 0 3px rgba(0,32,74,0.1);
+    }
+
+    .btn-generate {
+      height: 44px;
+      background: #00204a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0 22px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-generate:hover { background: #00306e; }
+
+    /* ── Result ── */
+    #result { margin-top: 28px; }
+
+    /* Detected environment badge */
+    .env-detected {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(0,32,74,0.04);
+      border: 1px solid rgba(0,32,74,0.1);
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .env-detected-check {
+      width: 18px;
+      height: 18px;
+      background: #00204a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .env-detected-check svg { display: block; }
+    .env-detected-text {
+      font-size: 13px;
+      color: rgba(17,24,39,0.7);
+    }
+    .env-detected-name {
+      font-weight: 700;
+      color: #00204a;
+    }
+
+    /* ── Lead capture form ── */
+    .lead-form {
+      border-top: 1px solid rgba(0,32,74,0.08);
+      padding-top: 20px;
+    }
+    .lead-form-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #00204a;
+      margin-bottom: 4px;
+    }
+    .lead-form-subtitle {
+      font-size: 12.5px;
+      color: rgba(17,24,39,0.45);
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .form-row-full {
+      margin-bottom: 12px;
+    }
+    @media (max-width: 480px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field input[type="text"],
+    .form-field input[type="email"],
+    .form-field select {
+      flex: none;
+      width: 100%;
+      height: 48px;
+    }
+
+
+    .btn-submit {
+      margin-top: 8px;
+      width: 100%;
+      height: 56px;
+      background: #00204a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-submit:hover { background: #00306e; }
+    .btn-submit:disabled { background: rgba(0,32,74,0.3); cursor: default; }
+
+    /* ── Download section (revealed after form submit) ── */
+    .download-section {
+      border-top: 1px solid rgba(0,32,74,0.08);
+      padding-top: 20px;
+    }
+
+    .result-link-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .result-link {
+      flex: 1;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #00204a;
+      word-break: break-all;
+      background: rgba(0,32,74,0.05);
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,32,74,0.1);
+    }
+    .btn-copy {
+      height: 38px;
+      background: #fff;
+      color: #00204a;
+      border: 1.5px solid rgba(0,32,74,0.2);
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.12s;
+      flex-shrink: 0;
+    }
+    .btn-copy:hover { background: rgba(0,32,74,0.05); }
+    .btn-copy.copied { background: rgba(0,32,74,0.08); color: #00204a; border-color: #00204a; }
+
+    .result-instructions {
+      background: rgba(255,255,255,0.7);
+      border-radius: 8px;
+      padding: 14px 16px;
+      border: 1px solid rgba(0,32,74,0.08);
+    }
+    .result-instructions p {
+      font-size: 13px;
+      color: rgba(17,24,39,0.75);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+    .result-instructions p:last-child { margin-bottom: 0; }
+    .result-instructions strong { color: #00204a; }
+
+    .result-next {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: #00204a;
+      border-radius: 10px;
+      gap: 12px;
+    }
+    .result-next-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.55);
+    }
+    .result-next-link {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+    }
+    .result-next-link:hover { text-decoration: underline; }
+
+    /* Admin notice */
+    .admin-notice {
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      background: #fffbe6;
+      border: 1.5px solid #f0d060;
+      border-radius: 10px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .admin-notice-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+    .admin-notice-body {
+      font-size: 13px;
+      color: rgba(17,24,39,0.8);
+      line-height: 1.55;
+    }
+    .admin-notice-body strong { color: #7a5a00; }
+
+    /* Not available */
+    .result-unavailable {
+      border-radius: 12px;
+      padding: 22px 24px;
+      border: 1.5px solid rgba(200,80,40,0.2);
+      background: rgba(200,80,40,0.04);
+    }
+    .result-unavailable .result-env { color: rgba(180,60,20,0.6); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; margin-bottom:10px; }
+    .result-unavailable p {
+      font-size: 13px;
+      color: rgba(17,24,39,0.7);
+      line-height: 1.55;
+    }
+    .result-unavailable a { color: #00204a; font-weight: 600; }
+
+    /* Error */
+    .result-error {
+      border-radius: 12px;
+      padding: 18px 20px;
+      border: 1.5px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.02);
+    }
+    .result-error p {
+      font-size: 13px;
+      color: rgba(17,24,39,0.6);
+      line-height: 1.5;
+    }
+
+    /* Loading */
+    .result-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 0;
+      color: rgba(17,24,39,0.45);
+      font-size: 13.5px;
+    }
+    .result-loading-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0,32,74,0.15);
+      border-top-color: #00204a;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(17,24,39,0.35);
+      padding: 0 20px 28px;
+    }
+    .footer a { color: rgba(0,32,74,0.5); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!--
+    Netlify Forms — hidden form so Netlify detects it at build time.
+    The actual submission happens via JS fetch below.
+  -->
+  <form name="manifest-download" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+    <input type="text" name="bot-field" />
+    <input type="text" name="company" />
+    <input type="email" name="email" />
+    <input type="text" name="user_count" />
+    <input type="hidden" name="environment" />
+    <input type="hidden" name="manifest_url" />
+    <input type="hidden" name="workspace_url" />
+  </form>
+
+  <div class="header">
+    <img src="images/SingleCaseLogo 2 500x500.png" alt="SingleCase" />
+    <span class="header-title">SingleCase Outlook Add-in</span>
+    <div class="lang-toggle">
+      <button onclick="setLang('en')" id="langEn" class="lang-btn active">EN</button>
+      <span class="lang-sep">|</span>
+      <button onclick="setLang('cs')" id="langCs" class="lang-btn">CS</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="card">
+      <div class="card-title" data-i18n="cardTitle">Get your manifest file</div>
+      <div class="card-subtitle" data-i18n="cardSubtitle">Enter your SingleCase workspace URL to get the correct manifest file for your environment.</div>
+
+      <div class="url-hint">
+        <img src="images/URL image.png" alt="Your workspace URL is in the browser address bar" />
+        <div class="url-hint-caption" data-i18n-html="urlHintCaption"><strong>Example only</strong> — your workspace URL will be different. Find it in the browser address bar when logged into SingleCase, then paste it below.</div>
+      </div>
+
+      <label class="field-label" for="urlInput" data-i18n="fieldLabel">Workspace URL</label>
+      <div class="input-row">
+        <input
+          type="text"
+          id="urlInput"
+          data-i18n-placeholder="urlPlaceholder"
+          placeholder="e.g. yourfirm.singlecase.app"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
+        <button class="btn-generate" onclick="generate()" data-i18n="btnGenerate">Generate</button>
+      </div>
+
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <div class="footer" data-i18n-html="footer">
+    Need help? Contact us at <a href="mailto:info@singlecase.cz">info@singlecase.cz</a>
+  </div>
+
+  <script>
+    var _currentLang = 'en';
+    var _lastDomain = '';
+    var _lastManifest = null;
+    var _leadSubmitted = false;
+
+    var STRINGS = {
+      en: {
+        cardTitle: 'Get your manifest file',
+        cardSubtitle: 'Enter your SingleCase workspace URL to get the correct manifest file for your environment.',
+        urlHintCaption: '<strong>Example only</strong> — your workspace URL will be different. Find it in the browser address bar when logged into SingleCase, then paste it below.',
+        fieldLabel: 'Workspace URL',
+        urlPlaceholder: 'e.g. yourfirm.singlecase.app',
+        btnGenerate: 'Generate',
+        errorUnknown: 'We couldn\'t recognise this workspace URL. Please check the URL and try again, or contact us at <a href="mailto:info@singlecase.cz" style="color:#00204a;font-weight:600;">info@singlecase.cz</a>.',
+        errorUnavailable: 'The manifest file for this environment is not yet available. Please contact us at <a href="mailto:info@singlecase.cz">info@singlecase.cz</a> and we\'ll send it to you directly.',
+        errorService: 'We couldn\'t reach the manifest service, so we can\'t check your URL right now. Please try again in a moment, or contact us at <a href="mailto:info@singlecase.cz" style="color:#00204a;font-weight:600;">info@singlecase.cz</a>.',
+        envLabel: 'Environment identified:',
+        leadTitle: 'One more step before downloading',
+        leadSubtitle: 'We use this to track deployments and make sure you get the right support.',
+        labelCompany: 'Company name *',
+        placeholderCompany: 'e.g. Pinnacle Law Group',
+        labelEmail: 'Work email *',
+        placeholderEmail: 'you@yourfirm.com',
+        labelUsers: 'Estimated number of users *',
+        selectPlaceholder: 'Select a range',
+        errorFields: 'Please fill in all fields.',
+        btnSubmit: 'Continue to download',
+        btnSubmitting: 'Submitting…',
+        domainExistsTitle: 'Someone from your company has already downloaded this.',
+        domainExistsBody: 'A colleague from <strong style="color:#00204a;">{domain}</strong> has already downloaded the manifest file. Please reach out to your IT department — they should have the manifest and deployment instructions ready.',
+        adminNoticeTitle: 'An administrator must sign in first.',
+        adminNoticeBody: 'After the add-in is deployed, the first person to sign in must be a SingleCase administrator. This one-time step automatically links your Microsoft 365 tenant to your SingleCase workspace. Once the administrator has signed in successfully, all other users can sign in normally. If a regular user signs in before an administrator, they will see an error.',
+        instructionsP: '<strong>How to download:</strong> Right-click the link below and select <strong>Save link as…</strong> to save the file to your device.',
+        nextLabel: 'Next step',
+        nextLinkText: 'Open the deployment guide →',
+        nextHref: 'https://sc-outlook-add-in.netlify.app/enterprise-deployment',
+        footer: 'Need help? Contact us at <a href="mailto:info@singlecase.cz">info@singlecase.cz</a>',
+        btnCopy: 'Copy',
+        btnCopied: 'Copied!',
+        checking: 'Checking your workspace…',
+      },
+      cs: {
+        cardTitle: 'Získejte soubor manifestu',
+        cardSubtitle: 'Zadejte URL adresu vašeho pracovního prostoru SingleCase a získejte správný soubor manifestu pro vaše prostředí.',
+        urlHintCaption: '<strong>Pouze příklad</strong> — vaše URL adresa bude jiná. Najdete ji v adresním řádku prohlížeče při přihlášení do SingleCase, poté ji vložte níže.',
+        fieldLabel: 'URL adresa pracovního prostoru',
+        urlPlaceholder: 'např. vasefrima.singlecase.app',
+        btnGenerate: 'Generovat',
+        errorUnknown: 'Tuto URL adresu pracovního prostoru jsme nedokázali rozpoznat. Zkontrolujte URL a zkuste to znovu, nebo nás kontaktujte na <a href="mailto:info@singlecase.cz" style="color:#00204a;font-weight:600;">info@singlecase.cz</a>.',
+        errorUnavailable: 'Soubor manifestu pro toto prostředí zatím není k dispozici. Kontaktujte nás na <a href="mailto:info@singlecase.cz">info@singlecase.cz</a> a zašleme vám jej přímo.',
+        errorService: 'Nepodařilo se nám spojit se službou pro manifesty, takže vaši URL teď nemůžeme zkontrolovat. Zkuste to prosím za chvíli znovu, nebo nás kontaktujte na <a href="mailto:info@singlecase.cz" style="color:#00204a;font-weight:600;">info@singlecase.cz</a>.',
+        envLabel: 'Identifikované prostředí:',
+        leadTitle: 'Ještě jeden krok před stažením',
+        leadSubtitle: 'Tyto údaje používáme ke sledování nasazení a zajištění správné podpory.',
+        labelCompany: 'Název firmy *',
+        placeholderCompany: 'např. Advokátní kancelář Novák',
+        labelEmail: 'Pracovní e-mail *',
+        placeholderEmail: 'vy@vasefirma.cz',
+        labelUsers: 'Odhadovaný počet uživatelů *',
+        selectPlaceholder: 'Vyberte rozsah',
+        errorFields: 'Prosím vyplněte všechna pole.',
+        btnSubmit: 'Pokračovat ke stažení',
+        btnSubmitting: 'Odesílám…',
+        domainExistsTitle: 'Někdo z vaší firmy si manifest již stáhl.',
+        domainExistsBody: 'Kolega z domény <strong style="color:#00204a;">{domain}</strong> již stáhl soubor manifestu. Obraťte se na vaše IT oddělení — měli by mít manifest a instrukce k nasazení připravené.',
+        adminNoticeTitle: 'Jako první se musí přihlásit administrátor.',
+        adminNoticeBody: 'Po nasazení doplňku se musí jako první přihlásit uživatel s rolí administrátora v SingleCase. Tento jednorázový krok automaticky propojí Microsoft 365 tenant vaší organizace s vaším pracovním prostorem SingleCase. Jakmile se administrátor úspěšně přihlásí, mohou se ostatní uživatelé přihlašovat normálně. Pokud se běžný uživatel přihlásí před administrátorem, zobrazí se mu chyba.',
+        instructionsP: '<strong>Jak stáhnout:</strong> Klikněte pravým tlačítkem na odkaz níže a vyberte <strong>Uložit odkaz jako…</strong> pro uložení souboru do zařízení.',
+        nextLabel: 'Další krok',
+        nextLinkText: 'Otevřít průvodce nasazením →',
+        nextHref: 'https://sc-outlook-add-in.netlify.app/enterprise-deployment-cs',
+        footer: 'Potřebujete pomoc? Kontaktujte nás na <a href="mailto:info@singlecase.cz">info@singlecase.cz</a>',
+        btnCopy: 'Kopírovat',
+        btnCopied: 'Zkopírováno!',
+        checking: 'Kontroluji váš pracovní prostor…',
+      }
+    };
+
+    function t(k) {
+      var s = STRINGS[_currentLang];
+      return (s && s[k] !== undefined) ? s[k] : (STRINGS['en'][k] || k);
+    }
+
+    function setLang(l) {
+      _currentLang = l;
+      document.documentElement.lang = l;
+      document.getElementById('langEn').classList.toggle('active', l === 'en');
+      document.getElementById('langCs').classList.toggle('active', l === 'cs');
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        el.textContent = t(el.getAttribute('data-i18n'));
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+        el.innerHTML = t(el.getAttribute('data-i18n-html'));
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+        el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+      });
+      if (_lastDomain && !_leadSubmitted) {
+        generate();
+      }
+    }
+
+    function parseDomain(input) {
+      var s = input.trim().toLowerCase();
+      s = s.replace(/^https?:\/\//i, '');
+      s = s.replace(/\/.*$/, '');
+      s = s.replace(/\?.*$/, '');
+      return s;
+    }
+
+    async function generate() {
+      var raw = document.getElementById('urlInput').value;
+      var resultEl = document.getElementById('result');
+      _leadSubmitted = false;
+      _lastManifest = null;
+
+      if (!raw.trim()) {
+        resultEl.innerHTML = '';
+        _lastDomain = '';
+        return;
+      }
+
+      var domain = parseDomain(raw);
+      _lastDomain = domain;
+
+      resultEl.innerHTML = '<div class="result-loading"><div class="result-loading-spinner"></div>' + t('checking') + '</div>';
+
+      var data;
+      try {
+        var res = await fetch('/.netlify/functions/resolve-manifest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain: domain }),
+        });
+        // A non-2xx response means the service is missing or broken, not that the
+        // URL is unrecognised — don't let it surface as a validation error.
+        if (!res.ok) {
+          console.error('[manifest-generator] resolve-manifest returned HTTP ' + res.status);
+          resultEl.innerHTML = '<div class="result-error"><p>' + t('errorService') + '</p></div>';
+          return;
+        }
+        data = await res.json();
+      } catch (e) {
+        console.error('[manifest-generator] resolve-manifest request failed', e);
+        resultEl.innerHTML = '<div class="result-error"><p>' + t('errorService') + '</p></div>';
+        return;
+      }
+
+      if (data.error === 'unknown') {
+        resultEl.innerHTML = '<div class="result-error"><p>' + t('errorUnknown') + '</p></div>';
+        return;
+      }
+
+      if (data.error === 'unavailable') {
+        resultEl.innerHTML = '<div class="result-unavailable"><p>' + t('errorUnavailable') + '</p></div>';
+        return;
+      }
+
+      _lastManifest = data.manifest;
+
+      resultEl.innerHTML =
+        '<div class="env-detected">' +
+          '<div class="env-detected-check">' +
+            '<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '</div>' +
+          '<span class="env-detected-text">' + t('envLabel') + ' <span class="env-detected-name">' + domain + '</span></span>' +
+        '</div>' +
+        '<div class="lead-form" id="leadForm">' +
+          '<div class="lead-form-title">' + t('leadTitle') + '</div>' +
+          '<div class="lead-form-subtitle">' + t('leadSubtitle') + '</div>' +
+          '<div class="form-row">' +
+            '<div class="form-field">' +
+              '<label class="field-label" for="lcCompany">' + t('labelCompany') + '</label>' +
+              '<input type="text" id="lcCompany" placeholder="' + t('placeholderCompany') + '" required />' +
+            '</div>' +
+            '<div class="form-field">' +
+              '<label class="field-label" for="lcEmail">' + t('labelEmail') + '</label>' +
+              '<input type="email" id="lcEmail" placeholder="' + t('placeholderEmail') + '" required onblur="checkEmailDomain(this.value)" />' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-row-full">' +
+            '<div class="form-field">' +
+              '<label class="field-label" for="lcUsers">' + t('labelUsers') + '</label>' +
+              '<select id="lcUsers">' +
+                '<option value="" disabled selected>' + t('selectPlaceholder') + '</option>' +
+                '<option value="1–10">1–10</option>' +
+                '<option value="11–50">11–50</option>' +
+                '<option value="51–200">51–200</option>' +
+                '<option value="200+">200+</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div id="lcError" style="font-size:12.5px;color:#c0392b;margin-top:4px;display:none;">' + t('errorFields') + '</div>' +
+          '<button class="btn-submit" id="lcSubmit" onclick="submitLead()">' +
+            t('btnSubmit') +
+            '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '</button>' +
+        '</div>' +
+        '<div class="download-section" id="downloadSection" style="display:none;">' +
+          '<div class="result-link-row">' +
+            '<div class="result-link">' + _lastManifest + '</div>' +
+            '<button class="btn-copy" id="copyBtn" onclick="copyUrl(\'' + _lastManifest + '\')">' + t('btnCopy') + '</button>' +
+          '</div>' +
+          '<div class="admin-notice">' +
+            '<div class="admin-notice-icon">⚠️</div>' +
+            '<div class="admin-notice-body">' +
+              '<strong>' + t('adminNoticeTitle') + '</strong> ' + t('adminNoticeBody') +
+            '</div>' +
+          '</div>' +
+          '<div class="result-instructions">' +
+            '<p>' + t('instructionsP') + '</p>' +
+            '<p style="margin-top:10px;"><a href="' + _lastManifest + '" style="color:#00204a;font-weight:700;font-size:13px;">→ ' + _lastManifest + '</a></p>' +
+          '</div>' +
+          '<div class="result-next">' +
+            '<span class="result-next-label">' + t('nextLabel') + '</span>' +
+            '<a href="' + t('nextHref') + '" target="_blank" class="result-next-link">' + t('nextLinkText') + '</a>' +
+          '</div>' +
+        '</div>';
+
+    }
+
+    function submitLead() {
+      var company = document.getElementById('lcCompany').value.trim();
+      var email = document.getElementById('lcEmail').value.trim();
+      var users = document.getElementById('lcUsers').value;
+      var errEl = document.getElementById('lcError');
+
+      if (!company || !email || !users) {
+        errEl.style.display = 'block';
+        return;
+      }
+      errEl.style.display = 'none';
+
+      identifyIntercom(email);
+
+      var btn = document.getElementById('lcSubmit');
+      btn.disabled = true;
+      btn.textContent = t('btnSubmitting');
+
+      var manifest = _lastManifest;
+      var domain = _lastDomain;
+      var env = domain;
+
+      var emailDomain = email.slice(email.indexOf('@') + 1).toLowerCase().trim();
+      if (emailDomain) {
+        fetch('/.netlify/functions/save-domain', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain: emailDomain, email: email }),
+        }).catch(function() {});
+      }
+
+      fetch(window.location.pathname, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'manifest-download',
+          'bot-field': '',
+          'company': company,
+          'email': email,
+          'user_count': users,
+          'environment': env,
+          'manifest_url': manifest,
+          'workspace_url': domain,
+        }).toString()
+      }).catch(function() {
+        // Submission failure is non-blocking — still reveal the download
+      }).finally(function() {
+        _leadSubmitted = true;
+        document.getElementById('leadForm').style.display = 'none';
+        document.getElementById('downloadSection').style.display = 'block';
+      });
+    }
+
+    function copyUrl(url) {
+      navigator.clipboard.writeText(url).then(function() {
+        var btn = document.getElementById('copyBtn');
+        if (btn) { btn.textContent = t('btnCopied'); btn.classList.add('copied'); }
+        setTimeout(function() {
+          if (btn) { btn.textContent = t('btnCopy'); btn.classList.remove('copied'); }
+        }, 2000);
+      });
+    }
+
+    function checkEmailDomain(emailVal) {
+      var atIdx = emailVal.indexOf('@');
+      if (atIdx < 0) return;
+      var domain = emailVal.slice(atIdx + 1).toLowerCase().trim();
+      if (!domain) return;
+
+      fetch('/.netlify/functions/check-domain?domain=' + encodeURIComponent(domain))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.exists) return;
+          var form = document.getElementById('leadForm');
+          if (!form) return;
+          form.innerHTML =
+            '<div style="padding:20px 0;">' +
+              '<div style="font-size:15px;font-weight:700;color:#00204a;margin-bottom:10px;">' + t('domainExistsTitle') + '</div>' +
+              '<div style="font-size:13.5px;color:rgba(17,24,39,0.65);line-height:1.6;">' +
+                t('domainExistsBody').replace('{domain}', domain) +
+              '</div>' +
+            '</div>';
+        })
+        .catch(function() {});
+    }
+
+    function identifyIntercom(email) {
+      if (typeof window.Intercom !== 'function') return;
+      window.Intercom('boot', {
+        app_id: 'ycqepu37',
+        email: email,
+        outlook_manifest: true,
+        hide_default_launcher: true,
+      });
+    }
+
+    document.getElementById('urlInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') generate();
+    });
+  </script>
+
+  <!-- Intercom — load script only, boot happens after form submit with email -->
+  <script>
+    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/ycqepu37';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Drag-and-drop deploy: the dropped folder itself is the publish directory,
+# so no `publish` key here — only the functions location.
+[build]
+  functions = "netlify/functions"

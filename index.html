@@ -1,0 +1,3555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="images/SingleCaseLogo 2 500x500.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>SingleCase Outlook Add-in: User Manual</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sc-blue:       #001F47;
+      --sc-blue-light: #e6eaf1;
+      --sc-blue-mid:   #b8c8de;
+      --sc-green:      #1a7c4b;
+      --sc-green-bg:   #d1fae5;
+      --sc-gray:       #6b7280;
+      --sc-gray-bg:    #f3f4f6;
+      --sc-gray-label: #9ca3af;
+      --sc-border:     #e5e7eb;
+      --sc-text:       #111827;
+      --sc-subtext:    #4b5563;
+      --sc-note-bg:    #fffbeb;
+      --sc-note-border:#f59e0b;
+      --sc-warn-bg:    #fef2f2;
+      --sc-warn-border:#ef4444;
+      --sidebar-w:     280px;
+      --content-max:   800px;
+      --radius:        8px;
+      --font:          'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono:          'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--sc-text);
+      background: #f8fafc;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav#sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid var(--sc-border);
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+      padding: 0 0 32px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav#sidebar::-webkit-scrollbar { width: 6px; }
+    nav#sidebar::-webkit-scrollbar-track { background: transparent; }
+    nav#sidebar::-webkit-scrollbar-thumb { background: var(--sc-border); border-radius: 3px; }
+
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--sc-border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-brand .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--sc-blue);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
+
+    .sidebar-brand .brand-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--sc-text);
+      line-height: 1.2;
+    }
+
+    .sidebar-brand .brand-sub {
+      font-size: 11px;
+      color: var(--sc-gray);
+      margin-top: 2px;
+    }
+
+    .sidebar-meta {
+      padding: 10px 20px 0;
+      font-size: 11px;
+      color: var(--sc-gray);
+      line-height: 1.5;
+    }
+
+    nav#sidebar ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+
+    nav#sidebar ul li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--sc-subtext);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    nav#sidebar ul li a:hover {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+    }
+
+    nav#sidebar ul li a.active {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue) !important;
+      border-left-color: var(--sc-blue) !important;
+      font-weight: 600;
+    }
+
+    nav#sidebar ul li a.active .nav-num {
+      color: var(--sc-blue);
+    }
+
+    nav#sidebar ul li a .nav-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--sc-gray-label);
+      width: 18px;
+      flex-shrink: 0;
+    }
+
+    nav#sidebar ul.nav-sub {
+      padding: 0 0 4px 34px;
+    }
+
+    nav#sidebar ul.nav-sub li a {
+      font-size: 12px;
+      color: var(--sc-gray);
+      padding: 4px 8px;
+      border-left: none;
+    }
+
+    nav#sidebar ul.nav-sub li a:hover {
+      color: var(--sc-blue);
+      background: transparent;
+      border-left: none;
+    }
+
+    /* ── Main Content ── */
+    main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 0 48px 80px;
+      max-width: calc(var(--sidebar-w) + var(--content-max) + 96px);
+    }
+
+    /* ── Cover ── */
+    .cover {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--sc-border);
+      margin-bottom: 56px;
+    }
+
+    .cover-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sc-blue);
+      margin-bottom: 12px;
+    }
+
+    .cover h1 {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--sc-text);
+      margin-bottom: 16px;
+    }
+
+    .cover h1 span { color: #FF5014; }
+
+    .cover-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--sc-gray-bg);
+      color: var(--sc-subtext);
+      border: 1px solid var(--sc-border);
+    }
+
+    .badge.blue { background: var(--sc-blue-light); color: var(--sc-blue); border-color: var(--sc-blue-mid); }
+
+    /* ── Section Headings ── */
+    .section {
+      margin-bottom: 64px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--sc-blue-light);
+    }
+
+    .section-number {
+      width: 36px; height: 36px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--sc-text);
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--sc-text);
+      margin: 28px 0 10px;
+    }
+
+    p { margin-bottom: 14px; color: var(--sc-subtext); }
+    p:last-child { margin-bottom: 0; }
+
+    strong { color: var(--sc-text); font-weight: 600; }
+
+    /* ── Steps ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps > li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 40px;
+      margin-bottom: 18px;
+    }
+
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 26px; height: 26px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .steps > li > p { margin: 0 0 8px; }
+    .steps > li > p:last-child { margin-bottom: 0; }
+
+    /* ── Bullet list ── */
+    ul.bullets {
+      list-style: none;
+      margin: 10px 0 14px 0;
+    }
+
+    ul.bullets li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      color: var(--sc-subtext);
+    }
+
+    ul.bullets li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--sc-blue);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* ── Sub-bullets ── */
+    ul.sub {
+      list-style: none;
+      margin: 6px 0 6px 20px;
+    }
+
+    ul.sub li {
+      display: block;
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--sc-subtext);
+    }
+
+    ul.sub li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--sc-gray-label);
+    }
+
+    /* ── Screenshots ── */
+    .manual-img {
+      display: block;
+      max-width: 100%;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin: 12px 0 4px;
+    }
+
+    .img-caption {
+      font-size: 12px;
+      color: var(--sc-gray);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    /* ── Notes / callouts ── */
+    .note {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-note-bg);
+      border: 1px solid var(--sc-note-border);
+      border-left: 4px solid var(--sc-note-border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #78350f;
+    }
+
+    .note .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .tip {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-blue-light);
+      border: 1px solid var(--sc-blue-mid);
+      border-left: 4px solid var(--sc-blue);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #001F47;
+    }
+
+    .tip .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Code ── */
+    code {
+      font-family: var(--mono);
+      font-size: 13px;
+      background: var(--sc-gray-bg);
+      border: 1px solid var(--sc-border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: #be185d;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    thead th:first-child { border-radius: var(--radius) 0 0 0; }
+    thead th:last-child  { border-radius: 0 var(--radius) 0 0; }
+
+    tbody tr { border-bottom: 1px solid var(--sc-border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+
+    tbody td {
+      padding: 10px 14px;
+      color: var(--sc-subtext);
+      vertical-align: top;
+    }
+
+    tbody td strong { color: var(--sc-text); }
+
+    /* ── Category labels ── */
+    .label-filed {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--sc-green-bg); color: var(--sc-green);
+      border: 1px solid #6ee7b7;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 12px; font-weight: 600;
+    }
+
+    .label-unfiled {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #e0f2fe; color: #0369a1;
+      border: 1px solid #7dd3fc;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 12px; font-weight: 600;
+    }
+
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: var(--sc-green); }
+    .dot.gray  { background: #7dd3fc; }
+
+    /* ── Feature cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0 24px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .card-icon { font-size: 22px; margin-bottom: 8px; }
+    .card h4 { font-size: 13px; font-weight: 700; color: var(--sc-text); margin-bottom: 4px; }
+    .card p  { font-size: 13px; margin: 0; }
+
+    /* ── FAQ ── */
+    details {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    details summary {
+      padding: 16px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sc-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      list-style: none;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    details summary:hover { background: var(--sc-gray-bg); }
+
+    details summary::-webkit-details-marker { display: none; }
+
+    details summary::after {
+      content: '+';
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--sc-gray);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    details[open] summary { border-bottom: 1px solid var(--sc-border); }
+    details[open] summary::after { content: '−'; }
+
+    .faq-body {
+      padding: 16px 18px;
+      font-size: 14px;
+      color: var(--sc-subtext);
+    }
+
+    .faq-body p { margin-bottom: 0; }
+
+    /* ── Troubleshooting ── */
+    .trouble-item {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-left: 4px solid var(--sc-blue);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+
+    .trouble-item h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--sc-text);
+      margin: 0 0 10px;
+    }
+
+    .trouble-item p, .trouble-item ul { font-size: 14px; }
+
+    /* ── App Screenshot ── */
+    .app-screenshot {
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .app-screenshot img {
+      max-width: min(680px, 100%);
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.14);
+      border: 1px solid var(--sc-border);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .app-screenshot-caption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--sc-gray);
+      font-style: italic;
+    }
+
+    /* ── Overview Section ── */
+    .overview {
+      background: var(--sc-blue);
+      border-radius: 12px;
+      padding: 36px 40px;
+      margin-bottom: 56px;
+      color: #fff;
+    }
+
+    .overview-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 6px;
+    }
+
+    .overview h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+
+    .overview-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .overview-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+    }
+
+    .overview-list li:last-child { border-bottom: none; }
+
+    .overview-list .ov-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      width: 26px;
+      text-align: center;
+    }
+
+    .overview-list li strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .overview-list li em {
+      font-style: normal;
+      color: #FF5014;
+      font-weight: 600;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--sc-border);
+      font-size: 13px;
+      color: var(--sc-gray);
+      text-align: center;
+    }
+
+    /* ── Mobile menu toggle (hidden on desktop) ── */
+    .nav-toggle-input { display: none; }
+
+    .menu-toggle {
+      display: none;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 150;
+      cursor: pointer;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      /* Hamburger button */
+      .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 12px;
+        left: 14px;
+        z-index: 300;
+        width: 40px;
+        height: 40px;
+        background: var(--sc-blue);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        border-radius: 2px;
+        transition: transform 0.2s, opacity 0.2s;
+      }
+
+      .nav-toggle-input:checked ~ .menu-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .nav-toggle-input:checked ~ .menu-toggle span:nth-child(2) { opacity: 0; }
+      .nav-toggle-input:checked ~ .menu-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      /* Sidebar becomes off-canvas drawer */
+      nav#sidebar {
+        width: min(var(--sidebar-w), 85vw);
+        left: -100vw;
+        transition: left 0.25s ease;
+        z-index: 200;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+      }
+
+      .nav-toggle-input:checked ~ nav#sidebar {
+        left: 0;
+      }
+
+      .nav-toggle-input:checked ~ .sidebar-overlay {
+        display: block;
+      }
+
+      /* Main content */
+      main {
+        margin-left: 0;
+        padding: 72px 16px 60px;
+        max-width: 100%;
+      }
+
+      /* Lang switcher — shift right of hamburger */
+      .lang-switcher {
+        top: 12px;
+        right: 14px;
+      }
+
+      /* Cover */
+      .cover {
+        padding: 28px 0 24px;
+        margin-bottom: 28px;
+      }
+
+      .cover h1 { font-size: 26px; }
+
+      /* Overview */
+      .overview {
+        padding: 22px 18px;
+        margin-bottom: 28px;
+        border-radius: 10px;
+      }
+
+      .overview h2 { font-size: 17px; margin-bottom: 18px; }
+
+      /* Sections */
+      .section { margin-bottom: 40px; }
+
+      /* Images — override inline max-width percentages */
+      .manual-img { max-width: 100% !important; height: auto; display: block; margin: 8px auto; }
+
+      /* Tables — horizontal scroll */
+      .table-wrap, table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Cards — single column */
+      .cards { grid-template-columns: 1fr; }
+
+      /* Steps padding */
+      .steps > li { padding-left: 36px; }
+    }
+
+    @media print {
+      nav#sidebar { display: none; }
+      main { margin-left: 0; padding: 0; max-width: 100%; }
+      details { page-break-inside: avoid; }
+      details[open] summary::after { content: ''; }
+    }
+
+    /* ── Version pills (cover) ── */
+    .version-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .version-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #fff3ed;
+      color: #c93d00;
+      border: 1.5px solid #ffcdb4;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .version-pill:hover {
+      background: #ffe8d6;
+      border-color: #FF5014;
+      color: #FF5014;
+    }
+
+    .version-pill .pill-tag {
+      background: #FF5014;
+      color: #fff;
+      border-radius: 12px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Version divider ── */
+    .version-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 64px 0 48px;
+    }
+
+    .version-divider::before,
+    .version-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ffd4bc;
+    }
+
+    .version-divider-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff3ed;
+      border: 1.5px solid #ffcdb4;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #FF5014;
+      white-space: nowrap;
+    }
+
+    /* ── Signal table ── */
+    .signal-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--sc-border);
+      font-size: 14px;
+    }
+
+    .signal-row:last-child { border-bottom: none; }
+
+    .signal-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      width: 28px;
+      text-align: center;
+      margin-top: 1px;
+    }
+
+    .signal-body { flex: 1; }
+    .signal-body strong { display: block; font-size: 14px; color: var(--sc-text); margin-bottom: 2px; }
+    .signal-body p { margin: 0; font-size: 13px; }
+
+    .signal-strength {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 3px;
+    }
+
+    .signal-strength.s-high  { background: var(--sc-green-bg); color: var(--sc-green); }
+    .signal-strength.s-mid   { background: #eff6ff; color: #1d4ed8; }
+    .signal-strength.s-low   { background: var(--sc-gray-bg); color: var(--sc-gray); }
+
+    /* ── Search Bar ── */
+    .sidebar-search {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--sc-border);
+    }
+
+    .sidebar-search-container {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .sidebar-search input {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 13px;
+      border: 1px solid var(--sc-border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--sc-text);
+      font-family: var(--font);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .sidebar-search input::placeholder {
+      color: var(--sc-gray-label);
+    }
+
+    .sidebar-search input:focus {
+      outline: none;
+      border-color: var(--sc-blue);
+      box-shadow: 0 0 0 3px var(--sc-blue-light);
+    }
+
+
+    .search-nav-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--sc-border);
+      border-radius: 5px;
+      background: #fff;
+      color: var(--sc-gray);
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .search-nav-btn:hover:not(:disabled) {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-color: var(--sc-blue);
+    }
+
+    .search-nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .search-counter {
+      font-size: 12px;
+      color: var(--sc-gray);
+      white-space: nowrap;
+      min-width: 35px;
+      text-align: center;
+    }
+
+    /* Search result highlight */
+    .search-highlight {
+      background: #fff176;
+      padding: 2px 3px;
+      border-radius: 2px;
+      font-weight: 600;
+      box-shadow: 0 0 0 1px #f9c74f;
+    }
+
+    .search-highlight.current-highlight {
+      background: #ffa500;
+      box-shadow: 0 0 0 1px #ff8c00;
+      color: #fff;
+    }
+
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      padding: 7px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--sc-gray);
+      background: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .lang-btn + .lang-btn {
+      border-left: 1px solid var(--sc-border);
+    }
+
+    .lang-btn.active {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+    }
+
+    /* ── Platform Switcher ── */
+    .platform-only { display: none; }
+    .platform-only.visible { display: block; }
+
+    /* ── GitBook page navigation ── */
+    .page { display: none; }
+    .page.active { display: block; padding-top: 40px; }
+
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--sc-border);
+      gap: 12px;
+    }
+
+    .page-nav-btn {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 20px;
+      border: 1px solid var(--sc-border);
+      border-radius: 10px;
+      text-decoration: none;
+      background: #fff;
+      transition: border-color 0.15s, background 0.15s;
+      cursor: pointer;
+      max-width: 48%;
+    }
+
+    .page-nav-btn:hover {
+      border-color: var(--sc-blue);
+      background: var(--sc-blue-light);
+    }
+
+    .page-nav-btn.prev { align-items: flex-start; }
+    .page-nav-btn.next { align-items: flex-end; margin-left: auto; }
+
+    .page-nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--sc-gray-label);
+      margin-bottom: 4px;
+    }
+
+    .page-nav-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sc-text);
+    }
+
+    .page-nav-btn:hover .page-nav-title { color: var(--sc-blue); }
+
+    .vc-box { border: 2px solid var(--sc-border); border-radius: 10px; padding: 20px 22px; margin-top: 24px; background: #fff; }
+    .vc-platforms { display: flex; gap: 6px; margin-bottom: 12px; }
+    .vc-plat-btn { padding: 5px 16px; border-radius: 6px; border: 1.5px solid var(--sc-border); background: #fff; font-size: 13px; cursor: pointer; font-weight: 500; color: var(--sc-text); transition: all .15s; }
+    .vc-plat-btn.active { border-color: var(--sc-blue); background: #eff6ff; color: var(--sc-blue); }
+    .vc-plat-btn:hover:not(.active) { border-color: var(--sc-blue); }
+    .vc-row { display: flex; gap: 8px; align-items: stretch; }
+    .vc-row input { flex: 1; padding: 8px 12px; border: 1.5px solid var(--sc-border); border-radius: 6px; font-size: 13px; font-family: inherit; }
+    .vc-row input:focus { outline: none; border-color: var(--sc-blue); box-shadow: 0 0 0 3px #dbeafe; }
+    .vc-row button { padding: 0 20px; background: var(--sc-blue); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .vc-row button:hover { opacity: .9; }
+    .vc-result { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+    .vc-result.yes  { background: #f0fdf4; border: 1.5px solid #86efac; }
+    .vc-result.no   { background: #fff7ed; border: 1.5px solid #fdba74; }
+    .vc-result.warn { background: #fffbeb; border: 1.5px solid #fcd34d; }
+    .vc-result.unknown { background: #f8fafc; border: 1.5px solid var(--sc-border); }
+    .vc-badge { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+
+    .page img:not(#vc-img) { cursor: zoom-in; }
+    .lb-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.88); z-index: 9999;
+      align-items: center; justify-content: center; cursor: zoom-out;
+    }
+    .lb-overlay.open { display: flex; }
+    .lb-overlay img {
+      max-width: 92vw; max-height: 92vh;
+      border-radius: 8px; box-shadow: 0 12px 48px rgba(0,0,0,.7);
+      cursor: default;
+    }
+    .lb-close {
+      position: absolute; top: 18px; right: 22px;
+      color: #fff; font-size: 28px; line-height: 1;
+      cursor: pointer; opacity: .7; user-select: none;
+    }
+    .lb-close:hover { opacity: 1; }
+
+    /* ── Role gate ── */
+    @keyframes rgFade { from { opacity:0; } to { opacity:1; } }
+    /* ── Role bar (sidebar) ── */
+  
+    /* ── Restructure: grouped navigation, inline platform tabs, start cards ── */
+    nav#sidebar ul li.nav-group { padding: 18px 20px 4px; font-size: 12px; font-weight: 600; color: var(--sc-text); line-height: 1.35; }
+    nav#sidebar ul li.nav-group:first-of-type { padding-top: 8px; }
+    nav#sidebar ul li a .nav-new { margin-left: auto; font-size: 10px; font-weight: 700; background: var(--sc-blue); color: #fff; border-radius: 10px; padding: 1px 7px; }
+    nav#sidebar ul li a.nav-ext { font-size: 12.5px; }
+    .ptabs { display: inline-flex; flex-wrap: wrap; gap: 4px; background: #f0f2f5; border-radius: 12px; padding: 4px; margin: 4px 0 18px; }
+    .ptab { border: 0; background: transparent; padding: 6px 12px; border-radius: 9px; font: 500 13px var(--font); color: var(--sc-subtext); cursor: pointer; }
+    .ptab.active { background: #fff; color: var(--sc-blue); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+    .ptab:focus-visible, .start-card:focus-visible { outline: 2px solid var(--sc-blue); outline-offset: 2px; }
+    .start { margin: 8px 0 48px; }
+    .start h2 { font-size: 20px; font-weight: 800; color: var(--sc-dark); margin-bottom: 16px; }
+    .start-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .start-card { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border: 1px solid var(--sc-border); border-radius: 10px; background: #fff; text-decoration: none; transition: border-color 0.15s, background 0.15s; }
+    .start-card:hover { border-color: var(--sc-blue); background: var(--sc-blue-light); }
+    .start-title { font-size: 15px; font-weight: 600; color: var(--sc-text); }
+    .start-desc { font-size: 13px; color: var(--sc-gray); }
+    .start-admin { margin-top: 14px; font-size: 13px; color: var(--sc-gray); }
+    @media (max-width: 640px) { .start-grid { grid-template-columns: 1fr; } }
+    nav#sidebar ul li a .nav-new.nav-soon { background: var(--sc-blue-light); color: var(--sc-blue); }
+    pre.folder-tree { background: var(--sc-gray-bg); border: 1px solid var(--sc-border); border-radius: 8px; padding: 12px 16px; font-size: 13px; line-height: 1.7; overflow-x: auto; margin: 12px 0 16px; }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Theme layer — calm, glassy reading surface
+       Palette: canvas #F4F6FA · ink #0B1F3A · navy #001F47 · orange #FF5014
+       ════════════════════════════════════════════════════════════════════ */
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", monospace;
+      --sc-text: #0B1F3A;
+      --sc-subtext: #3E4B5F;
+      --sc-gray: #6A7587;
+      --sc-border: rgba(11, 31, 58, 0.09);
+      --canvas: #F4F6FA;
+      --glass: rgba(255, 255, 255, 0.62);
+      --glass-strong: rgba(255, 255, 255, 0.82);
+      --glass-edge: rgba(255, 255, 255, 0.75);
+      --hairline: rgba(11, 31, 58, 0.08);
+      --shadow-soft: 0 1px 2px rgba(11, 31, 58, 0.05), 0 8px 24px -12px rgba(11, 31, 58, 0.18);
+      --shadow-lift: 0 2px 4px rgba(11, 31, 58, 0.06), 0 18px 40px -16px rgba(11, 31, 58, 0.28);
+      --radius: 14px;
+      --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ease-spring: cubic-bezier(0.34, 1.36, 0.5, 1);
+    }
+
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.62;
+      color: var(--sc-subtext);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    /* Ambient light behind the glass */
+    body::before {
+      content: "";
+      position: fixed; inset: -20vh -20vw; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(38vw 38vw at 12% 8%, rgba(0, 31, 71, 0.10), transparent 70%),
+        radial-gradient(34vw 34vw at 92% 18%, rgba(255, 80, 20, 0.08), transparent 70%),
+        radial-gradient(44vw 44vw at 70% 96%, rgba(64, 120, 200, 0.10), transparent 70%);
+    }
+    ::selection { background: rgba(255, 80, 20, 0.18); }
+
+    /* ── Reading progress ── */
+    .read-progress {
+      position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 400; pointer-events: none;
+      transform-origin: 0 50%; transform: scaleX(0);
+      background: linear-gradient(90deg, #001F47, #2D5BA0 60%, #FF5014);
+    }
+
+    /* ── Sidebar: floating glass panel ── */
+    nav#sidebar {
+      background: var(--glass);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      backdrop-filter: blur(28px) saturate(180%);
+      border-right: none;
+      scrollbar-width: thin;
+    }
+    @media (min-width: 769px) {
+      nav#sidebar {
+        top: 12px; left: 12px; bottom: 12px; height: auto;
+        border-radius: 22px;
+        border: 1px solid var(--glass-edge);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--shadow-soft);
+      }
+      main { margin-left: calc(var(--sidebar-w) + 24px); padding: 0 56px 96px; }
+    }
+    .sidebar-brand { border-bottom: none; padding: 22px 20px 12px; }
+    .sidebar-brand .brand-name { font-family: var(--font-display); letter-spacing: -0.01em; }
+    .sidebar-search { border-bottom: none; padding: 6px 14px 10px; }
+    .sidebar-search input {
+      border-radius: 11px; border: 1px solid var(--hairline);
+      background: rgba(255, 255, 255, 0.7); padding: 9px 12px; font-size: 13.5px;
+      transition: box-shadow 0.2s var(--ease-out), border-color 0.2s var(--ease-out), background 0.2s;
+    }
+    .sidebar-search input:focus { outline: none; background: #fff; border-color: rgba(0, 31, 71, 0.25); box-shadow: 0 0 0 4px rgba(0, 31, 71, 0.08); }
+    .search-nav-btn { border-radius: 9px !important; border: 1px solid var(--hairline) !important; background: rgba(255, 255, 255, 0.7) !important; }
+    .sidebar-meta { padding: 0 20px 4px; font-size: 11.5px; }
+    nav#sidebar ul { padding: 6px 0 10px; }
+    nav#sidebar ul li a {
+      margin: 1px 10px; padding: 7px 12px; border-radius: 10px; border-left: none !important;
+      font-size: 13.5px; color: var(--sc-subtext);
+      transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out);
+    }
+    nav#sidebar ul li a:hover { background: rgba(0, 31, 71, 0.05); color: var(--sc-text); }
+    nav#sidebar ul li a.active {
+      background: var(--glass-strong); color: var(--sc-blue) !important; font-weight: 600;
+      box-shadow: 0 1px 2px rgba(11, 31, 58, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+    }
+    nav#sidebar ul li.nav-group { padding: 16px 22px 4px; font-size: 11.5px; color: var(--sc-gray); letter-spacing: 0.01em; }
+    nav#sidebar ul li a .nav-new { font-size: 10px; padding: 2px 8px; border-radius: 999px; }
+    nav#sidebar ul.nav-root { padding: 4px 0 12px; }
+    nav#sidebar ul.nav-items { padding: 0 0 6px; }
+    .nav-section { margin-top: 2px; }
+    .nav-group-btn {
+      width: calc(100% - 20px); margin: 0 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 9px 12px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; text-align: left;
+      font: 600 12.5px var(--font); letter-spacing: 0.005em; color: var(--sc-text);
+      transition: background 0.18s var(--ease-out);
+    }
+    .nav-group-btn:hover { background: rgba(0, 31, 71, 0.05); }
+    .nav-chev {
+      width: 7px; height: 7px; flex: 0 0 auto; margin-right: 3px;
+      border-right: 1.6px solid var(--sc-gray); border-bottom: 1.6px solid var(--sc-gray);
+      transform: rotate(-45deg); transition: transform 0.35s var(--ease-spring);
+    }
+    .nav-section.open .nav-chev { transform: translateY(-2px) rotate(45deg); }
+    .nav-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.38s var(--ease-out); }
+    .nav-collapse > ul { overflow: hidden; min-height: 0; opacity: 0; transition: opacity 0.25s var(--ease-out); }
+    .nav-section.open .nav-collapse { grid-template-rows: 1fr; }
+    .nav-section.open .nav-collapse > ul { opacity: 1; }
+    .nav-section.has-active:not(.open) .nav-group-btn span:first-child::after {
+      content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-radius: 50%; background: #FF5014; vertical-align: middle;
+    }
+    nav#sidebar ul.nav-items li a { padding-left: 22px; }
+
+    /* ── Floating controls ── */
+    .lang-switcher {
+      background: var(--glass); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-edge); border-radius: 999px; padding: 3px; box-shadow: var(--shadow-soft); overflow: visible;
+    }
+    .lang-btn { border-radius: 999px; padding: 6px 15px; letter-spacing: 0.04em; border-left: none !important; transition: background 0.25s var(--ease-out), color 0.25s var(--ease-out); }
+    .lang-btn.active { background: var(--sc-blue); color: #fff; box-shadow: 0 2px 8px rgba(0, 31, 71, 0.3); }
+    .menu-toggle {
+      background: var(--glass) !important; -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-edge) !important; border-radius: 14px !important; box-shadow: var(--shadow-soft);
+    }
+    .menu-toggle span { background: var(--sc-blue) !important; }
+    .sidebar-overlay { background: rgba(11, 31, 58, 0.25); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+    /* ── Reading column ── */
+    .page.active { padding-top: 56px; }
+    .page { max-width: 860px; }
+    .sidebar-search-container { min-width: 0; }
+    .sidebar-search input { min-width: 0; width: 100%; }
+    .page > p, .page > ul, .page > ol, .page > .tip, .page > .note, .page > h3, .page > details, .page > .trouble-item, .page > pre { max-width: 74ch; }
+    p { margin-bottom: 12px; }
+    .page p, .page li, .page td { font-size: 15px; }
+    .page .tip, .page .note { font-size: 14px; }
+    .page .tip p, .page .note p, .page .tip li, .page .note li { font-size: 14px; }
+    .page td, .page .card p, .page .faq-body p, .page .faq-body li { font-size: 13.5px; }
+    .page .app-screenshot-caption, .page .img-caption { font-size: 12.5px; }
+    .steps > li > p:first-child { font-size: 15px; }
+    a { color: #0A4FA6; text-decoration-color: rgba(10, 79, 166, 0.35); text-underline-offset: 3px; transition: color 0.15s, text-decoration-color 0.15s; }
+    a:hover { color: var(--sc-blue); text-decoration-color: currentColor; }
+    strong { color: var(--sc-text); font-weight: 600; }
+
+    .section-header { border-bottom: none; padding-bottom: 0; margin-bottom: 22px; }
+    .section h2 {
+      font-family: var(--font-display); font-size: clamp(28px, 3vw, 36px); line-height: 1.12;
+      font-weight: 700; letter-spacing: -0.028em; color: var(--sc-text);
+    }
+    h3 { font-family: var(--font-display); font-size: 18px; font-weight: 650; letter-spacing: -0.015em; color: var(--sc-text); margin: 40px 0 12px; }
+
+    /* ── Home cover ── */
+    .cover { border-bottom: none; padding: 72px 0 36px; margin-bottom: 24px; }
+    .cover-eyebrow { text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; color: #FF5014; }
+    .cover h1 { font-family: var(--font-display); font-size: clamp(40px, 5.2vw, 60px); line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; }
+    .cover p { font-size: 17px; line-height: 1.55; color: var(--sc-subtext); max-width: 56ch; }
+    .badge {
+      background: var(--glass); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-edge); border-radius: 999px; padding: 6px 12px; box-shadow: var(--shadow-soft);
+      text-decoration: none; transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-out);
+    }
+    a.badge:hover { transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+    .app-screenshot img#hero-img-desktop, .app-screenshot img#hero-img-web { height: auto; border-radius: 20px; box-shadow: 0 2px 6px rgba(11, 31, 58, 0.08), 0 40px 80px -30px rgba(11, 31, 58, 0.45); }
+
+    .start h2 { font-family: var(--font-display); letter-spacing: -0.02em; font-size: 24px; color: var(--sc-text); }
+    .start-card, .card, .page-nav-btn, details, .trouble-item, .vc-box {
+      background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid var(--glass-edge); border-radius: 18px; box-shadow: var(--shadow-soft);
+    }
+    .start-card { padding: 20px 22px; transition: transform 0.35s var(--ease-spring), box-shadow 0.35s var(--ease-out), background 0.2s; }
+    .start-title { font-size: 16px; letter-spacing: -0.01em; }
+    .card { padding: 20px; }
+    .card h4 { font-family: var(--font-display); font-size: 15.5px; letter-spacing: -0.01em; color: var(--sc-text); margin-bottom: 6px; }
+    .card p { font-size: 14px; line-height: 1.55; margin: 0; }
+    .card-icon {
+      width: 40px; height: 40px; display: grid; place-items: center; font-size: 20px; margin-bottom: 12px;
+      border-radius: 12px; background: rgba(255, 255, 255, 0.85); box-shadow: 0 1px 2px rgba(11, 31, 58, 0.08), inset 0 0 0 1px rgba(11, 31, 58, 0.04);
+    }
+    @media (hover: hover) {
+      .start-card:hover, .page-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); background: var(--glass-strong); border-color: var(--glass-edge); }
+    }
+
+    .overview {
+      border-radius: 26px; padding: 40px 44px;
+      background:
+        radial-gradient(120% 140% at 0% 0%, rgba(80, 140, 230, 0.35), transparent 55%),
+        radial-gradient(90% 120% at 100% 100%, rgba(255, 80, 20, 0.22), transparent 60%),
+        linear-gradient(160deg, #0B2C5C, #001F47 60%, #00142F);
+      box-shadow: 0 30px 60px -30px rgba(0, 31, 71, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+    .overview-eyebrow { text-transform: none; letter-spacing: 0; font-size: 13px; }
+    .overview h2 { font-family: var(--font-display); letter-spacing: -0.02em; font-size: 24px; }
+
+    /* ── Steps ── */
+    .steps > li { padding-left: 46px; margin-bottom: 22px; }
+    .steps > li::before {
+      width: 30px; height: 30px; top: -1px; font-size: 13px; font-weight: 650;
+      background: linear-gradient(160deg, #2D5BA0, #001F47);
+      box-shadow: 0 4px 10px -3px rgba(0, 31, 71, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    ul.bullets li::before { width: 6px; height: 6px; margin-top: 10px; background: #FF5014; opacity: 0.85; }
+
+    /* ── Callouts ── */
+    .tip, .note {
+      border: 1px solid var(--hairline); border-left: 1px solid var(--hairline); border-radius: 16px;
+      padding: 16px 18px; gap: 14px; line-height: 1.6;
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    }
+    .tip { background: linear-gradient(135deg, rgba(0, 31, 71, 0.055), rgba(64, 120, 200, 0.05)); }
+    .note { background: linear-gradient(135deg, rgba(255, 176, 32, 0.11), rgba(255, 80, 20, 0.05)); border-color: rgba(214, 140, 20, 0.22); }
+    .tip .note-icon, .note .note-icon {
+      flex: 0 0 32px; height: 32px; display: grid; place-items: center; font-size: 16px; margin-top: -3px;
+      border-radius: 10px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 2px rgba(11, 31, 58, 0.08);
+    }
+
+    /* ── Tables ── */
+    .page table {
+      border-collapse: separate; border-spacing: 0; border: 1px solid var(--hairline); border-radius: 16px; overflow: hidden;
+      background: var(--glass-strong); box-shadow: var(--shadow-soft); font-size: 13.5px;
+    }
+    .page thead tr { background: rgba(0, 31, 71, 0.045); color: var(--sc-text); }
+    .page thead th { font-weight: 650; font-size: 13px; color: var(--sc-text); padding: 12px 16px; border-bottom: 1px solid var(--hairline); }
+    .page tbody td { padding: 12px 16px; }
+    .page tbody tr { border-bottom: none; }
+    .page tbody tr + tr td { border-top: 1px solid var(--hairline); }
+
+    /* ── Images ── */
+    .app-screenshot img, .manual-img, .page img:not(#vc-img):not([src$=".svg"]) {
+      border-radius: 14px; border: 1px solid var(--hairline);
+      box-shadow: 0 1px 2px rgba(11, 31, 58, 0.06), 0 16px 36px -18px rgba(11, 31, 58, 0.3);
+    }
+    .app-screenshot-caption, .img-caption { font-style: normal; font-size: 13px; color: var(--sc-gray); }
+    .app-screenshot { margin-bottom: 32px; }
+
+    /* ── Platform tabs: segmented control with a sliding thumb ── */
+    .ptabs {
+      position: relative; isolation: isolate; background: rgba(11, 31, 58, 0.06); border-radius: 13px; padding: 3px;
+      box-shadow: inset 0 1px 2px rgba(11, 31, 58, 0.06);
+    }
+    .ptabs { display: inline-grid; grid-auto-flow: column; grid-auto-columns: auto; max-width: 100%; }
+    .ptab { white-space: nowrap; }
+    .ptab { position: relative; z-index: 1; border-radius: 10px; padding: 7px 14px; transition: color 0.25s var(--ease-out); }
+    .ptab.active { background: transparent; box-shadow: none; }
+    .ptab-thumb {
+      position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: 10px;
+      background: #fff; box-shadow: 0 1px 2px rgba(11, 31, 58, 0.1), 0 4px 12px -4px rgba(11, 31, 58, 0.2);
+      transition: transform 0.45s var(--ease-spring), width 0.45s var(--ease-spring);
+    }
+    .ptabs:not(.ready) .ptab-thumb { transition: none; }
+    .ptabs.ready .ptab.active { color: var(--sc-blue); }
+
+    /* ── FAQ ── */
+    details { border-radius: 16px; margin-bottom: 10px; transition: box-shadow 0.3s var(--ease-out), background 0.3s; }
+    details[open] { background: var(--glass-strong); box-shadow: var(--shadow-lift); }
+    details summary { padding: 15px 20px; font-size: 14.5px; font-weight: 600; letter-spacing: -0.005em; border-radius: 16px; }
+    details summary:hover { background: transparent; }
+    details[open] summary { border-bottom: 1px solid var(--hairline); border-radius: 16px 16px 0 0; }
+    details summary::after, details[open] summary::after {
+      content: ""; width: 9px; height: 9px; margin-left: 16px; flex: 0 0 auto;
+      border-right: 2px solid var(--sc-gray); border-bottom: 2px solid var(--sc-gray);
+      transform: translateY(-3px) rotate(45deg); transition: transform 0.35s var(--ease-spring);
+    }
+    details[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+    .faq-body { padding: 14px 20px 16px; font-size: 14px; }
+
+    .trouble-item { border-left: 1px solid var(--glass-edge); padding: 20px 22px; }
+    .trouble-item h3 { font-size: 16px; }
+
+    /* ── Page navigation ── */
+    .page-nav { border-top: none; margin-top: 72px; }
+    .page-nav-btn { padding: 16px 22px; transition: transform 0.35s var(--ease-spring), box-shadow 0.35s var(--ease-out), background 0.2s; }
+    .page-nav-label { text-transform: none; letter-spacing: 0; font-size: 12.5px; font-weight: 500; color: var(--sc-gray); }
+    .page-nav-title { font-size: 15px; letter-spacing: -0.01em; }
+
+    /* ── Inline code, keys, misc ── */
+    code { font-size: 0.88em; color: #8A1C3D; background: rgba(11, 31, 58, 0.05); border: 1px solid var(--hairline); border-radius: 6px; padding: 1px 6px; }
+    kbd {
+      font-family: var(--font); font-size: 0.85em; font-weight: 600; color: var(--sc-text); padding: 1px 7px; border-radius: 6px;
+      background: linear-gradient(#fff, #F1F3F7); border: 1px solid rgba(11, 31, 58, 0.14); box-shadow: 0 1px 0 rgba(11, 31, 58, 0.14);
+    }
+    pre.folder-tree { background: var(--glass-strong); border-radius: 14px; border: 1px solid var(--hairline); font-family: var(--mono); }
+    .search-highlight { background: rgba(255, 200, 60, 0.55); box-shadow: none; border-radius: 4px; }
+    .search-highlight.current-highlight { background: #FF5014; color: #fff; }
+    footer { color: var(--sc-gray); }
+
+    /* ── Version checker ── */
+    .vc-box { border-width: 1px; }
+    .vc-plat-btn { border-radius: 10px; }
+    .vc-row input, .vc-row button { border-radius: 10px; }
+
+    /* ── Lightbox ── */
+    .lb-overlay { background: rgba(8, 18, 36, 0.55); -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); }
+    .lb-overlay.open { animation: lbFade 0.3s var(--ease-out); }
+    .lb-overlay.open img { border-radius: 16px; animation: lbZoom 0.45s var(--ease-spring); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6); }
+    .lb-close {
+      width: 40px; height: 40px; display: grid; place-items: center; font-size: 18px; border-radius: 50%; opacity: 1;
+      background: rgba(255, 255, 255, 0.18); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* ── Focus ── */
+    a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid #2D5BA0; outline-offset: 2px; border-radius: 8px; }
+
+    /* ── Motion ── */
+    @keyframes pageIn { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes riseIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes lbZoom { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+    .page.page-enter { animation: pageIn 0.5s var(--ease-out) both; }
+    body.first-load #home.active .cover > *,
+    body.first-load #home.active .app-screenshot,
+    body.first-load #home.active .start { animation: riseIn 0.8s var(--ease-out) both; }
+    body.first-load #home.active .cover > *:nth-child(2) { animation-delay: 0.06s; }
+    body.first-load #home.active .cover > *:nth-child(3) { animation-delay: 0.12s; }
+    body.first-load #home.active .cover > *:nth-child(4) { animation-delay: 0.18s; }
+    body.first-load #home.active .app-screenshot { animation-delay: 0.26s; }
+    body.first-load #home.active .start { animation-delay: 0.38s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+    @media (max-width: 768px) {
+      main { padding: 0 18px 64px !important; }
+      .ptabs { display: grid; grid-auto-columns: 1fr; width: 100%; }
+      .ptab { padding: 8px 6px; font-size: 12.5px; }
+      .page.active { padding-top: 76px; }
+      .cover { padding-top: 32px; }
+      .overview { padding: 26px 22px; border-radius: 22px; }
+    }
+    @media print {
+      body::before, .read-progress { display: none; }
+      .tip, .note, .card, details, .page table { box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    }
+  </style>
+</head>
+<body>
+
+<input type="checkbox" id="navToggle" class="nav-toggle-input">
+<label for="navToggle" class="menu-toggle" aria-label="Open navigation">
+  <span></span><span></span><span></span>
+</label>
+
+<label for="navToggle" class="sidebar-overlay" id="sidebarOverlay"></label>
+
+<div class="lang-switcher">
+  <a href="index.html" class="lang-btn active">EN</a>
+  <a href="index-cs.html" class="lang-btn">CS</a>
+</div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-row">
+      <img src="images/SingleCaseLogo.svg" alt="SingleCase" style="width: 32px; height: 32px; flex-shrink: 0;">
+      <span class="brand-name">SingleCase</span>
+    </div>
+    <div class="brand-sub">Outlook Add-in · User Manual</div>
+  </div>
+  <div class="sidebar-search">
+    <div class="sidebar-search-container">
+      <input type="text" id="searchInput" placeholder="Search..." aria-label="Search manual">
+      <button class="search-nav-btn" id="searchPrev" title="Previous match" aria-label="Previous match">‹</button>
+      <button class="search-nav-btn" id="searchNext" title="Next match" aria-label="Next match">›</button>
+    </div>
+    <div class="search-counter" id="searchCounter"></div>
+  </div>
+  
+  
+  <div class="sidebar-meta">Version 1.3.1.0 &nbsp;·&nbsp; October 2026</div>
+  <ul class="nav-root">
+    <li><a href="#home">Overview</a></li>
+    <li class="nav-section" data-group="start">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Get started</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#about">What the add-in does</a></li>
+          <li><a href="#install">Get the add-in</a></li>
+          <li><a href="#open">Open the add-in</a></li>
+          <li><a href="#sign-in">Sign in and choose your workspace</a></li>
+          <li><a href="#platforms">Supported platforms</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="read">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Read mode</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#file-email">File an email</a></li>
+          <li><a href="#what-to-file">Choose attachments, folder and name</a></li>
+          <li><a href="#after-filing">After filing: open the case and documents</a></li>
+          <li><a href="#filing-status">Already filed, skipped or removed emails</a></li>
+          <li><a href="#move-to-folder">Move filed emails to case folders<span class="nav-new nav-soon">Soon</span></a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="compose">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Compose mode</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#file-on-send">File on Send<span class="nav-new">New</span></a></li>
+          <li><a href="#case-address">Send to a case email address</a></li>
+          <li><a href="#after-sending">After sending: confirmations and errors</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="shared">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Works in both modes</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#find-case">Finding a case</a></li>
+          <li><a href="#suggestions">Case suggestions</a></li>
+          <li><a href="#categories">Filing status in Outlook</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="settings">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Settings</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#settings">All settings explained</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="help">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Help</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+          <li><a href="#whats-new">What's new</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="admin">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>For IT administrators</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#admin-install">Install and update the add-in</a></li>
+          <li><a class="nav-ext" href="enterprise-deployment.html" target="_blank" rel="noopener">Enterprise deployment guide ↗</a></li>
+          <li><a class="nav-ext" href="manifest-generator.html" target="_blank" rel="noopener">Manifest generator ↗</a></li>
+      </ul></div>
+    </li>
+  </ul>
+  <div style="padding: 16px 14px 12px; border-top: 1px solid var(--sc-border); margin-top: 8px;">
+    <a href="https://feedback.singlecase.com/" target="_blank" rel="noopener" style="display:block;font-size:12px;color:var(--sc-blue);text-decoration:none;font-weight:500;margin-bottom:6px;">Share feedback →</a>
+    <a href="quickstart.html" target="_blank" rel="noopener" style="display:block;font-size:12px;color:var(--sc-gray);text-decoration:none;">Quick Start Guide</a>
+  </div>
+</nav>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main>
+
+  <div id="home" class="page active">
+  <!-- Cover -->
+  <div class="cover">
+    <div class="cover-eyebrow">User Manual</div>
+    <h1>SingleCase <span>Outlook Add-in</span></h1>
+    <p>File emails to cases, track what has been filed, and manage documents, all without leaving Outlook.</p>
+    <div class="cover-badges">
+      <span class="badge blue">Version 1.3.1.0</span>
+      <a href="#file-on-send" class="badge">
+        <span class="pill-tag" style="background:#001F47;color:#fff;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;letter-spacing:0.03em;">New</span>
+        File on Send
+      </a>
+    </div>
+  </div>
+
+  <!-- Platform Switcher -->
+  <!-- ── App Screenshot ── -->
+  <div class="app-screenshot">
+    <img id="hero-img-desktop" src="images/hero/overview-en-2040.png" srcset="images/hero/overview-en-1360.png 1360w, images/hero/overview-en-2040.png 2040w, images/hero/overview-en-full.png 2954w" sizes="(max-width: 768px) calc(100vw - 36px), 680px" width="2954" height="1880" decoding="async" fetchpriority="high" alt="SingleCase Outlook Add-in — taskpane view in Outlook Desktop">
+    <img id="hero-img-web" src="images/webapp main.png" alt="SingleCase Outlook Add-in — taskpane view in Outlook on the Web" style="display:none;">
+    <p class="app-screenshot-caption">SingleCase Outlook Add-in — taskpane view alongside your inbox</p>
+  </div>
+
+  <div class="start">
+    <h2>Where do you want to start?</h2>
+    <div class="start-grid">
+      <a class="start-card" href="#file-email"><span class="start-title">File an email I received or sent</span><span class="start-desc">Open the email, choose a case, file it.</span></a>
+      <a class="start-card" href="#file-on-send"><span class="start-title">File an email while I write it</span><span class="start-desc">Choose the case before you click Send.</span></a>
+      <a class="start-card" href="#install"><span class="start-title">Set up the add-in</span><span class="start-desc">Get the add-in, open it and sign in.</span></a>
+      <a class="start-card" href="#troubleshooting"><span class="start-title">Something isn't working</span><span class="start-desc">Sign-in problems, errors and missing cases.</span></a>
+    </div>
+    <p class="start-admin">IT administrator? Go to <a href="#admin-install">Install and update the add-in</a> or the <a href="enterprise-deployment.html">Enterprise deployment guide</a>.</p>
+  </div>
+
+
+  <!-- ── Overview ── -->
+  <div class="overview">
+    <div class="overview-eyebrow">What's included</div>
+    <h2>Key capabilities at a glance</h2>
+    <ul class="overview-list">
+      <li>
+        <span class="ov-icon">🖥️</span>
+        <span><strong>Available everywhere</strong> — Appears as a panel on the right side of Outlook when you open an email. Supported on Outlook for Windows, Mac, and Outlook on the Web.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔍</span>
+        <span><strong>Case search and suggestions</strong> — Search by client, case name or number. For emails that are not filed yet, the add-in suggests the most likely cases before you type anything.</span>
+      </li>
+      <li>
+        <span class="ov-icon">📎</span>
+        <span><strong>Full attachment control</strong> — Choose which attachments to include (all are selected by default), rename them, and choose the case folder they are saved to.</span>
+      </li>
+      <li>
+        <span class="ov-icon">✏️</span>
+        <span><strong>Rename before filing</strong> — Rename any attachment before it is uploaded, so <code>scan0001.pdf</code> reaches the case under a name your colleagues recognise. The email in Outlook stays untouched.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔗</span>
+        <span><strong>Direct document access</strong> — After filing, click through to the case or any individual document, and <strong>open attachments for editing with one click</strong> — changes are versioned directly in SingleCase.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🏷️</span>
+        <span><strong>Visible filing status</strong> — Filed emails get an <em>SC: Filed</em> Outlook category label, visible across all your devices. If a colleague has already filed an email, the add-in shows it as filed when you open it.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔒</span>
+        <span><strong>Duplicate warning</strong> — The add-in warns you before you file an email that is already filed.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔑</span>
+        <span><strong>Sign in once</strong> — No repeated logins. Authorize once via Microsoft SSO and the add-in keeps you signed in automatically.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🚀</span>
+        <span><strong>IT-managed deployment</strong> — Deploy to all users at once via the M365 Admin Center. Updates are delivered automatically in the background — no reinstallation needed.</span>
+      </li>
+    </ul>
+  </div>
+  <div class="page-nav">
+      <div></div>
+      <a class="page-nav-btn next" href="#about">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">What the add-in does</span>
+      </a>
+    </div>
+  </div>  <!-- /#home -->
+
+  <!-- ── about ── -->
+  <div class="section page" id="about">
+    <div class="section-header">
+      <h2>What the add-in does</h2>
+    </div>
+    <p>The SingleCase Outlook Add-in connects Outlook to SingleCase. It lets you save emails and their attachments to the right case without leaving Outlook.</p>
+    <p>The add-in opens as a panel on the right side of Outlook. You can use it in two ways:</p>
+    <ul class="bullets">
+      <li><div><strong>When you open an email</strong> (<a href="#file-email">read mode</a>): the add-in checks whether the email is already filed, suggests the likely case, and files the email with the attachments you choose.</div></li>
+      <li><div><strong>While you write an email</strong> (<a href="#file-on-send">compose mode</a>): you choose the case before sending, and the add-in files the email when you click Send, automatically or after you confirm.</div></li>
+    </ul>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">📨</div>
+        <h4>File received and sent emails</h4>
+        <p>Choose a case and file the email you have open, from your inbox, Sent Items or any other folder.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✉️</div>
+        <h4>File on Send</h4>
+        <p>Pick the case while you write. The email is filed after you click Send, so there is no need to go back to Sent Items.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h4>Case suggestions</h4>
+        <p>The add-in suggests likely cases based on the email thread, case and court numbers in the email, and your filing history.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📎</div>
+        <h4>Attachment control</h4>
+        <p>Choose which attachments to file, rename them before filing, and choose the folder they go to.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏷️</div>
+        <h4>Filing status in Outlook</h4>
+        <p>Filed emails get the SC: Filed label on all your devices, and the add-in warns you before you file an email twice.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h4>Open filed documents</h4>
+        <p>Open the case or any filed document in SingleCase, or open a document for editing, directly from the panel.</p>
+      </div>
+    </div>
+    <p>The add-in works in Outlook for Windows, Outlook for Mac and Outlook on the web. Check which versions are supported in <a href="#platforms">Supported platforms</a>.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#home">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Overview</span>
+      </a>
+      <a class="page-nav-btn next" href="#install">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Get the add-in</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── install ── -->
+  <div class="section page" id="install">
+    <div class="section-header">
+      <h2>Get the add-in</h2>
+    </div>
+    <span id="s3-get-addin"></span>
+    <p>Before you can use SingleCase, the add-in needs to be in your Outlook. There are two ways this can happen:</p>
+
+    <div class="tip" style="margin-bottom:16px;">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Deployed by your IT administrator</strong> — The SingleCase button is already in your Outlook ribbon. No installation needed. Proceed to the setup steps below.</div>
+    </div>
+
+    <p><strong>Or install it yourself</strong> (public version — available in the Microsoft AppSource marketplace):</p>
+
+    
+      <div class="ptabs" role="tablist"><button type="button" class="ptab" data-platform="windows" role="tab" onclick="setPlatform('windows')">🪟 Windows</button><button type="button" class="ptab" data-platform="mac" role="tab" onclick="setPlatform('mac')">🍎 Mac</button><button type="button" class="ptab" data-platform="web" role="tab" onclick="setPlatform('web')">🌐 Outlook on the web</button></div>
+      <div class="platform-only" data-platforms="windows">
+    <ol class="steps">
+      <li>
+        <p>Open Outlook and click the <strong>Apps</strong> icon in the ribbon.</p>
+        <img src="images/Windows/ribbon.png" alt="Outlook ribbon with the Apps icon highlighted" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">The Outlook ribbon — click the <strong>Apps</strong> icon (highlighted).</p>
+        <img src="images/Windows/stepw1.5.png" alt="Apps flyout panel with Add Apps link at the bottom" class="manual-img" style="width:240px;max-width:100%;height:auto;">
+        <p class="img-caption">In the panel that appears, click <strong>Add Apps</strong>.</p>
+      </li>
+      <li>
+        <p>The <strong>Add Apps</strong> dialog opens. Type <strong>SingleCase</strong> in the search box and press Enter.</p>
+      </li>
+      <li>
+        <p>Click <strong>Add</strong> next to the SingleCase listing.</p>
+      </li>
+      <li>
+        <p>The add-in is installed. SingleCase will appear under <strong>Built for your org</strong> and the button will show in your ribbon the next time you open an email.</p>
+        <img src="images/Windows/stepw2.png" alt="Add Apps dialog showing SingleCase listed under Built for your org" class="manual-img" style="width:640px;max-width:100%;height:auto;">
+        <p class="img-caption">SingleCase listed under <strong>Built for your org</strong> after a successful installation.</p>
+      </li>
+    </ol>
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div>
+        <strong>If the SingleCase button does not appear in the ribbon after installation</strong><br><br>Restart Outlook — the button should appear automatically in the ribbon on next launch.
+      </div>
+    </div>
+    </div>
+
+    <div class="platform-only" data-platforms="mac">
+    <div class="note">
+      <span class="note-icon">🍎</span>
+      <div><strong>New Outlook for Mac required.</strong> SingleCase does not work in Legacy Outlook for Mac. If you still use it, switch off the <strong>Legacy Outlook</strong> toggle in Outlook first. See <a href="#platforms">Supported platforms</a>.</div>
+    </div>
+    <ol class="steps">
+      <li>
+        <p>Open Outlook and go to <strong>Tools</strong> menu → <strong>Get Add-ins</strong>.</p>
+      </li>
+      <li>
+        <p>The <strong>Add Apps</strong> dialog opens. Type <strong>SingleCase</strong> in the search box and press Enter.</p>
+      </li>
+      <li>
+        <p>Click <strong>Add</strong> next to the SingleCase listing.</p>
+      </li>
+      <li>
+        <p>The add-in is installed. SingleCase will appear under <strong>Built for your org</strong> and the button will show in your ribbon the next time you open an email.</p>
+      </li>
+    </ol>
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div>
+        <strong>If the SingleCase button does not appear in the ribbon after installation</strong><br><br>You can add it manually using the <strong>Customise Toolbar</strong> option:
+        <ol style="margin: 10px 0 0 18px; line-height: 2;">
+          <li>Click the <strong>…</strong> (three-dot overflow menu) at the right end of the ribbon and choose <strong>Customise Toolbar…</strong></li>
+        </ol>
+        <img src="images/Customise toolbar.png" alt="Outlook ribbon overflow menu with Customise Toolbar option highlighted" class="manual-img" style="width:260px;max-width:100%;height:auto; margin: 10px 0 4px;">
+        <p class="img-caption" style="margin-bottom: 12px;">Click <strong>…</strong> in the ribbon, then choose <strong>Customise Toolbar…</strong></p>
+        <ol start="2" style="margin: 0 0 0 18px; line-height: 2;">
+          <li>In the <strong>Customise Toolbar</strong> dialog, find <strong>SingleCase</strong> under <strong>Installed Add-ins</strong> on the right-hand side, then <strong>drag and drop</strong> it into the main toolbar area on the left.</li>
+          <li>Click <strong>Done</strong> to save your changes.</li>
+        </ol>
+        <img src="images/Add to ribbon.png" alt="Customise Toolbar dialog showing SingleCase in the Installed Add-ins panel, ready to be dragged to the toolbar" class="manual-img" style="width:100%;height:auto; margin: 10px 0 4px;">
+        <p class="img-caption">Drag <strong>SingleCase</strong> from the Installed Add-ins list into the toolbar to pin it to the ribbon.</p>
+      </div>
+    </div>
+    </div>
+
+    <div class="platform-only" data-platforms="web">
+      <ol class="steps">
+        <li>
+          <p>Open any email in Outlook on the Web. On the right side of the email you will see a small app panel. Click <strong>Add apps</strong> at the bottom of that panel.</p>
+          <img src="images/stepw1.png" alt="Outlook on the Web showing an email open with the app panel on the right and the Add apps button highlighted" class="manual-img" style="width:100%;height:auto;">
+          <p class="img-caption">Click <strong>Add apps</strong> in the app panel on the right side of the email.</p>
+        </li>
+        <li>
+          <p>The <strong>Apps</strong> store opens. Type <strong>SingleCase</strong> in the search bar at the top and press Enter.</p>
+          <img src="images/stepw2.png" alt="The Microsoft Apps store showing app categories and a search bar at the top" class="manual-img" style="width:100%;height:auto;">
+          <p class="img-caption">Search for <strong>SingleCase</strong> in the Apps store.</p>
+        </li>
+        <li>
+          <p>Click on the <strong>SingleCase</strong> result, then click <strong>Open</strong> to install the add-in.</p>
+          <img src="images/stepw3.png" alt="SingleCase add-in detail page showing the Open button" class="manual-img" style="width:640px;max-width:100%;height:auto;">
+          <p class="img-caption">Click <strong>Open</strong> to install SingleCase.</p>
+        </li>
+      </ol>
+      <div class="tip">
+        <span class="note-icon">🔗</span>
+        <div><strong>Installs everywhere automatically.</strong> Because add-ins are tied to your Microsoft account, installing SingleCase in Outlook on the Web also makes it available in Outlook Desktop (Windows and Mac) automatically — no need to install it again on each device.</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <div>Depending on your organization's Microsoft 365 policies, self-service installation from the Store may be restricted. If the <strong>Add-ins</strong> button is greyed out or unavailable, ask your IT administrator to deploy the add-in for you.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#about">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">What the add-in does</span>
+      </a>
+      <a class="page-nav-btn next" href="#open">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Open the add-in</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── open ── -->
+  <div class="section page" id="open">
+    <div class="section-header">
+      <h2>Open the add-in</h2>
+    </div>
+    <div class="ptabs" role="tablist"><button type="button" class="ptab" data-platform="windows" role="tab" onclick="setPlatform('windows')">🪟 Windows</button><button type="button" class="ptab" data-platform="mac" role="tab" onclick="setPlatform('mac')">🍎 Mac</button><button type="button" class="ptab" data-platform="web" role="tab" onclick="setPlatform('web')">🌐 Outlook on the web</button></div>
+      <div class="platform-only" data-platforms="mac windows">
+      <p>Open an email, then click the <strong>SingleCase</strong> button in the ribbon to open the panel.</p>
+
+      <div class="note" style="margin-bottom:20px;">
+        <span class="note-icon">⚠️</span>
+        <div><strong>Select an email first.</strong> The add-in button is greyed out when no email is open — it only activates once an email is selected.</div>
+      </div>
+
+      <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;text-align:center;">
+          <img src="images/email not selected.png" alt="Outlook with no email selected — SingleCase button is greyed out" style="max-width:100%;border-radius:6px;border:1px solid #e5e7eb;">
+          <p class="img-caption">No email selected — button greyed out</p>
+        </div>
+        <div style="flex:1;min-width:160px;text-align:center;">
+          <img src="images/email selected.png" alt="Outlook with an email open — SingleCase button is active" style="max-width:100%;border-radius:6px;border:1px solid #e5e7eb;">
+          <p class="img-caption">Email selected — add-in available</p>
+        </div>
+      </div>
+
+      <p><strong>Keeping the panel open:</strong> click the <strong>pin icon (📌)</strong> in the top-right corner of the taskpane so it stays visible as you browse emails. Outlook tracks pin state separately for reading vs. composing — you may need to pin once in each context.</p>
+      <img src="images/pin.png" alt="Pin icon in the top-right corner of the SingleCase taskpane" class="manual-img" style="width:240px;max-width:100%;height:auto;">
+      <p class="img-caption">Pin icon in the taskpane header — click once to keep the panel open.</p>
+      <p style="font-size:13px;color:var(--sc-gray);">The pin resets when Outlook restarts — this is a <a href="https://github.com/OfficeDev/office-js/issues/4235" target="_blank" rel="noopener" style="color:var(--sc-gray);">known platform limitation</a>.</p>
+    </div>
+
+    <div class="platform-only" data-platforms="web">
+      <p>Open any email. The <strong>SingleCase icon</strong> appears in the email toolbar at the top right — click it to open the add-in panel.</p>
+      <img src="images/pinw2.png" alt="Outlook on the Web email toolbar showing the SingleCase icon highlighted in the top-right corner" class="manual-img" style="width:100%;height:auto;">
+      <p class="img-caption">The SingleCase icon in the email toolbar — click it to open the panel.</p>
+
+      <div class="note" style="margin-bottom:20px;">
+        <span class="note-icon">ℹ️</span>
+        <div>If the icon isn't visible, it may be behind the <strong>three-dot menu (⋯)</strong> — click that and look for <strong>SingleCase</strong>.</div>
+      </div>
+
+      <p><strong>Keeping the panel open:</strong> click the <strong>pin icon</strong> in the top-right corner of the taskpane header (next to the × button) to keep it visible as you switch between emails.</p>
+      <img src="images/pinw.png" alt="SingleCase taskpane header showing the pin icon highlighted" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+      <p class="img-caption">Pin icon in the taskpane header — shown here in the pinned state.</p>
+      <p style="font-size:13px;color:var(--sc-gray);">The pin resets when Outlook is closed or you sign out — this is a <a href="https://github.com/OfficeDev/office-js/issues/4235" target="_blank" rel="noopener" style="color:var(--sc-gray);">known platform limitation</a>.</p>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#install">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Get the add-in</span>
+      </a>
+      <a class="page-nav-btn next" href="#sign-in">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Sign in and choose your workspace</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── sign-in ── -->
+  <div class="section page" id="sign-in">
+    <div class="section-header">
+      <h2>Sign in and choose your workspace</h2>
+    </div>
+    <h3 id="s3-first-open" style="margin-top:32px;">First Time Open</h3>
+    <p>You only need to do this once. After setup the add-in keeps you signed in automatically.</p>
+
+    <ol class="steps">
+      <li>
+        <p><strong>Enter your workspace URL.</strong> On the welcome screen, type your SingleCase workspace address (for example <code>yourfirm.singlecase.app</code>). If you are unsure of your address, click <strong>Open workspace</strong> to look it up in your browser.</p>
+        <img src="images/workspace URL.png" alt="SingleCase welcome screen with workspace URL input field" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+        <p class="img-caption">Enter your workspace address on the welcome screen.</p>
+      </li>
+      <li>
+        <p><strong>Microsoft sign-in</strong> (may appear once). A Microsoft sign-in window may appear briefly — no action needed, it resolves automatically.</p>
+        <img src="images/Grant Outlook permissions.png" alt="Microsoft sign-in window that may appear briefly during setup" class="manual-img" style="width:480px;max-width:100%;height:auto;">
+        <p class="img-caption">Microsoft sign-in prompt.</p>
+      </li>
+    </ol>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>After setup is complete you will not need to log in again. As long as you are signed into Microsoft 365, the add-in signs you in automatically every time you open Outlook.</div>
+    </div>
+
+    <div class="tip">
+      <span class="note-icon">⚠️</span>
+      <div>If the Microsoft sign-in window stops with a red message saying your account does not exist in the SingleCase tenant, your Microsoft account is not linked to your SingleCase profile yet. See <a href="#s14-login" onclick="showSubSection('s14','s14-login');return false;">I can't sign in</a> in Troubleshooting for the fix.</div>
+    </div>
+  
+    <h3>Staying signed in</h3>
+    <p>The add-in uses the same account you already use for Outlook. As long as you are signed into Outlook, you are signed into SingleCase too — no password, no extra steps required.</p>
+    <p>You may be prompted to sign in manually in the following situations:</p>
+    <ul class="bullets">
+      <li><div>You are using an older version of Outlook that does not support silent login. In that case, a button will appear — click it to log in via a popup:<strong style="display:block; margin-top:6px;">Sign in with Microsoft</strong></div></li>
+      <li>Your organisation requires additional consent for a new permission. A message will guide you through the one-time step.</li>
+    </ul>
+
+    <h3>Switching workspaces</h3>
+    <p>To connect to a different SingleCase workspace, open <a href="#settings">Settings</a>, click <strong>Change workspace</strong> and enter the new workspace address.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#open">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Open the add-in</span>
+      </a>
+      <a class="page-nav-btn next" href="#platforms">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Supported platforms</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── platforms ── -->
+  <div class="section page" id="platforms">
+    <div class="section-header">
+      <h2>Supported platforms</h2>
+    </div>
+    <span id="s2-compat"></span>
+    <p>The SingleCase add-in requires <strong>Outlook connected to Exchange Online</strong> (Microsoft 365 subscription or Exchange Online standalone). On-premises Exchange is not supported.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Version / Mode</th>
+          <th>Supported</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Windows group -->
+        <tr>
+          <td rowspan="5" style="vertical-align:middle;font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Windows</td>
+          <td>Outlook (M365) — Classic or New Outlook</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Yes</td>
+          <td>Fully supported. Version 2206 (Build 15330+) or newer required. <a href="https://learn.microsoft.com/en-us/office/dev/add-ins/outlook/outlook-add-ins-overview" target="_blank" rel="noopener" style="color:var(--sc-blue);">Docs ↗</a></td>
+        </tr>
+        <tr>
+          <td>Outlook 2021 (retail perpetual)</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Yes</td>
+          <td>Fully supported on an up-to-date install.</td>
+        </tr>
+        <tr>
+          <td>Outlook 2021 LTSC (volume-licensed)</td>
+          <td style="color:#b45309;font-weight:600;">✗ No</td>
+          <td>Supports add-in API up to version 1.9 only; this add-in requires 1.12. Please upgrade to M365.<br><span data-eos="2026-10-13"></span></td>
+        </tr>
+        <tr>
+          <td>Outlook 2019</td>
+          <td style="color:#b45309;font-weight:600;">✗ No</td>
+          <td>Supports add-in API up to version 1.6 only. Please upgrade to M365 or Outlook 2021 (retail).<br><span data-eos="2025-10-14"></span></td>
+        </tr>
+        <tr>
+          <td>Outlook 2016</td>
+          <td style="color:#b45309;font-weight:600;">✗ No</td>
+          <td>Not supported. Please upgrade.<br><span data-eos="2025-10-14"></span></td>
+        </tr>
+        <!-- Mac group -->
+        <tr style="border-top:2px solid var(--sc-border);">
+          <td rowspan="3" style="vertical-align:middle;font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Mac</td>
+          <td>Outlook for Mac M365, New Outlook (v16.38.506+)</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Yes</td>
+          <td>Fully supported. New Outlook UI required. <a href="https://learn.microsoft.com/en-us/office/dev/add-ins/outlook/compare-outlook-add-in-support-in-outlook-for-mac" target="_blank" rel="noopener" style="color:var(--sc-blue);">Docs ↗</a></td>
+        </tr>
+        <tr>
+          <td>Outlook for Mac M365, Legacy Outlook</td>
+          <td style="color:#b45309;font-weight:600;">✗ No</td>
+          <td>Legacy Outlook supports add-in API up to version 1.8 only; this add-in requires 1.12. In Outlook, disable the <strong>Legacy Outlook</strong> toggle to switch to New Outlook.</td>
+        </tr>
+        <tr>
+          <td>Outlook for Mac below v16.38.506</td>
+          <td style="color:#b45309;font-weight:600;">✗ No</td>
+          <td>Update Outlook to the latest version via <strong>Help → Check for Updates</strong>.</td>
+        </tr>
+        <!-- Web group -->
+        <tr style="border-top:2px solid var(--sc-border);">
+          <td style="font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Web</td>
+          <td>Outlook on the web (Exchange Online)</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Yes</td>
+          <td>Fully supported at <a href="https://outlook.office.com" target="_blank" rel="noopener" style="color:var(--sc-blue);">outlook.office.com</a>.</td>
+        </tr>
+        <!-- Mobile group -->
+        <tr style="border-top:2px solid var(--sc-border);">
+          <td style="font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Mobile</td>
+          <td>Outlook iOS / Android</td>
+          <td style="color:var(--sc-gray);font-weight:600;">⟳ Soon</td>
+          <td>Mobile support is coming soon.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note" style="margin-top:20px;">
+      <span class="note-icon">ℹ️</span>
+      <div>Not sure which version of Outlook you have? In Outlook Desktop go to <strong>Help → About Outlook</strong> (Windows) or <strong>Outlook → About Outlook</strong> (Mac) to see the version number.</div>
+    </div>
+
+    <div class="vc-box">
+      <h4 style="margin:0 0 4px;font-size:15px;">Check Your Outlook Version</h4>
+      <p style="margin:0 0 14px;font-size:13px;color:var(--sc-gray);">Not sure if your Outlook is compatible? Select your platform and paste your version string below.</p>
+      <div class="vc-platforms">
+        <button class="vc-plat-btn active" onclick="vcSetPlatform('windows',this)">Windows</button>
+        <button class="vc-plat-btn" onclick="vcSetPlatform('mac',this)">Mac</button>
+        <button class="vc-plat-btn" onclick="vcSetPlatform('web',this)">Web</button>
+      </div>
+      <p id="vc-hint" style="font-size:12px;color:var(--sc-gray);margin:0 0 10px;">Find in <strong>Help → About Outlook</strong>. Paste the full string, e.g. <em>Version 2306 (Build 16.0.16529.20164)</em></p>
+      <div id="vc-input-row" class="vc-row">
+        <input type="text" id="vc-input" placeholder="e.g. Version 2306 (Build 16.0.16529.20164)" />
+        <button onclick="vcCheck()">Check →</button>
+      </div>
+      <div id="vc-result" class="vc-result" style="display:none;"></div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#sign-in">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Sign in and choose your workspace</span>
+      </a>
+      <a class="page-nav-btn next" href="#file-email">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">File an email</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── file-email ── -->
+  <div class="section page" id="file-email">
+    <div class="section-header">
+      <h2>File an email</h2>
+    </div>
+    <p>The add-in files the email you have open: a received email from your inbox, or an email you sent, from <strong>Sent Items</strong>. It always files that one email, not the whole conversation. If you need other emails from the same thread in SingleCase, file each of them separately.</p>
+
+    <ol class="steps">
+      <li>
+        <p><strong>Open the email you want to file</strong>, in your inbox, Sent Items or any other folder.</p>
+      </li>
+      <li>
+        <p><strong>Open the SingleCase panel</strong> from the ribbon, if it is not open yet (see <a href="#open">Open the add-in</a>).</p>
+      </li>
+      <li>
+        <p><strong>Check what the panel says.</strong> The add-in first checks whether the email has already been filed.</p>
+        <ul class="bullets">
+          <li><div><strong>Already filed:</strong> the panel shows the case and the filed documents. There is nothing more to do.</div></li>
+          <li><div><strong>Not filed yet:</strong> the panel asks <em>“This email isn’t filed yet. Do you want me to file it?”</em> Click <strong>Yes, file it</strong>.</div></li>
+        </ul>
+        <div class="app-screenshot">
+          <img src="images/File it.png" alt="The add-in asks whether to file the email" style="width:280px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">The add-in asks whether you want to file the email.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Select the case.</strong> Suggested cases appear at the top of the list, and you can search for any other case. See <a href="#find-case">Finding a case</a> and <a href="#suggestions">Case suggestions</a>.</p>
+        <div class="app-screenshot">
+          <img src="images/select case.png" alt="Selecting a case in the add-in" style="width:280px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Search for a case by client, name or number.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Choose what to file.</strong> Select the attachments, the destination folder and, if needed, new file names. See <a href="#what-to-file">Choose attachments, folder and name</a>.</p>
+        <div class="app-screenshot">
+          <img src="images/what to file.png" alt="Choosing what to file" style="width:280px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Select the attachments to file with the email.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Click Continue.</strong> The add-in uploads your selection to SingleCase and shows a summary. The email in Outlook gets the <strong>SC: Filed</strong> label. See <a href="#after-filing">After filing</a>.</p>
+      </li>
+    </ol>
+
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Other things the panel can show.</strong> If everyone in the email is from your organisation, the add-in asks whether to mark it as skipped instead. If the email was filed before and later deleted in SingleCase, it offers to file it again. See <a href="#filing-status">Already filed, skipped or removed emails</a>.</div>
+    </div>
+
+    <div class="tip">
+      <span class="note-icon">📌</span>
+      <div><strong>Filing several emails in a row?</strong> Pin the panel so it stays open as you move between emails. Outlook remembers the pin separately for reading and for writing emails. See <a href="#open">Open the add-in</a>.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#platforms">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Supported platforms</span>
+      </a>
+      <a class="page-nav-btn next" href="#what-to-file">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Choose attachments, folder and name</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── what-to-file ── -->
+  <div class="section page" id="what-to-file">
+    <div class="section-header">
+      <h2>Choose attachments, folder and name</h2>
+    </div>
+    <p>After you select a case, the add-in shows what will be filed. The email itself is always filed, as an <code>.eml</code> file. If the email has attachments, you can also choose which of them to file, rename them and choose the folder they go to. If the email has no attachments, these options do not appear and <strong>Continue</strong> files the email straight away.</p>
+    <div class="app-screenshot">
+      <img src="images/Addin filing.png" alt="The filing screen with attachments and folder selection" style="width:280px;max-width:100%;height:auto;">
+    </div>
+
+    <h3>Choosing attachments</h3>
+    <p>Under <strong>Attachments to include</strong>, every attachment has a checkbox and all of them are selected by default. Uncheck the ones you do not need. When an email has more than one attachment, <strong>Select all</strong> / <strong>Deselect all</strong> switches them all at once. You can file up to 50 attachments from one email.</p>
+    <p>When you are ready, click <strong>Continue</strong>.</p>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div>The add-in does not change the email or its attachments in Outlook. It only adds the <strong>SC: Filed</strong> category after filing.</div>
+    </div>
+
+    <h3 id="s8-rename">Renaming an attachment before filing</h3>
+    <p>Attachments often arrive with names that mean nothing inside a case, such as <code>scan0001.pdf</code> or <code>IMG_4821.jpg</code>. You can rename an attachment before it is filed, so it lands in SingleCase under a name your colleagues will recognise.</p>
+    <ol class="steps">
+      <li>
+        <p><strong>Click the pencil icon</strong> next to the attachment.</p>
+        <div class="app-screenshot">
+          <img src="images/Mac/rename1.png" alt="The pencil icon next to an attachment" style="width:340px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Click the pencil icon next to an attachment to rename it.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Type the new name</strong> and press <kbd>Enter</kbd>, or click outside the field. Press <kbd>Esc</kbd> to discard the change.</p>
+        <div class="app-screenshot">
+          <img src="images/Mac/rename2.png" alt="Editing the attachment name" style="width:340px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Only the name can be changed. The extension stays as it is.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Click Continue.</strong> The attachment is filed under the new name, and the add-in shows that name whenever you open the email again.</p>
+        <div class="app-screenshot">
+          <img src="images/Mac/rename3.png" alt="The filed document under its new name" style="width:360px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">The filing summary shows the document under the name you gave it.</p>
+        </div>
+      </li>
+    </ol>
+    <ul class="bullets">
+      <li><div><strong>The extension cannot be changed</strong>, so a <code>.pdf</code> stays a <code>.pdf</code>.</div></li>
+      <li><div><strong>An empty name changes nothing.</strong> The attachment keeps its original name.</div></li>
+      <li><div><strong>Two attachments with the same name cannot be renamed.</strong> Their pencil icon is disabled and shows <em>“An attachment sharing its name with another one cannot be renamed”</em>.</div></li>
+      <li><div><strong>The email in Outlook is untouched.</strong> Only the copy in SingleCase gets the new name.</div></li>
+    </ul>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Renaming is only possible before filing.</strong> To change the name of a document that is already filed, rename it in SingleCase.</div>
+    </div>
+
+    <h3 id="s8-folder">Choosing the destination folder</h3>
+    <p>Below the attachments is a <strong>Folder</strong> row with two options:</p>
+    <ul class="bullets">
+      <li><div><strong>Default</strong> (preselected): the attachments go to the case’s default folder for incoming mail, <strong>Correspondence → Incoming</strong>.</div></li>
+      <li><div><strong>Custom</strong>: you choose any folder in the case.</div></li>
+    </ul>
+    <p>With <strong>Custom</strong>, the case’s folders appear below the row. Click a folder to open it. The folder you are in is the selected one: it is shown at the top of the list with a checkmark (✓). Folders that contain subfolders show an arrow (→). To go one level up, click the selected folder at the top of the list (↵).</p>
+    <div class="app-screenshot">
+      <img src="images/Mac/Folder Select.png" alt="Choosing a custom folder" style="width:360px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">The checkmark shows the folder the attachments will be saved to.</p>
+    </div>
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div>The folder applies to all attachments you file from this email. The email itself (<code>.eml</code>) always goes to the <strong>Case Mailbox</strong>. You only see folders you are allowed to open in SingleCase.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#file-email">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">File an email</span>
+      </a>
+      <a class="page-nav-btn next" href="#after-filing">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">After filing: open the case and documents</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── after-filing ── -->
+  <div class="section page" id="after-filing">
+    <div class="section-header">
+      <h2>After filing: open the case and documents</h2>
+    </div>
+    <p>Once filing is complete the panel shows a summary:</p>
+    <img src="images/filed.png" alt="Summary view after filing showing the case name, date, and filed documents" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+    <p class="img-caption">The summary view after a successful filing.</p>
+    <ul class="bullets">
+      <li><div>The <strong>case name</strong> (click it to open the case in SingleCase)</div></li>
+      <li><div>The <strong>date and time</strong> it was filed</div></li>
+      <li><div>The <strong>number of documents</strong> filed</div></li>
+      <li><div>Each <strong>filed document</strong> listed individually</div></li>
+    </ul>
+
+    <p>From the summary you can also manage each document:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>What it does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Open case in SingleCase</strong></td>
+          <td>Opens the case the email was filed to in SingleCase</td>
+        </tr>
+        <tr>
+          <td><strong>Open document in SingleCase</strong></td>
+          <td>Opens the filed document directly in SingleCase</td>
+        </tr>
+        <tr>
+          <td><strong>Edit via SingleCase</strong></td>
+          <td>Opens the document in SingleCase for editing</td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+    <div class="note">
+      <span class="note-icon">🔒</span>
+      <div><strong>Document opened by someone else.</strong> If a colleague has the document open in SingleCase, the add-in cannot open it and shows a message with their name, for example <em>“Contract.docx is currently opened by [colleague’s name] and cannot be opened.”</em> Wait until they close it and try again.</div>
+    </div>
+<h3>Where to find everything in SingleCase</h3>
+    <p>Once filed, you can find the email and attachments directly in the case in SingleCase.</p>
+
+    <h4>The email — Case Mailbox</h4>
+    <p>The filed email appears in the <strong>Case Mailbox</strong> of the case.</p>
+    <img src="images/case mailbox.png" alt="Case Mailbox tab in SingleCase" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+    <img src="images/case mailbox 1.png" alt="Filed email visible inside the Case Mailbox in SingleCase" class="manual-img" style="width:100%;height:auto;">
+    <p class="img-caption">The filed email is visible in the Case Mailbox.</p>
+
+    <h4>Attachments — Documents</h4>
+    <p>Any attachments you selected are stored in the <strong>Documents</strong> section of the case. With the default folder setting they land in the case <strong>Inbox</strong>, under <em>Correspondence → Incoming</em>. If you picked a different folder before filing (see <a href="#s8-folder" onclick="showSubSection('s8','s8-folder');return false;">Choosing the destination folder</a>), you will find them in that folder instead.</p>
+    <img src="images/documents.png" alt="Documents section in SingleCase showing the filed attachment under Correspondence style="width:100%;height:auto;"> Incoming" class="manual-img" style="max-width: 100%;">
+    <p class="img-caption">Filed attachments appear in Documents under Correspondence → Incoming.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#what-to-file">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Choose attachments, folder and name</span>
+      </a>
+      <a class="page-nav-btn next" href="#filing-status">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Already filed, skipped or removed emails</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── filing-status ── -->
+  <div class="section page" id="filing-status">
+    <div class="section-header">
+      <h2>Already filed, skipped or removed emails</h2>
+    </div>
+    <p>When you open an email, the add-in first checks its status in SingleCase. Depending on the result, the panel shows one of the following.</p>
+
+    <h3>Already filed</h3>
+    <p>The panel shows the case and the filed documents. This works the same whether you filed the email yourself, a colleague filed it, or it was filed on send. The email also gets the <strong>SC: Filed</strong> label in Outlook. See <a href="#after-filing">After filing</a> for what you can do from here.</p>
+
+    <h3>Not filed yet</h3>
+    <p>The panel asks <em>“This email isn’t filed yet. Do you want me to file it?”</em></p>
+    <ul class="bullets">
+      <li><div><strong>Yes, file it</strong> opens the case selection. See <a href="#file-email">File an email</a>.</div></li>
+      <li><div><strong>No</strong> leaves the email unfiled. The panel confirms <em>“Got it. I won’t file this email now.”</em> and does not ask about this email again until the panel is reopened.</div></li>
+    </ul>
+
+    <h3>Internal emails</h3>
+    <p>If the sender and all recipients are from your organisation’s email domain (including its subdomains), the panel asks <em>“This looks like an internal email. Mark as Skipped?”</em> This detection is automatic; there is no setting for it.</p>
+    <ul class="bullets">
+      <li><div><strong>Yes</strong> marks the email as skipped. It gets the <strong>SC: Skipped</strong> label and the panel says <em>“Marked as Skipped. You can still file it manually.”</em></div></li>
+      <li><div><strong>File anyway</strong> opens the case selection, the same as for any other email.</div></li>
+    </ul>
+
+    <h3>Skipped emails</h3>
+    <p>When you open an email marked as skipped, the panel says <em>“This email has been marked as skipped. You can still file it manually.”</em> Click <strong>File manually</strong> to file it to a case.</p>
+
+    <h3>Removed from SingleCase</h3>
+    <p>If the email was filed but its documents were later deleted in SingleCase, the panel says <em>“This email was removed from SingleCase. Do you want to file it again?”</em> Click <strong>Yes, file it</strong> to file it again, or <strong>No</strong> to leave it.</p>
+
+    <h3>Filing the same email again</h3>
+    <p>If you file an email that is already filed, the panel says <em>“This email was already filed. Click again to file anyway.”</em> Click again only if you really want to file it a second time.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#after-filing">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">After filing: open the case and documents</span>
+      </a>
+      <a class="page-nav-btn next" href="#move-to-folder">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Move filed emails to case folders</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── move-to-folder ── -->
+  <div class="section page" id="move-to-folder">
+    <div class="section-header">
+      <h2>Move filed emails to case folders</h2>
+    </div>
+    <div class="tip">
+      <span class="note-icon">🗓️</span>
+      <div><strong>Coming in version 1.4 of the add-in.</strong> This feature is off by default; you turn it on yourself in Settings.</div>
+    </div>
+    <p>Filed emails normally stay in your inbox with only the <strong>SC: Filed</strong> label. If you prefer a clean inbox, the add-in can move each email you file into a folder for its case, right after filing.</p>
+
+    <h3>Turning it on</h3>
+    <ol class="steps">
+      <li><p>Open <a href="#settings">Settings</a> (the gear icon in the add-in panel).</p></li>
+      <li><p>In the <strong>Email organization</strong> section, switch on <strong>Move filed emails to a folder in Outlook</strong>. The helper text below it reads: <em>“After you file an email in SingleCase, the plugin automatically moves it to the SingleCase - Plugin → [case name] folder in your Outlook.”</em></p></li>
+    </ol>
+    <p>The setting is saved for you and stays on when you close and reopen the add-in. Switching it off again stops future moves; emails already moved stay in their case folders.</p>
+
+    <h3>How the folders are organised</h3>
+    <p>The add-in creates a folder named <strong>SingleCase - Plugin</strong> at the top level of your mailbox, next to your Inbox. Inside it there is one folder per case, named <strong>case number · case name</strong>:</p>
+    <pre class="folder-tree">SingleCase - Plugin
+  2024-0003 · Environmental protection
+  2025-0010 · Smith vs. Jones
+  2026-1348 · Flat-fee retainer</pre>
+    <ul class="bullets">
+      <li><div>Both folders are created automatically: <strong>SingleCase - Plugin</strong> the first time an email is moved, and a case folder the first time you file an email to that case.</div></li>
+      <li><div>If a case has no case number, the folder is named after the case name only.</div></li>
+      <li><div>The characters <code>/</code>, <code>\</code> and <code>:</code> in case names are replaced with a hyphen, and very long names are shortened.</div></li>
+      <li><div>The folders live in your mailbox, so you see them in Outlook on all your devices.</div></li>
+    </ul>
+
+    <h3>Which emails are moved</h3>
+    <ul class="bullets">
+      <li><div><strong>Only emails you file with the add-in</strong>, at the moment you file them. No other email in your mailbox is ever touched.</div></li>
+      <li><div><strong>The email is moved, not copied.</strong> It disappears from the folder it was in and appears in the case folder, still with the <strong>SC: Filed</strong> label.</div></li>
+      <li><div><strong>Emails filed before you turned the setting on stay where they are.</strong> Nothing is moved retroactively.</div></li>
+    </ul>
+
+    <h3>If the email cannot be moved</h3>
+    <p>Filing always comes first. If the move fails, the email is still filed in SingleCase, it stays in its original folder, and the add-in lets you know. You can then move it yourself.</p>
+
+    <h3>Renaming, moving or deleting the folders</h3>
+    <p>The add-in looks for a case folder by its name inside <strong>SingleCase - Plugin</strong> (upper and lower case do not matter). If you rename a case folder, move it somewhere else or delete it, the next email you file to that case creates a new folder with the standard name. The same applies to the <strong>SingleCase - Plugin</strong> folder itself.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#filing-status">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Already filed, skipped or removed emails</span>
+      </a>
+      <a class="page-nav-btn next" href="#file-on-send">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">File on Send</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── file-on-send ── -->
+  <div class="section page" id="file-on-send">
+    <div class="section-header">
+      <h2>File on Send</h2>
+    </div>
+    <p>With File on Send, you choose the case <strong>while you are writing the email</strong>. After you click <strong>Send</strong>, the add-in files the sent email to that case for you, either automatically or after you confirm it, depending on your settings. There is no need to go to <strong>Sent Items</strong> afterwards.</p>
+
+      <div class="app-screenshot"><img src="images/fos/en-compose-warn-case.png" alt="Compose panel with a case selected and the Warn each time message" style="width:340px;max-width:100%;height:auto;"><p class="app-screenshot-caption">While you write, the panel shows the case and what happens after you click Send.</p></div>
+
+      <h3>Choose how File on Send behaves</h3>
+      <p>Open <strong>Settings</strong> in the add-in (see <a href="#settings">All settings explained</a>) and choose one of the options under <strong>File on send</strong>:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>While you write</th>
+            <th>After you click Send</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Warn each time</strong> <span style="color:var(--sc-gray);">(default)</span></td>
+            <td>The panel is highlighted in yellow and says <em>“After sending, I’ll ask if you want to file the email.”</em></td>
+            <td>The email sends normally. The next time you open the add-in panel, it asks <em>“Email sent. Do you want to file it now?”</em> and shows the case. Click <strong>File now</strong> to file it, or <strong>Skip</strong> to leave it unfiled. Nothing is filed until you click <strong>File now</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Always file</strong></td>
+            <td>The panel says <em>“When you click Send, I’ll file this email automatically.”</em> and turns green once a case is selected.</td>
+            <td>The email is filed to the selected case automatically, in the background. No confirmation is needed.</td>
+          </tr>
+          <tr>
+            <td><strong>Off</strong></td>
+            <td>The panel says <em>“Auto filing is off.”</em> Click <strong>Turn on warnings</strong> to switch the setting to <strong>Warn each time</strong>.</td>
+            <td>Nothing is filed. You can file the email manually from Sent Items (see <a href="#file-email">File an email</a>).</td>
+          </tr>
+        </tbody>
+      </table>
+        <div class="app-screenshot"><img src="images/fos/en-settings.png" alt="Settings with the File on send options" style="width:310px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Choose the behaviour under File on send in Settings.</p></div>
+        <div class="app-screenshot"><img src="images/fos/en-compose-always.png" alt="Compose panel in Always file mode" style="width:340px;max-width:100%;height:auto;"><p class="app-screenshot-caption">With Always file, the panel turns green once a case is selected.</p></div>
+
+      <h3>How to use it</h3>
+      <ol class="steps">
+        <li>
+          <p><strong>Open a new email or a reply</strong> and click the <strong>SingleCase</strong> button in the ribbon to open the panel. The case has to be selected in the panel before you send. If you send without opening the panel, nothing is filed on send and you can file the email later from Sent Items.</p>
+        </li>
+        <li>
+          <p><strong>Add a recipient.</strong> Until there is at least one recipient in <strong>To</strong> or <strong>Cc</strong>, the panel shows <em>“Add a recipient (To / Cc)”</em>. If you send the email to a case’s SingleCase email address, the case is recognised straight away.</p>
+        
+        <div class="app-screenshot"><img src="images/fos/en-add-recipient.png" alt="New email without recipients; the panel asks to add a recipient" style="width:640px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Until the email has a recipient, the panel asks you to add one.</p></div></li>
+        <li>
+          <p><strong>Check the case.</strong> The panel names the case the email will be filed to. If it is not the right one, click <strong>Select a different case</strong> and pick another from the list or search for it. If the add-in has no suggestion, the panel says <em>“Select a case for this draft.”</em> Click <strong>Select a case</strong> and choose one.</p>
+        
+        <div class="app-screenshot"><img src="images/fos/en-select-case.png" alt="Panel asking to select a case for the draft" style="width:340px;max-width:100%;height:auto;"><p class="app-screenshot-caption">No suggestion yet: click Select a case.</p></div></li>
+        <li>
+          <p><strong>Keep writing or close the panel.</strong> The selected case stays with this draft until you send it.</p>
+        </li>
+        <li>
+          <p><strong>Click Send.</strong> The email always goes out. With <strong>Always file</strong>, it is filed in the background. With <strong>Warn each time</strong>, the add-in asks you about it the next time you open the panel.</p>
+        </li>
+      </ol>
+
+      <div class="tip">
+        <span class="note-icon">🔒</span>
+        <div><strong>Your email always sends.</strong> File on Send never stops or holds up your outgoing email. If filing is not possible at the moment of sending (for example, your sign-in has expired or the connection drops), the add-in completes it the next time you open the panel.</div>
+      </div>
+
+      <h3>How the add-in picks the case</h3>
+      <p>While you write, the add-in decides which case to prepare in this order:</p>
+      <ul class="bullets">
+        <li><div><strong>A case you chose yourself</strong> always wins.</div></li>
+        <li><div><strong>Case email address in the recipients:</strong> if you send the email to a case’s SingleCase email address, that case is selected.</div></li>
+        <li><div><strong>Recognised automatically:</strong> when the email belongs to a thread that is already filed, the subject or body contains the case number, or a recipient’s address matches the case exactly, the case is selected and the panel shows <em>“Suggested case: …”</em>.</div></li>
+        <li><div><strong>Recipients you have filed with before:</strong> if you previously filed emails with the same people to a case, that case is offered in the list under <strong>Select a different case</strong>. It is not selected for you.</div></li>
+      </ul>
+      <p>In the list under <strong>Select a different case</strong>, each suggestion shows why it was offered, for example <em>“Same email thread”</em>, <em>“Case number in the email”</em>, <em>“You often file this sender here”</em> or <em>“Recently used case”</em>.</p>
+      <p>More about how cases are ranked in <a href="#suggestions">Case suggestions</a>, and about case addresses in <a href="#case-address">Send to a case email address</a>.</p>
+
+
+      <h3>What gets filed?</h3>
+      <p>The sent email is saved as a document to the root of the selected case’s documents. Attachment selection, the destination folder and renaming (see <a href="#what-to-file">Choose attachments, folder and name</a>) are not available with File on Send. If you need them, do not select a case in the draft, and file the email manually from <strong>Sent Items</strong> after sending (see <a href="#file-email">File an email</a>).</p>
+      <p>If the panel says <em>“After sending, you can file it from the Sent folder.”</em>, the add-in could not prepare this draft for filing. The email sends normally, but nothing is filed on send; file it manually from Sent Items.</p>
+
+      <h3>File on Send vs. manual filing</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Situation</th>
+            <th>Recommended approach</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>You know which case the email belongs to before sending</td>
+            <td><strong>File on Send</strong>: select the case before sending and save a step</td>
+          </tr>
+          <tr>
+            <td>Replying to an email already filed in a case</td>
+            <td><strong>File on Send</strong>: the add-in selects the same case automatically</td>
+          </tr>
+          <tr>
+            <td>You want to choose attachments, the folder or the document name</td>
+            <td><strong>Manual filing</strong> from Sent Items after sending (see <a href="#file-email">File an email</a>)</td>
+          </tr>
+        </tbody>
+      </table>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#move-to-folder">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Move filed emails to case folders</span>
+      </a>
+      <a class="page-nav-btn next" href="#case-address">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Send to a case email address</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── case-address ── -->
+  <div class="section page" id="case-address">
+    <div class="section-header">
+      <h2>Send to a case email address</h2>
+    </div>
+    <p>Every case in SingleCase has its own email address in the format <code>CASE-ID@yourfirm.singlecase.app</code>. When you add this address to the recipients of an email you are writing, usually as <strong>Bcc</strong> so the other recipients do not see it, the add-in recognises the case straight away.</p>
+    <ul class="bullets">
+      <li><div>The case is selected in the panel without any searching, and the panel names it.</div></li>
+      <li><div>A case address is treated as certain. It is used ahead of any suggestion; only a case you pick yourself takes priority.</div></li>
+      <li><div>What happens after you click Send depends on your <a href="#file-on-send">File on Send</a> setting.</div></li>
+    </ul>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#file-on-send">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">File on Send</span>
+      </a>
+      <a class="page-nav-btn next" href="#after-sending">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">After sending: confirmations and errors</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── after-sending ── -->
+  <div class="section page" id="after-sending">
+    <div class="section-header">
+      <h2>After sending: confirmations and errors</h2>
+    </div>
+    <p>The outcome is shown at the top of the add-in panel the next time you open it, whichever email you have selected:</p>
+      <ul class="bullets">
+        <li><div><strong>Filed:</strong> <em>“Sent message filed to [case].”</em> The message stays until you close it. Click <strong>Change case</strong> to open the case in SingleCase if the email went to the wrong case; the add-in cannot move a filed email to another case.
+        <div class="app-screenshot"><img src="images/fos/en-filed.png" alt="Confirmation that the sent message was filed" style="width:300px;max-width:100%;height:auto;"><p class="app-screenshot-caption">The confirmation stays until you close it.</p></div></div></li>
+        <li><div><strong>Already filed elsewhere:</strong> if the same email is already filed in a different case, it is not filed again and the message names the case where it already is.</div></li>
+        <li><div><strong>Failed:</strong> <em>“Filing failed. Reopen the add-in or file manually.”</em> This appears when filing cannot succeed, for example when you do not have permission to file to the case or your Microsoft sign-in has expired. Temporary problems, such as a network outage, are not reported; the add-in simply tries again the next time you open the panel.</div></li>
+        <li><div><strong>Waiting for confirmation (Warn each time):</strong> if you do not answer the question, it comes back every time you open the panel for 24 hours. After that, the email stays unfiled. If you sent several emails, the add-in asks about them one at a time, oldest first.
+        <div class="app-screenshot"><img src="images/fos/en-warn-after-send.png" alt="Question whether to file the sent email" style="width:300px;max-width:100%;height:auto;"><p class="app-screenshot-caption">With Warn each time, the add-in asks before filing.</p></div></div></li>
+      </ul>
+
+      <div class="note">
+        <span class="note-icon">ℹ️</span>
+        <div><strong>Why the message can take a moment.</strong> The add-in files the copy of the email in your <strong>Sent Items</strong>. In classic Outlook for Windows, that copy can take tens of seconds to sync, so the confirmation can appear a little later than in Outlook on the web or the new Outlook.</div>
+      </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#case-address">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Send to a case email address</span>
+      </a>
+      <a class="page-nav-btn next" href="#find-case">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Finding a case</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── find-case ── -->
+  <div class="section page" id="find-case">
+    <div class="section-header">
+      <h2>Finding a case</h2>
+    </div>
+    <p>The case list has two views, switched with the buttons at the top: <strong>All</strong> and <strong>Favourites</strong>. Which one opens first is set in <a href="#settings">Settings</a> (<strong>Default case group</strong>, All by default).</p>
+
+    <h3>Searching for a case</h3>
+    <p>In <strong>All</strong>, the add-in shows its <a href="#suggestions">suggested cases</a> and a search box below them. Type at least 3 characters; results appear as you type, and more load as you scroll down. Each result shows the case name, the case number and the client. Press <kbd>Enter</kbd> to pick the first result, or <kbd>Esc</kbd> to clear the search.</p>
+    <p>You do not need to type full names; partial terms work, and you can combine them:</p>
+    <table>
+      <thead>
+        <tr><th>What you type</th><th>Example</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Client name (or part of it)</td><td><code>nextpresso</code></td><td>Cases of that client</td></tr>
+        <tr><td>Case name (or part of it)</td><td><code>magenta</code></td><td>Cases with that name</td></tr>
+        <tr><td>Case number</td><td><code>2025-100</code></td><td>That case</td></tr>
+        <tr><td>Client + case name</td><td><code>nextpresso magenta</code></td><td>That case under that client</td></tr>
+        <tr><td>Partial terms combined</td><td><code>next mag</code></td><td>Matching client and case</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Search finds your cases:</strong> cases where you are the responsible person or a member. If you need a case you are not on, ask its responsible person to add you in SingleCase.</div>
+    </div>
+
+    <h3>Favourites</h3>
+    <p><strong>Favourites</strong> lists the cases you starred in SingleCase. Suggestions and the search box are only shown in <strong>All</strong>; in Favourites you pick a case from the list.</p>
+    <div class="app-screenshot">
+      <img src="images/favourites-en.png" alt="Switching between All and Favourites" style="width:280px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">Switch between All and Favourites with the buttons at the top of the list.</p>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#after-sending">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">After sending: confirmations and errors</span>
+      </a>
+      <a class="page-nav-btn next" href="#suggestions">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Case suggestions</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── suggestions ── -->
+  <div class="section page" id="suggestions">
+    <div class="section-header">
+      <h2>Case suggestions</h2>
+    </div>
+    <p>When you file an email you have open, the add-in asks SingleCase which cases the email most likely belongs to, and shows up to three suggestions above the search box (in <strong>All</strong>).</p>
+    <div class="app-screenshot">
+      <img src="images/suggestion.png" alt="Case suggestions in the add-in" style="width:360px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">Suggested cases with their confidence and the reason they were suggested.</p>
+    </div>
+
+    <h3>What a suggestion shows</h3>
+    <ul class="bullets">
+      <li><div>The case name, and below it the case number and the client.</div></li>
+      <li><div>A confidence percentage.</div></li>
+      <li><div>The main reason for the suggestion: <em>“Same email thread”</em>, <em>“Case number in the email”</em>, <em>“You often file this sender here”</em>, <em>“Emails from this organisation are usually filed here”</em>, <em>“Linked contact”</em>, <em>“Recently used case”</em> or <em>“Suggested match”</em>.</div></li>
+    </ul>
+
+    <h3>What the add-in looks at</h3>
+    <p>SingleCase combines several clues. Each clue adds to a case’s score, so a case that matches several of them ranks higher. From strongest to weakest:</p>
+    <ol class="steps">
+      <li><p><strong>Same email thread.</strong> Another email from this conversation is already filed to the case.</p></li>
+      <li><p><strong>SingleCase case number</strong> in the subject, the first 5,000 characters of the body, or an attachment name. It has to match as a whole number, not as part of a longer one.</p></li>
+      <li><p><strong>Court file number</strong> in the same places. Separators do not matter, so <code>23-C-159</code>, <code>23/C/159</code> and <code>23 C 159</code> all match.</p></li>
+      <li><p><strong>Your history with these addresses.</strong> How often and how recently you filed emails with the sender and recipients to the case.</p></li>
+      <li><p><strong>The organisation’s history.</strong> Emails from the same email domain filed to the case. This counts far less than an exact address, and less the more cases the domain is spread across. Your firm’s own domain and public domains such as gmail.com are ignored.</p></li>
+      <li><p><strong>Linked contacts.</strong> A participant matches an active contact linked to the case in SingleCase. If the contact is linked to several cases, the boost is split between them, so a contact on many cases says little about any one of them. A contact linked to just one case ranks above weak sender history, but established history (frequent, recent filing) still wins.</p></li>
+      <li><p><strong>Recently used cases.</strong> Cases you filed to in the last 14 days. This only decides between cases that other clues already surfaced.</p></li>
+    </ol>
+    <p>A case or court number in the email always ranks above filing history alone.</p>
+
+    <h3>The confidence percentage</h3>
+    <p>The percentage reflects both how strong the clues are and how far the case is ahead of the next one. If two cases have equally strong clues, both get a lower percentage. A single clue, even an exact case number, does not reach 100%. Cases below 10% are not shown.</p>
+
+    <h3>Recommended case</h3>
+    <p>When the top case is clearly ahead, the add-in marks it as recommended with a green outline, and you can click <strong>Continue</strong> right away. Only the strong clues count towards this: the same thread, a case or court number, or your history with these addresses. The organisation’s history and linked contacts never make a case recommended on their own. Nothing is filed until you click <strong>Continue</strong>, and you can always pick a different case.</p>
+
+    <h3>Suggestions are personal</h3>
+    <p>Suggestions are based on the cases you have access to and on your own filing history, so a colleague can see different suggestions for the same email. Every email you file improves later suggestions for the same people and organisations.</p>
+
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div><strong>No suggestion fits?</strong> Use the search box below the suggestions. See <a href="#find-case">Finding a case</a>.</div>
+    </div>
+
+    <div class="note">
+      <span class="note-icon">✉️</span>
+      <div><strong>While writing an email</strong>, the add-in uses the same information to prepare a case before you send. How that works is described in <a href="#file-on-send">File on Send</a>.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#find-case">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Finding a case</span>
+      </a>
+      <a class="page-nav-btn next" href="#categories">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Filing status in Outlook</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── categories ── -->
+  <div class="section page" id="categories">
+    <div class="section-header">
+      <h2>Filing status in Outlook</h2>
+    </div>
+    <p>The add-in uses Outlook categories to show the filing status of each email at a glance. These labels appear in your inbox, sent items, and any folder where the email lives, and sync across all your devices.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="label-filed"><span class="dot green"></span>SC: Filed</span></td>
+          <td>Email has been successfully filed in SingleCase</td>
+        </tr>
+        <tr>
+          <td><span class="label-unfiled"><span class="dot gray"></span>SC: Skipped</span></td>
+          <td>Email is marked as not yet filed to any case in SingleCase</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#suggestions">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Case suggestions</span>
+      </a>
+      <a class="page-nav-btn next" href="#settings">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">All settings explained</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── settings ── -->
+  <div class="section page" id="settings">
+    <div class="section-header">
+      <h2>All settings explained</h2>
+    </div>
+    <p>To open Settings, click the gear icon (⚙) in the top-right corner of the add-in panel. Close it with <strong>Done</strong> or the × in the top-right corner.</p>
+    <div class="app-screenshot">
+      <img src="images/settings cog.png" alt="The gear icon in the add-in panel" style="width:340px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">Click the gear icon to open Settings.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Setting</th><th>Options</th><th>What it does</th><th>Used in</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Default case group</strong></td>
+          <td><strong>All</strong> (default), <strong>Favourites</strong></td>
+          <td>Which view the case list opens in. Favourites are the cases you starred in SingleCase. Suggestions and search are only in All. See <a href="#find-case">Finding a case</a>.</td>
+          <td>Both modes</td>
+        </tr>
+        <tr>
+          <td><strong>File on send</strong></td>
+          <td><strong>Warn each time</strong> (default), <strong>Always file</strong>, <strong>Off</strong></td>
+          <td>Whether a sent email is filed automatically, after you confirm, or not at all. See <a href="#file-on-send">File on Send</a>.</td>
+          <td>Compose mode</td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="app-screenshot"><img src="images/fos/en-settings.png" alt="The Settings window" style="width:310px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Settings in the add-in.</p></div>
+
+    <p>At the bottom of Settings:</p>
+    <ul class="bullets">
+      <li><div><strong>Version</strong> and <strong>Workspace</strong> show the add-in version and the workspace you are connected to. Include both when you contact support.</div></li>
+      <li><div><strong>Change workspace</strong> connects the add-in to a different SingleCase workspace. See <a href="#sign-in">Sign in and choose your workspace</a>.</div></li>
+      <li><div><strong>Reset</strong> restores the default settings.</div></li>
+    </ul>
+
+    <div class="tip">
+      <span class="note-icon">🗓️</span>
+      <div><strong>Coming in version 1.4:</strong> a new <strong>Email organization</strong> section with the switch <strong>Move filed emails to a folder in Outlook</strong> (off by default). See <a href="#move-to-folder">Move filed emails to case folders</a>.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#categories">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Filing status in Outlook</span>
+      </a>
+      <a class="page-nav-btn next" href="#faq">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">FAQ</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── faq ── -->
+  <div class="section page" id="faq">
+    <div class="section-header">
+      <h2>FAQ</h2>
+    </div>
+    <h3>Filing emails</h3>
+    <details>
+      <summary>How do I know if an email has already been filed?</summary>
+      <div class="faq-body">
+        <p>Open the email and click the SingleCase button. If the email has been filed, the panel immediately shows the case name, the filing date, and links to the filed documents. A green <strong>SC: Filed</strong> label in your inbox also indicates the email is in SingleCase.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Can I file the same email twice?</summary>
+      <div class="faq-body">
+        <p>The add-in warns you first: <em>“This email was already filed. Click again to file anyway.”</em> It files the email a second time only if you click again. See <a href="#filing-status">Already filed, skipped or removed emails</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What happens if I file an email and then forward it?</summary>
+      <div class="faq-body">
+        <p>Forwarding creates a brand new email. The forwarded copy is not automatically filed. You need to open the add-in for the forwarded copy and file it separately if needed.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>I excluded some attachments. Does that change the original email?</summary>
+      <div class="faq-body">
+        <p>No. The add-in does not change the email or its attachments in Outlook; it only adds the <strong>SC: Filed</strong> category. Only the files you selected are uploaded to SingleCase.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>I accidentally filed the wrong email. What do I do?</summary>
+      <div class="faq-body">
+        <p>Filing cannot be undone from the add-in. To remove a wrongly filed document, go to <strong>SingleCase → Cases → Documents</strong>, find the document, and delete it from there. The email in Outlook will remain completely unchanged.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Why does the email category appear in English?</summary>
+      <div class="faq-body">
+        <p>The category names <strong>SC: Filed</strong> and <strong>SC: Skipped</strong> are the same in every language, regardless of your Outlook language setting.</p>
+      </div>
+    </details>
+
+    <h3>Cases and suggestions</h3>
+    <details>
+      <summary>I can't see the case I need among the suggestions. What do I do?</summary>
+      <div class="faq-body">
+        <p>Suggestions show at most three cases; they are a shortcut, not a limit. Use the search box below the suggestions (in <strong>All</strong>) and search by client name, case name or case number. Pressing <kbd>Enter</kbd> picks the first result.</p>
+        <p>If the search finds nothing either, check these in order:</p>
+        <ul class="bullets">
+          <li><div><strong>Try a shorter fragment.</strong> Partial terms work, but a long name with a typo will not.</div></li>
+          <li><div><strong>Check the workspace.</strong> If your firm has more than one SingleCase workspace, you may be signed into a different one. See <a href="#sign-in">Sign in and choose your workspace</a>.</div></li>
+          <li><div><strong>Check that you are on the case.</strong> Search finds cases where you are the responsible person or a member. Ask the case’s responsible person to add you in SingleCase.</div></li>
+          <li><div><strong>Newly created case?</strong> Reload the panel (right-click inside it → <strong>Reload</strong>) and search again.</div></li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>The add-in recommended the wrong case. What do I do?</summary>
+      <div class="faq-body">
+        <p>A recommended case is only a proposal. Nothing is filed until you click Continue, so simply pick a different case or search for one. The add-in recommends a case when it is clearly ahead based on the same thread, a case or court number in the email, or your history with these addresses. A number can legitimately appear in an email that belongs elsewhere, for example in a forwarded thread.</p>
+        <p>Filing to the correct case improves later suggestions for the same people. See <a href="#suggestions">Case suggestions</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Why do I get no suggestions at all for some emails?</summary>
+      <div class="faq-body">
+        <p>That is normal, and the search box is always available. Suggestions stay empty when there is nothing to go on:</p>
+        <ul class="bullets">
+          <li><div>No other email from the thread is filed, and there is no case or court number in the subject, the first 5,000 characters of the body or the attachment names.</div></li>
+          <li><div>You have not filed emails with these people or this organisation before. Public domains such as gmail.com and your firm’s own domain do not count as organisation history.</div></li>
+          <li><div>Every candidate scored below 10%, the minimum the add-in shows.</div></li>
+        </ul>
+      </div>
+    </details>
+
+    <h3>Sign-in, updates and availability</h3>
+    <details>
+      <summary>Will I be signed out automatically?</summary>
+      <div class="faq-body">
+        <p>Generally no. The add-in keeps you signed in and refreshes your session automatically in the background, so you do not need to log in each time you open Outlook. If you do get signed out, for example after a password change, sign in again on the welcome screen. To connect to a different workspace, use <strong>Change workspace</strong> in <a href="#settings">Settings</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>How do I get the latest version of the add-in?</summary>
+      <div class="faq-body">
+        <p>The add-in updates automatically. Because it runs as a web application inside Outlook, your administrator publishes new versions to Microsoft 365 and you always receive the latest release the next time you open Outlook. You do not need to install anything manually.</p>
+        <p>If you need to pick up a new version immediately without restarting Outlook, you can force-reload the add-in taskpane:</p>
+        <ul style="margin: 8px 0 8px 16px; line-height: 1.8;">
+          <li><strong>Outlook for Mac:</strong> right-click anywhere inside the SingleCase taskpane → <strong>Reload</strong>.</li>
+          <li><strong>Outlook for Windows:</strong> right-click anywhere inside the SingleCase taskpane → <strong>Reload</strong>.</li>
+          <li><strong>Outlook on the Web (Mac):</strong> click inside the taskpane and press <strong>Cmd+Shift+R</strong>.</li>
+          <li><strong>Outlook on the Web (Windows):</strong> click inside the taskpane and press <strong>Ctrl+Shift+R</strong>.</li>
+        </ul>
+        <img src="images/reload.png" alt="Right-click context menu inside the SingleCase taskpane showing the Reload option" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+        <p class="img-caption">Right-click inside the taskpane and choose Reload to pick up the latest version immediately.</p>
+        <p>You can check the installed version via <strong>Outlook: My Add-ins</strong>:</p>
+        <ul style="margin: 8px 0 0 16px; line-height: 1.8;">
+          <li><strong>Outlook on the Web:</strong> open any email → click the <strong>three-dot menu (⋯)</strong> → <strong>Get Add-ins</strong> → <strong>My add-ins</strong>. Find SingleCase in the list. The version is shown below the add-in name.</li>
+          <li><strong>Outlook for Mac:</strong> <strong>Tools</strong> menu → <strong>Get Add-ins</strong> → <strong>My add-ins</strong> tab.</li>
+          <li><strong>Outlook for Windows:</strong> <strong>File</strong> → <strong>Manage Add-ins</strong> (opens a browser page) → <strong>My add-ins</strong> tab.</li>
+        </ul>
+        <p style="margin-top: 10px;">When reporting an issue, include the version number from either location so your IT administrator or SingleCase support can assist you.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Can I use the add-in on my phone?</summary>
+      <div class="faq-body">
+        <p>Not yet. Mobile support (iOS &amp; Android) is coming <strong>soon</strong>. You'll be notified when it's available.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Does the add-in work offline?</summary>
+      <div class="faq-body">
+        <p>No. The add-in needs an internet connection to communicate with SingleCase. If you are offline, you will see a connection error. Once you are back online, file the email again.</p>
+      </div>
+    </details>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#settings">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">All settings explained</span>
+      </a>
+      <a class="page-nav-btn next" href="#troubleshooting">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Troubleshooting</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── troubleshooting ── -->
+  <div class="section page" id="troubleshooting">
+    <div class="section-header">
+      <h2>Troubleshooting</h2>
+    </div>
+    <div class="trouble-item">
+      <h3 id="s14-login">I can't sign in — Microsoft says my account does not exist in the SingleCase tenant</h3>
+      <p>You click sign in and Microsoft's <strong>Pick an account</strong> window appears with a message in red:</p>
+      <p style="margin-left:16px; border-left:3px solid #e5e7eb; padding-left:12px; color:#4b5563;"><em>The selected user account does not exist in tenant 'SingleCase' and cannot access the application in that tenant. The account needs to be added as an external user in the tenant first. Please use a different account.</em></p>
+      <img src="images/tenant missing.png" alt="Microsoft Pick an account dialog showing the error that the selected account does not exist in the SingleCase tenant" class="manual-img" style="width:380px;max-width:100%;height:auto;">
+      <p class="img-caption">The sign-in stops here. Choosing the same account again just repeats the message.</p>
+
+      <p>This is not a password problem and it is not something you can fix from Outlook. The add-in signs you in through Microsoft, so your SingleCase profile has to know which Microsoft account belongs to you. Until that link exists, Microsoft has nothing to grant access to and shows this message. The fix is to create (or re-create) the link in SingleCase:</p>
+
+      <ol class="steps">
+        <li><p>Open your SingleCase workspace <strong>in a browser</strong> and sign in the way you normally do.</p></li>
+        <li><p>Go to <strong>My profile</strong> and find the <strong>Microsoft account connection</strong> section.</p></li>
+        <li>
+          <p><strong>If no account is connected</strong> — connect it now. Sign in with the <em>same</em> Microsoft account you use in Outlook and confirm the permission prompt. This alone resolves the error in most cases.</p>
+        </li>
+        <li>
+          <p><strong>If an account is already connected</strong> — cancel the existing connection and connect again. A connection can go stale, for example after an email address change, a licence change, or a migration between Microsoft tenants, and a stale link produces exactly the same error as a missing one.</p>
+        </li>
+        <li><p>Go back to Outlook, close and reopen the SingleCase panel, and sign in again.</p></li>
+      </ol>
+
+      <div class="tip">
+        <span class="note-icon">⚠️</span>
+        <div>Connect the same Microsoft account you are signed into Outlook with. A personal Microsoft account, or a second work account, will produce the same message even after connecting.</div>
+      </div>
+
+      <div class="tip">
+        <span class="note-icon">ℹ️</span>
+        <div>If the error survives a fresh connection, take a screenshot of the dialog — including the application ID (the long GUID) — and send it to your IT administrator or SingleCase support. In that case the add-in most likely has not been approved in your organization's Microsoft tenant, which only an administrator can do.</div>
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <h3>The taskpane is blank or shows a loading spinner indefinitely</h3>
+      <ol class="steps">
+        <li><p>Close the taskpane and reopen it from the ribbon.</p></li>
+        <li><p>If that does not help, restart Outlook.</p></li>
+        <li><p>On Outlook on the Web, try refreshing the browser page.</p></li>
+        <li><p>If the problem persists, contact your IT administrator. The add-in may need to be re-published.</p></li>
+      </ol>
+    </div>
+
+    <div class="trouble-item">
+      <h3>“I couldn’t find this workspace” when signing in</h3>
+    <p>Check the workspace address. The correct format is <code>yourfirm.singlecase.app</code>. If you are unsure, ask your SingleCase administrator for the exact address.</p>
+    </div>
+
+    <div class="trouble-item">
+      <h3>Filed categories (green/gray labels) are not appearing</h3>
+      <p>Categories require a specific minimum version of Outlook. Make sure your Outlook is fully up to date. In Outlook on the Web, categories may take a few seconds to appear after filing.</p>
+    </div>
+
+    <div class="trouble-item">
+      <h3>The case I am looking for is not in the list</h3>
+    <ul class="bullets">
+      <li><div>Switch from <strong>Favourites</strong> to <strong>All</strong>. The search box is only available in All.</div></li>
+      <li><div>Search by the case number (e.g. <code>2023-0001</code>).</div></li>
+      <li><div>Search only finds cases where you are the responsible person or a member. Ask the case’s responsible person to add you in SingleCase.</div></li>
+      <li><div>A case created a moment ago may need a reload: right-click inside the panel and choose <strong>Reload</strong>.</div></li>
+    </ul>
+    </div>
+
+    <div class="trouble-item">
+      <h3>"Filing failed" error</h3>
+      <p>Filing failures are usually caused by a brief network interruption or a temporary server issue. Try again after a few seconds. If the error persists, check that you can open your SingleCase workspace in a browser. If the workspace is accessible but filing still fails, contact SingleCase support.</p>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#faq">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">FAQ</span>
+      </a>
+      <a class="page-nav-btn next" href="#whats-new">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">What's new</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── whats-new ── -->
+  <div class="section page" id="whats-new">
+    <div class="section-header">
+      <h2>What's new</h2>
+    </div>
+    <h3>Coming in version 1.4</h3>
+    <ul class="bullets">
+      <li><div><strong>Move filed emails to case folders.</strong> An optional setting that moves each filed email into a <strong>SingleCase - Plugin → case</strong> folder in Outlook. See <a href="#move-to-folder">Move filed emails to case folders</a>.</div></li>
+    </ul>
+
+    <h3>Version 1.3.1.0 · October 2026</h3>
+    <ul class="bullets">
+      <li><div><strong>New: File on Send.</strong> Choose the case while you write an email, and the add-in files it when you click Send, automatically or after you confirm. See <a href="#file-on-send">File on Send</a>.</div></li>
+    </ul>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#troubleshooting">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">Troubleshooting</span>
+      </a>
+      <a class="page-nav-btn next" href="#admin-install">
+        <span class="page-nav-label">Next →</span>
+        <span class="page-nav-title">Install and update the add-in</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── admin-install ── -->
+  <div class="section page" id="admin-install">
+    <div class="section-header">
+      <h2>Install and update the add-in</h2>
+    </div>
+    <div class="tip">
+      <span class="note-icon">📘</span>
+      <div>For the full step-by-step guide with screenshots, see the <a href="enterprise-deployment.html">Enterprise deployment guide</a>. To generate a manifest for your workspace, use the <a href="manifest-generator.html">Manifest generator</a>.</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:#f0f6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:13px;line-height:1.5;">
+      <span style="font-weight:600;color:var(--sc-blue);white-space:nowrap;">Admin-managed only</span>
+      <span style="color:var(--sc-gray);">—</span>
+      <span>The add-in is pushed via the M365 Admin Center and does <strong>not appear in AppSource</strong>. For self-install, see <a href="#s3-get-addin" style="color:var(--sc-blue);">Getting the Add-in →</a></span>
+    </div>
+
+    <p>Deploy SingleCase to your entire organization — or to specific users or groups. Requires a <strong>Global Administrator</strong> or <strong>Application Administrator</strong> account. Users receive the add-in automatically in their Outlook ribbon with no action on their side.</p>
+
+    <ol class="steps">
+      <li>
+        <p>Sign in to the <strong>Microsoft 365 Admin Center</strong> at <a href="https://admin.microsoft.com" target="_blank" rel="noopener">admin.microsoft.com</a>.</p>
+      </li>
+      <li>
+        <p>In the left sidebar, go to <strong>Settings</strong> → <strong>Integrated apps</strong>.</p>
+      </li>
+      <li>
+        <p>Click <strong>Upload custom apps</strong> to deploy via manifest file, or search for <strong>SingleCase</strong> in the App Store and select it.</p>
+        <ul class="sub">
+          <li>If uploading a manifest: select <strong>Office Add-in</strong> as the app type, then upload the manifest file.</li>
+        </ul>
+      </li>
+      <li>
+        <p>In the <strong>Add users</strong> step, choose the deployment scope:</p>
+        <ul class="sub">
+          <li><strong>Just me</strong> — your account only (useful for testing)</li>
+          <li><strong>Entire organization</strong> — all users in your M365 tenant</li>
+          <li><strong>Specific users / groups</strong> — a defined list or security group</li>
+        </ul>
+      </li>
+      <li>
+        <p>Click <strong>Deploy</strong> and confirm. Propagation can take up to 24 hours — in practice we typically see it within 12 hours.</p>
+      </li>
+      <li>
+        <p>The <strong>SingleCase</strong> button appears automatically in each assigned user's Outlook ribbon on their next launch.</p>
+      </li>
+    </ol>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>
+        The add-in updates automatically after initial deployment — no re-deployment is needed when a new version is published. Users can also find it manually under the <strong>Admin-managed</strong> tab in <em>Get Add-ins</em> (not available on Outlook 2016, 2019, or Mac Legacy Outlook).
+      </div>
+    </div>
+
+    <p style="margin-top:16px">
+      <a href="enterprise-deployment.html" style="display:inline-flex;align-items:center;gap:6px;background:var(--sc-blue);color:#fff;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">
+        Full step-by-step deployment guide with screenshots →
+      </a>
+    </p>
+
+    <h3 id="s2-manifest" style="margin-top:32px;">Updating the Manifest</h3>
+    <p>If SingleCase provides a new manifest file (for example when switching from Trial to Production, or when the add-in URL changes), you replace it in the Admin Center without removing the existing deployment. Always-up-to-date manifest files are available in the <a href="enterprise-deployment.html#manifests" style="color:var(--sc-blue);">IT Administrator Guide → Manifest files ↗</a>.</p>
+    <ol class="steps">
+      <li>
+        <p>Go to <strong>Settings → Integrated apps</strong> in the <a href="https://admin.microsoft.com" target="_blank" rel="noopener">Microsoft 365 Admin Center</a> and select the <strong>SingleCase</strong> add-in from the list. In the panel that opens, under <strong>Actions</strong>, click <strong>Update add-in</strong>.</p>
+        <img src="images/Screenshot 1.png" alt="SingleCase add-in detail panel in Integrated apps, showing the Update add-in action" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">The add-in detail panel — click <strong>Update add-in</strong> under <strong>Actions</strong>.</p>
+      </li>
+      <li>
+        <p>On the <strong>Update file</strong> screen, keep <strong>Upload manifest file (.xml) from device</strong> selected, click <strong>Choose File</strong> and pick the new manifest. Wait for <strong>Manifest file validated</strong> to appear, then click <strong>Next</strong>.</p>
+        <img src="images/Screenshot 2.png" alt="Update file screen with a manifest selected and the Manifest file validated confirmation" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Upload the new manifest from your device — the green <strong>Manifest file validated</strong> confirmation must appear before you continue.</p>
+      </li>
+      <li>
+        <p>Review the <strong>Updates</strong> screen, which lists the app permissions and capabilities requested by the new manifest, then click <strong>Accept and update</strong>.</p>
+        <img src="images/Screenshot 3.png" alt="Updates review screen listing app permissions and capabilities with the Accept and update button" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Review the requested permissions and capabilities, then <strong>Accept and update</strong>.</p>
+      </li>
+      <li>
+        <p>The update runs. <strong>Update in progress…</strong> is shown while it completes — you can close the panel and it will continue in the background.</p>
+        <img src="images/Screenshot 4.png" alt="Update in progress screen showing the SingleCase add-in with In Progress status" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">The update is applied in the background.</p>
+      </li>
+      <li>
+        <p><strong>Updated successfully</strong> confirms the new manifest is deployed. Click <strong>Done</strong>. User assignments carry over — there is no need to reassign anyone.</p>
+        <img src="images/Screenshot 5.png" alt="Updated successfully confirmation screen with the SingleCase add-in marked as Updated" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Confirmation that the manifest has been updated for all assigned users.</p>
+      </li>
+    </ol>
+    <p>Because SingleCase is deployed as a line-of-business (LOB) add-in, metadata changes require the admin to upload the new manifest as above — the add-in then updates the next time a user starts Outlook.</p>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div>
+        After uploading a new manifest, propagation to all users can take <strong>up to 72 hours</strong> (Microsoft's stated maximum for updates) — in practice we typically see it within 12 hours. Users must <strong>restart Outlook</strong> once the update has arrived.
+        <br><br>
+        <a href="https://learn.microsoft.com/en-us/microsoft-365/admin/manage/centralized-deployment-faq?view=o365-worldwide" target="_blank" rel="noopener" style="color:var(--sc-blue);">Microsoft Centralized Deployment FAQ ↗</a>
+      </div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#whats-new">
+        <span class="page-nav-label">← Previous</span>
+        <span class="page-nav-title">What's new</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>For additional help, contact your SingleCase administrator or reach out to SingleCase support through the <a href="https://www.singlecase.com/" target="_blank" rel="noopener">SingleCase web interface</a> or via the <a href="https://www.singlecase.com/contact" target="_blank" rel="noopener">contact page</a>.</p>
+    <p style="margin-top:8px;">SingleCase Outlook Add-in · User Manual · v1.3.1.0 current · October 2026</p>
+  </footer>
+
+</main>
+
+  <script>
+    // ── Page navigation ──
+    var PAGE_ORDER = ["home", "about", "install", "open", "sign-in", "platforms", "file-email", "what-to-file", "after-filing", "filing-status", "move-to-folder", "file-on-send", "case-address", "after-sending", "find-case", "suggestions", "categories", "settings", "faq", "troubleshooting", "whats-new", "admin-install"];
+    var LEGACY_HASH = {"s1": "about", "s2": "admin-install", "s3": "install", "s4": "open", "s5": "file-email", "s6": "file-email", "s7": "find-case", "s8": "what-to-file", "s9": "after-filing", "s10": "categories", "s11": "settings", "s12": "sign-in", "s13": "faq", "s14": "troubleshooting", "s15": "file-on-send", "s16": "file-on-send", "s2-compat": "platforms", "s2-manifest": "admin-install", "s11-case-display": "settings", "s3-first-open": "sign-in"};
+
+    // Resolve any hash (current page id, old #sN link or an anchor inside a page)
+    function resolveHash(hash) {
+      if (!hash) return { page: 'home' };
+      if (PAGE_ORDER.indexOf(hash) !== -1) return { page: hash };
+      if (LEGACY_HASH[hash]) return { page: LEGACY_HASH[hash] };
+      var el = document.getElementById(hash);
+      if (el) {
+        var pg = el.closest('.page');
+        if (pg) return { page: pg.id, anchor: hash };
+      }
+      var m = hash.match(/^(s\d+)-/);
+      if (m && LEGACY_HASH[m[1]]) return { page: LEGACY_HASH[m[1]] };
+      return null;
+    }
+
+    function showPage(id, opts) {
+      opts = opts || {};
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      var target = document.getElementById(id);
+      if (!target || !target.classList.contains('page')) { target = document.getElementById('home'); id = 'home'; }
+      target.classList.add('active');
+      document.querySelectorAll('nav#sidebar a').forEach(function(a) {
+        var href = a.getAttribute('href') || '';
+        a.classList.toggle('active', href === '#' + id);
+      });
+      var newHash = '#' + (opts.anchor || id);
+      try {
+        if (opts.replace) history.replaceState(null, '', newHash);
+        else if (opts.push !== false) history.pushState(null, '', newHash);
+      } catch (e) {}
+      if (opts.anchor) {
+        setTimeout(function() {
+          var el = document.getElementById(opts.anchor);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+      } else {
+        window.scrollTo(0, 0);
+      }
+      var nt = document.getElementById('navToggle'); if (nt) nt.checked = false;
+    }
+
+    document.addEventListener('click', function(e) {
+      var a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      var r = resolveHash(a.getAttribute('href').slice(1));
+      if (!r) return;
+      e.preventDefault();
+      showPage(r.page, { anchor: r.anchor });
+    });
+
+    (function init() {
+      var r = resolveHash(window.location.hash.replace('#', '')) || { page: 'home' };
+      showPage(r.page, { anchor: r.anchor, replace: true });
+    })();
+
+    window.addEventListener('popstate', function() {
+      var r = resolveHash(window.location.hash.replace('#', '')) || { page: 'home' };
+      showPage(r.page, { anchor: r.anchor, push: false });
+    });
+
+    // ── Platform switcher ──
+    function setPlatform(platform) {
+      document.querySelectorAll('.platform-tab, .ptab').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.platform === platform);
+      });
+      document.querySelectorAll('.platform-only').forEach(function(el) {
+        var platforms = (el.dataset.platforms || '').split(' ');
+        el.classList.toggle('visible', platforms.indexOf(platform) !== -1);
+      });
+      var imgDesktop = document.getElementById('hero-img-desktop');
+      var imgWeb = document.getElementById('hero-img-web');
+      if (imgDesktop && imgWeb) {
+        imgDesktop.style.display = platform === 'web' ? 'none' : '';
+        imgWeb.style.display = platform === 'web' ? '' : 'none';
+      }
+      try { localStorage.setItem('sc-manual-os', platform); } catch(e) {}
+    }
+
+    (function initPlatform() {
+      var platform = 'windows';
+      try { platform = localStorage.getItem('sc-manual-os') || 'windows'; } catch(e) {}
+      if (['windows', 'mac', 'web'].indexOf(platform) === -1) platform = 'windows';
+      setPlatform(platform);
+    })();
+
+    // ── Search ──
+    const searchInput = document.getElementById('searchInput');
+    let currentHighlightIndex = 0;
+    let highlights = [];
+
+    function updateCounter() {
+      const counter = document.getElementById('searchCounter');
+      const prevBtn = document.getElementById('searchPrev');
+      const nextBtn = document.getElementById('searchNext');
+      if (highlights.length === 0) {
+        counter.textContent = '';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+      } else {
+        counter.textContent = `${currentHighlightIndex + 1} of ${highlights.length}`;
+        prevBtn.disabled = highlights.length <= 1;
+        nextBtn.disabled = highlights.length <= 1;
+      }
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.search-highlight').forEach(span => {
+        while (span.firstChild) span.parentNode.insertBefore(span.firstChild, span);
+        span.parentNode.removeChild(span);
+      });
+      document.querySelector('main').normalize();
+      highlights = [];
+      currentHighlightIndex = 0;
+    }
+
+    function highlightMatches(text) {
+      clearHighlights();
+      if (!text.trim()) { updateCounter(); return; }
+      const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escapedText, 'gi');
+      const textNodes = [];
+      function collectTextNodes(node) {
+        if (node.nodeType === Node.TEXT_NODE) textNodes.push(node);
+        else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains('search-highlight'))
+          Array.from(node.childNodes).forEach(collectTextNodes);
+      }
+      // Search across ALL pages (not just active)
+      document.querySelectorAll('.page').forEach(collectTextNodes);
+      textNodes.forEach(node => {
+        const t = node.textContent;
+        searchRegex.lastIndex = 0;
+        if (searchRegex.test(t)) {
+          const span = document.createElement('span');
+          searchRegex.lastIndex = 0;
+          span.innerHTML = t.replace(searchRegex, '<span class="search-highlight">$&</span>');
+          node.parentNode.replaceChild(span, node);
+          span.querySelectorAll('.search-highlight').forEach(h => highlights.push(h));
+        }
+      });
+      if (highlights.length > 0) scrollToHighlight(0);
+      updateCounter();
+    }
+
+    function scrollToHighlight(index) {
+      if (!highlights.length) return;
+      highlights.forEach((h, i) => h.classList.toggle('current-highlight', i === index));
+      currentHighlightIndex = index;
+      // Find which page this highlight belongs to and show it
+      var el = highlights[index];
+      var pageEl = el.closest('.page');
+      if (pageEl && !pageEl.classList.contains('active')) {
+        showPage(pageEl.id);
+      }
+      highlights[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      updateCounter();
+    }
+
+    searchInput.addEventListener('input', e => highlightMatches(e.target.value));
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); if (highlights.length) scrollToHighlight((currentHighlightIndex + 1) % highlights.length); }
+    });
+    document.getElementById('searchPrev').addEventListener('click', () => { if (highlights.length) scrollToHighlight((currentHighlightIndex - 1 + highlights.length) % highlights.length); });
+    document.getElementById('searchNext').addEventListener('click', () => { if (highlights.length) scrollToHighlight((currentHighlightIndex + 1) % highlights.length); });
+
+    // ── Quick start search handoff (?q=) ──
+    (function() {
+      var urlQ = new URLSearchParams(window.location.search).get('q');
+      if (urlQ) {
+        searchInput.value = urlQ;
+        highlightMatches(urlQ);
+        if (highlights.length) scrollToHighlight(0);
+      }
+    })();
+
+    // ── Mobile sidebar — close when a nav link is tapped ──
+    var navToggle = document.getElementById('navToggle');
+    document.querySelectorAll('nav#sidebar a').forEach(function(link) {
+      link.addEventListener('click', function() { if (navToggle) navToggle.checked = false; });
+    });
+
+    // EOS countdown badges
+    document.querySelectorAll('[data-eos]').forEach(function(el) {
+      var eosDate = new Date(el.getAttribute('data-eos'));
+      var now = new Date();
+      var days = Math.round((eosDate - now) / 86400000);
+      var label, color;
+      if (days < 0) {
+        label = 'Microsoft support ended ' + eosDate.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+        color = '#b45309';
+      } else if (days <= 90) {
+        label = 'Microsoft support ends ' + eosDate.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) + ' — ' + days + ' days left';
+        color = '#dc2626';
+      } else {
+        label = 'Microsoft support ends ' + eosDate.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) + ' — ' + days + ' days left';
+        color = '#b45309';
+      }
+      el.innerHTML = '<span style="display:inline-block;margin-top:4px;font-size:11px;font-weight:600;color:' + color + ';background:#fef3c7;border:1px solid #fcd34d;border-radius:4px;padding:2px 7px;">⏱ ' + label + '</span>';
+    });
+
+    // ── Version checker ──────────────────────────────────────────────
+    var vcPlatform = 'windows';
+    var vcHints = {
+      windows: 'Find in <strong>Help → About Outlook</strong>. Paste the full string, e.g. <em>Version 2306 (Build 16.0.16529.20164)</em>',
+      mac:     'Find in <strong>Outlook → About Microsoft Outlook</strong>. Paste the version, e.g. <em>16.92 (24112031)</em>',
+    };
+
+    function vcSetPlatform(p, btn) {
+      vcPlatform = p;
+      document.querySelectorAll('.vc-plat-btn').forEach(function(b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      var inputRow = document.getElementById('vc-input-row');
+      var hintEl   = document.getElementById('vc-hint');
+      var resultEl = document.getElementById('vc-result');
+      var inputEl  = document.getElementById('vc-input');
+      resultEl.style.display = 'none';
+      if (p === 'web') {
+        inputRow.style.display = 'none';
+        hintEl.innerHTML = '';
+        resultEl.style.display = 'block';
+        resultEl.className = 'vc-result yes';
+        resultEl.innerHTML = '<div class="vc-badge" style="color:#16a34a;">✓ Supported</div>Outlook on the web (<a href="https://outlook.office.com" target="_blank">outlook.office.com</a>) is fully supported — no version constraints apply.';
+      } else {
+        inputRow.style.display = 'flex';
+        hintEl.innerHTML = vcHints[p];
+        inputEl.value = '';
+        inputEl.placeholder = p === 'windows' ? 'e.g. Version 2306 (Build 16.0.16529.20164)' : 'e.g. 16.92 (24112031)';
+      }
+    }
+
+    function vcCheck() {
+      var v = (document.getElementById('vc-input').value || '').trim();
+      var resultEl = document.getElementById('vc-result');
+      if (!v) {
+        resultEl.style.display = 'block';
+        resultEl.className = 'vc-result unknown';
+        resultEl.innerHTML = 'Please paste your Outlook version string.';
+        return;
+      }
+      var r = vcPlatform === 'windows' ? vcCheckWindows(v) : vcCheckMac(v);
+      resultEl.style.display = 'block';
+      resultEl.className = 'vc-result ' + r.status;
+      var colour = r.status === 'yes' ? '#16a34a' : r.status === 'no' ? '#b45309' : '#92400e';
+      var icon   = r.status === 'yes' ? '✓ Supported' : r.status === 'no' ? '✗ Not supported' : '⚠ Uncertain';
+      resultEl.innerHTML = '<div class="vc-badge" style="color:' + colour + ';">' + icon + '</div>' + r.message;
+    }
+
+    function vcCheckWindows(v) {
+      var chanMatch  = v.match(/version\s+(\d{4})/i) || v.match(/\b(2[012]\d{2})\b/);
+      var buildMatch = v.match(/(?:build\s+)?16\.0\.(\d{4,})/i);
+
+      if (chanMatch) {
+        var ver = parseInt(chanMatch[1]);
+        if (ver >= 2206) {
+          if (buildMatch && parseInt(buildMatch[1]) < 15330) {
+            return { status: 'no', message: 'Version <strong>' + ver + '</strong> detected but the build number is below 15330 — this specific build is not supported. Run <strong>File → Office Account → Update Options → Update Now</strong> to get the latest build.' };
+          }
+          return { status: 'yes', message: 'Version <strong>' + ver + '</strong> is supported. You\'re good to go.' };
+        }
+        if (ver < 2206 && ver >= 2000) {
+          return { status: 'no', message: 'Version <strong>' + ver + '</strong> is below the minimum required (2206). Update via <strong>File → Office Account → Update Options → Update Now</strong>.' };
+        }
+      }
+
+      if (buildMatch) {
+        var build = parseInt(buildMatch[1]);
+        if (build >= 15000) {
+          return { status: 'warn', message: 'Build <strong>' + build + '</strong> looks like Outlook 2021, but we can\'t distinguish retail from LTSC based on the build alone.<br><br>• <strong>Outlook 2021 (retail, one-time purchase)</strong> — ✓ Supported<br>• <strong>Outlook 2021 LTSC (volume-licensed)</strong> — ✗ Not supported (API 1.9 max; this add-in requires 1.12). Upgrade to Microsoft 365.<br><br>Check <strong>File → Office Account</strong>: if it says "Microsoft Office LTSC", it\'s LTSC.' };
+        }
+        if (build >= 10000) {
+          return { status: 'no', message: 'Build <strong>' + build + '</strong> corresponds to <strong>Outlook 2019</strong>, which is not supported (add-in API 1.6 max; this add-in requires 1.12).<br><br><strong>Recommendation:</strong> upgrade to Microsoft 365.' };
+        }
+        return { status: 'no', message: 'Build <strong>' + build + '</strong> corresponds to <strong>Outlook 2016 or older</strong>, which is not supported.<br><br><strong>Recommendation:</strong> upgrade to Microsoft 365.' };
+      }
+
+      return { status: 'unknown', message: 'Could not parse the version string. Try pasting the full text from <strong>Help → About Outlook</strong>, for example:<br><em>Version 2306 (Build 16.0.16529.20164)</em>' };
+    }
+
+    function vcCheckMac(v) {
+      var m = v.match(/16\.(\d+)(?:\.(\d+))?/);
+      if (!m) return { status: 'unknown', message: 'Could not parse the version. Try pasting from <strong>Outlook → About Microsoft Outlook</strong>, for example: <em>16.92 (24112031)</em>' };
+      var minor = parseInt(m[1]);
+      var patch = m[2] ? parseInt(m[2]) : 0;
+      var ok = (minor > 38) || (minor === 38 && patch >= 506);
+      if (ok) {
+        return { status: 'yes', message: 'Version <strong>16.' + minor + (m[2] ? '.' + patch : '') + '</strong> is supported.<br><br>Make sure you are using <strong>New Outlook</strong> and not Legacy Outlook. If you see a <strong>Legacy Outlook</strong> toggle in the top-right corner of Outlook, disable it.' };
+      }
+      return { status: 'no', message: 'Version <strong>16.' + minor + (m[2] ? '.' + patch : '') + '</strong> is below the minimum required (16.38.506).<br><br><strong>Recommendation:</strong> update Outlook via <strong>Help → Check for Updates</strong>.' };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var inp = document.getElementById('vc-input');
+      if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') vcCheck(); });
+
+      // ── Lightbox ─────────────────────────────────────────────────
+      var lb = document.createElement('div');
+      lb.className = 'lb-overlay';
+      lb.innerHTML = '<span class="lb-close">&#x2715;</span><img>';
+      document.body.appendChild(lb);
+      var lbImg = lb.querySelector('img');
+
+      document.querySelectorAll('.page img:not(#vc-img)').forEach(function(img) {
+        img.addEventListener('click', function() {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lb.classList.add('open');
+        });
+      });
+
+      function closeLb() { lb.classList.remove('open'); }
+      lb.addEventListener('click', function(e) { if (e.target !== lbImg) closeLb(); });
+      lb.querySelector('.lb-close').addEventListener('click', closeLb);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLb(); });
+    });
+
+    // ── Role gate ──
+  </script>
+
+  
+
+
+  <script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // One orchestrated entrance on first load of the overview; ordinary navigation uses the page transition.
+    document.body.classList.add('first-load');
+    setTimeout(function () { document.body.classList.remove('first-load'); }, 1400);
+
+    // Page transition
+    if (typeof window.showPage === 'function') {
+      var baseShowPage = window.showPage;
+      window.showPage = function (id, opts) {
+        var before = document.querySelector('.page.active');
+        baseShowPage(id, opts);
+        var now = document.querySelector('.page.active');
+        if (now && now !== before && !reduce) {
+          now.classList.remove('page-enter'); void now.offsetWidth; now.classList.add('page-enter');
+        }
+        requestAnimationFrame(function () { placeThumbs(); updateProgress(); syncNav(); });
+      };
+    }
+
+    // Collapsible navigation groups: only the group of the open article is expanded by default.
+    var NAV_KEY = 'sc-manual-nav-open';
+    var manual = {};
+    try { manual = JSON.parse(localStorage.getItem(NAV_KEY) || '{}'); } catch (e) {}
+    function setOpen(sec, open) {
+      sec.classList.toggle('open', open);
+      var btn = sec.querySelector('.nav-group-btn'); if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    function syncNav() {
+      var hash = (location.hash || '#home').slice(1);
+      var activePage = document.querySelector('.page.active');
+      var id = activePage ? activePage.id : hash;
+      document.querySelectorAll('.nav-section').forEach(function (sec) {
+        var has = !!sec.querySelector('a[href="#' + id + '"]');
+        sec.classList.toggle('has-active', has);
+        var g = sec.dataset.group;
+        if (has) setOpen(sec, true);
+        else setOpen(sec, manual[g] === true);
+      });
+    }
+    document.querySelectorAll('.nav-group-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var sec = btn.closest('.nav-section'), open = !sec.classList.contains('open');
+        setOpen(sec, open);
+        manual[sec.dataset.group] = open;
+        try { localStorage.setItem(NAV_KEY, JSON.stringify(manual)); } catch (e) {}
+      });
+    });
+    syncNav();
+
+    // Segmented platform control: sliding thumb
+    function placeThumbs() {
+      document.querySelectorAll('.ptabs').forEach(function (bar) {
+        var thumb = bar.querySelector('.ptab-thumb');
+        if (!thumb) { thumb = document.createElement('span'); thumb.className = 'ptab-thumb'; thumb.setAttribute('aria-hidden', 'true'); bar.prepend(thumb); }
+        var active = bar.querySelector('.ptab.active');
+        if (!active || !bar.offsetParent) return;
+        thumb.style.width = active.offsetWidth + 'px';
+        thumb.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+        if (!bar.classList.contains('ready')) requestAnimationFrame(function () { bar.classList.add('ready'); });
+      });
+    }
+    if (typeof window.setPlatform === 'function') {
+      var baseSetPlatform = window.setPlatform;
+      window.setPlatform = function (p) { baseSetPlatform(p); placeThumbs(); };
+    }
+    window.addEventListener('resize', placeThumbs);
+    placeThumbs();
+
+    // Reading progress
+    var bar = document.createElement('div'); bar.className = 'read-progress'; document.body.appendChild(bar);
+    function updateProgress() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, window.scrollY / h) : 0) + ')';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // FAQ: animate open and close
+    document.querySelectorAll('details').forEach(function (d) {
+      var summary = d.querySelector('summary'), body = d.querySelector('.faq-body');
+      if (!summary || !body || reduce || !body.animate) return;
+      summary.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (d.dataset.animating) return;
+        d.dataset.animating = '1';
+        if (!d.open) {
+          d.open = true;
+          var h = body.scrollHeight;
+          body.animate([{ height: '0px', opacity: 0 }, { height: h + 'px', opacity: 1 }], { duration: 380, easing: 'cubic-bezier(0.2,0.8,0.2,1)' })
+            .onfinish = function () { delete d.dataset.animating; };
+        } else {
+          var h2 = body.scrollHeight;
+          body.animate([{ height: h2 + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 260, easing: 'cubic-bezier(0.4,0,1,1)' })
+            .onfinish = function () { d.open = false; delete d.dataset.animating; };
+        }
+      });
+      body.style.overflow = 'hidden';
+    });
+  })();
+  </script>
+</body>
+</html>

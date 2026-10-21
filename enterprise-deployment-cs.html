@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Průvodce nasazením pro organizaci — SingleCase Outlook Add-in</title>
+  <link rel="icon" type="image/svg+xml" href="images/SingleCaseLogo.svg" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sc-blue:       #001F47;
+      --sc-blue-light: #e6eaf1;
+      --sc-blue-mid:   #b8c8de;
+      --sc-green:      #1a7c4b;
+      --sc-green-bg:   #d1fae5;
+      --sc-gray:       #6b7280;
+      --sc-gray-bg:    #f3f4f6;
+      --sc-gray-label: #9ca3af;
+      --sc-border:     #e5e7eb;
+      --sc-text:       #111827;
+      --sc-subtext:    #4b5563;
+      --sc-note-bg:    #fffbeb;
+      --sc-note-border:#f59e0b;
+      --sc-warn-bg:    #fef2f2;
+      --sc-warn-border:#ef4444;
+      --sidebar-w:     260px;
+      --content-max:   820px;
+      --radius:        8px;
+      --font:          'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono:          'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--sc-text);
+      background: #f8fafc;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav#sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid var(--sc-border);
+      overflow-y: auto;
+      padding: 0 0 32px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--sc-border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-brand .brand-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--sc-text);
+      line-height: 1.2;
+    }
+
+    .sidebar-brand .brand-sub {
+      font-size: 11px;
+      color: var(--sc-gray);
+      margin-top: 2px;
+    }
+
+    nav#sidebar ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+
+    nav#sidebar ul li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--sc-subtext);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    nav#sidebar ul li a:hover {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+    }
+
+    nav#sidebar ul li a.active {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+      font-weight: 600;
+    }
+
+    nav#sidebar ul li a .nav-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--sc-gray-label);
+      width: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-back {
+      padding: 12px 20px 4px;
+      border-bottom: 1px solid var(--sc-border);
+    }
+
+    .sidebar-back a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--sc-blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .sidebar-back a:hover { text-decoration: underline; }
+
+    .sidebar-toc-label {
+      padding: 14px 20px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sc-gray-label);
+    }
+
+    nav#sidebar ul.toc li a {
+      font-size: 12px;
+      padding: 5px 20px;
+      border-left: 3px solid transparent;
+    }
+
+    nav#sidebar ul.toc li a:hover {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+    }
+
+    /* ── Main Content ── */
+    main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 0 48px 80px;
+      max-width: calc(var(--sidebar-w) + var(--content-max) + 96px);
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 48px 0 36px;
+      border-bottom: 1px solid var(--sc-border);
+      margin-bottom: 48px;
+    }
+
+    .page-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sc-blue);
+      margin-bottom: 10px;
+    }
+
+    .page-header h1 {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--sc-text);
+      margin-bottom: 14px;
+    }
+
+    .page-header p {
+      font-size: 15px;
+      color: var(--sc-subtext);
+      max-width: 640px;
+      margin-bottom: 20px;
+    }
+
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--sc-gray-bg);
+      color: var(--sc-subtext);
+      border: 1px solid var(--sc-border);
+    }
+
+    .badge.blue { background: var(--sc-blue-light); color: var(--sc-blue); border-color: var(--sc-blue-mid); }
+    .badge.green { background: var(--sc-green-bg); color: var(--sc-green); border-color: #6ee7b7; }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 56px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--sc-blue-light);
+    }
+
+    .section-num {
+      width: 32px; height: 32px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section h2 {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--sc-text);
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--sc-text);
+      margin: 24px 0 8px;
+    }
+
+    p { margin-bottom: 14px; color: var(--sc-subtext); }
+    p:last-child { margin-bottom: 0; }
+
+    strong { color: var(--sc-text); font-weight: 600; }
+
+    /* ── Steps ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps > li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 44px;
+      margin-bottom: 32px;
+    }
+
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 28px; height: 28px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .steps > li > p { margin: 0 0 10px; }
+    .steps > li > p:last-child { margin-bottom: 0; }
+
+    /* ── Sub-bullets ── */
+    ul.sub {
+      list-style: none;
+      margin: 6px 0 10px 20px;
+    }
+
+    ul.sub li {
+      display: block;
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--sc-subtext);
+    }
+
+    ul.sub li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--sc-gray-label);
+    }
+
+    /* ── Screenshots ── */
+    .manual-img {
+      display: block;
+      max-width: 80%;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin: 14px 0 6px;
+    }
+
+    .img-caption {
+      font-size: 12px;
+      color: var(--sc-gray);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    /* ── Notes / callouts ── */
+    .note {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-note-bg);
+      border: 1px solid var(--sc-note-border);
+      border-left: 4px solid var(--sc-note-border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #78350f;
+    }
+
+    .note .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .tip {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-blue-light);
+      border: 1px solid var(--sc-blue-mid);
+      border-left: 4px solid var(--sc-blue);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #001F47;
+    }
+
+    .tip .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .success {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-green-bg);
+      border: 1px solid #6ee7b7;
+      border-left: 4px solid var(--sc-green);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #065f46;
+    }
+
+    .success .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Code ── */
+    code {
+      font-family: var(--mono);
+      font-size: 13px;
+      background: var(--sc-gray-bg);
+      border: 1px solid var(--sc-border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: #be185d;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    thead th:first-child { border-radius: var(--radius) 0 0 0; }
+    thead th:last-child  { border-radius: 0 var(--radius) 0 0; }
+
+    tbody tr { border-bottom: 1px solid var(--sc-border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+
+    tbody td {
+      padding: 10px 14px;
+      color: var(--sc-subtext);
+      vertical-align: top;
+    }
+
+    tbody td strong { color: var(--sc-text); }
+
+    /* ── Prereq cards ── */
+    .prereq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0 24px;
+    }
+
+    .prereq-card {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .prereq-card .card-icon { font-size: 20px; margin-bottom: 8px; }
+    .prereq-card h4 { font-size: 13px; font-weight: 700; color: var(--sc-text); margin-bottom: 4px; }
+    .prereq-card p  { font-size: 13px; margin: 0; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--sc-border);
+      font-size: 13px;
+      color: var(--sc-gray);
+      text-align: center;
+    }
+
+    footer a { color: var(--sc-blue); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      padding: 7px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--sc-gray);
+      background: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .lang-btn + .lang-btn {
+      border-left: 1px solid var(--sc-border);
+    }
+
+    .lang-btn.active {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+    }
+
+    /* ── Mobile menu toggle (hidden on desktop) ── */
+    .menu-toggle {
+      display: none;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 150;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 12px;
+        left: 14px;
+        z-index: 300;
+        width: 40px;
+        height: 40px;
+        background: var(--sc-blue);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        border-radius: 2px;
+        transition: transform 0.2s, opacity 0.2s;
+      }
+
+      .menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .menu-toggle.open span:nth-child(2) { opacity: 0; }
+      .menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      nav#sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 200;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+      }
+
+      nav#sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.visible {
+        display: block;
+      }
+
+      main {
+        margin-left: 0;
+        padding: 72px 16px 60px;
+        max-width: 100%;
+      }
+
+      .lang-switcher {
+        top: 12px;
+        right: 14px;
+      }
+
+      .cover {
+        padding: 28px 0 24px;
+        margin-bottom: 28px;
+      }
+
+      .cover h1 { font-size: 26px; }
+
+      .section { margin-bottom: 40px; }
+
+      .manual-img { max-width: 100% !important; }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .steps > li { padding-left: 36px; }
+    }
+
+    @media print {
+      nav#sidebar { display: none; }
+      main { margin-left: 0; padding: 0; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Otevřít navigaci">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="lang-switcher">
+  <a href="enterprise-deployment.html" class="lang-btn">EN</a>
+  <a href="enterprise-deployment-cs.html" class="lang-btn active">CS</a>
+</div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-row">
+      <img src="images/SingleCaseLogo.svg" alt="SingleCase" style="width: 32px; height: 32px; flex-shrink: 0;">
+      <span class="brand-name">SingleCase</span>
+    </div>
+    <div class="brand-sub">Outlook Add-in · IT průvodce</div>
+  </div>
+
+  <div class="sidebar-back">
+    <a href="index-cs.html">← Zpět na uživatelskou příručku</a>
+  </div>
+
+  <div class="sidebar-toc-label">Na této stránce</div>
+
+  <ul class="toc">
+    <li><a href="#manifests">Soubory manifestu</a></li>
+    <li><a href="#prereqs">Požadavky</a></li>
+    <li><a href="#step1">1 — Otevření integrovaných aplikací</a></li>
+    <li><a href="#step2">2 — Nahrání manifestu</a></li>
+    <li><a href="#step3">3 — Přiřazení uživatelů</a></li>
+    <li><a href="#step4">4 — Kontrola oprávnění</a></li>
+    <li><a href="#step5">5 — Dokončení nasazení</a></li>
+    <li><a href="#step6">6 — Ověření a správa</a></li>
+    <li><a href="#after">7 — Po nasazení</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-eyebrow">Průvodce pro IT administrátory</div>
+    <h1>Nasazení pro organizaci</h1>
+    <p>Nasaďte doplněk SingleCase pro Outlook v celé organizaci — nebo jen pro vybranou skupinu uživatelů — prostřednictvím Centra pro správu Microsoft 365. Po nasazení není ze strany koncových uživatelů vyžadována žádná akce.</p>
+  </div>
+
+  <!-- Manifest files -->
+  <div class="section" id="manifests">
+    <div class="section-header">
+      <h2>Soubory manifestu</h2>
+    </div>
+    <p>Správný soubor manifestu pro vaše prostředí získáte pomocí <a href="manifest-generator.html" style="color:var(--sc-blue);font-weight:600;">Generátoru manifestu</a>. Zadejte URL vašeho SingleCase workspace a soubor stáhněte.</p>
+  </div>
+
+  <!-- Prerequisites -->
+  <div class="section" id="prereqs">
+    <div class="section-header">
+      <h2>Požadavky</h2>
+    </div>
+    <p>Před zahájením se ujistěte, že máte k dispozici následující:</p>
+    <div class="prereq-grid">
+      <div class="prereq-card">
+        <div class="card-icon">🔑</div>
+        <h4>Oprávnění správce</h4>
+        <p>Účet Microsoft 365 s rolí <strong>Globální správce</strong> nebo <strong>Správce aplikací</strong>.</p>
+      </div>
+      <div class="prereq-card">
+        <div class="card-icon">📄</div>
+        <h4>Soubor manifestu</h4>
+        <p>Stáhněte správný soubor pomocí <a href="manifest-generator.html" style="color:var(--sc-blue)">Generátoru manifestu</a>.</p>
+      </div>
+      <div class="prereq-card">
+        <div class="card-icon">🏢</div>
+        <h4>Tenant Microsoft 365</h4>
+        <p>Uživatelé musí mít účty Microsoft 365 s přístupem k Outlooku (Exchange Online nebo Outlook na webu).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="section" id="step1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Otevření integrovaných aplikací v Centru pro správu</h2>
+    </div>
+
+    <p>Přihlaste se do <strong>Centra pro správu Microsoft 365</strong> na adrese <a href="https://admin.microsoft.com" target="_blank" rel="noopener" style="color:var(--sc-blue)">admin.microsoft.com</a> a v levém postranním panelu přejděte na <strong>Nastavení → Integrované aplikace</strong>.</p>
+    <p>Na kartě <strong>Nasazené aplikace</strong> klikněte na <strong>Nahrát vlastní aplikace</strong> (pro soubor manifestu) — nebo použijte vyhledávací pole k nalezení SingleCase v Microsoft 365 App Store a vyberte jej.</p>
+
+    <img src="images/deploy-step1-integrated-apps.png"
+         alt="Centrum pro správu Microsoft 365 zobrazující stránku Integrované aplikace se zvýrazněným tlačítkem Nahrát vlastní aplikace"
+         class="manual-img">
+    <p class="img-caption">Nastavení → Integrované aplikace — klikněte na „Nahrát vlastní aplikace" a začněte.</p>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="section" id="step2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Nahrání souboru manifestu</h2>
+    </div>
+
+    <p>Pokud nahráváte manifest: v průvodci <strong>Nasadit novou aplikaci</strong> vyberte jako typ aplikace <strong>Office Add-in</strong> a nahrajte stažený soubor manifestu.</p>
+    <p>Centrum pro správu soubor automaticky ověří. Počkejte na zelené potvrzení <strong>Soubor manifestu ověřen</strong> a poté klikněte na <strong>Další</strong>.</p>
+
+    <img src="images/deploy-step2-upload-manifest.png"
+         alt="Průvodce nasazením nové aplikace zobrazující vybraný typ Office Add-in a ověřený soubor manifestu"
+         class="manual-img">
+    <p class="img-caption">Vyberte „Office Add-in", nahrajte manifest a počkejte na zelené potvrzení ověření.</p>
+
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <div>Pokud ověření selže, zkontrolujte, zda používáte správný soubor manifestu a zda nebyl upraven. Pokud problém přetrvává, kontaktujte <a href="mailto:support@singlecase.com" style="color:#92400e">podporu SingleCase</a>.</div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="section" id="step3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Přiřazení uživatelů</h2>
+    </div>
+
+    <p>V kroku <strong>Přidat uživatele</strong> zvolte, kdo má doplněk obdržet:</p>
+
+    <table>
+      <thead>
+        <tr><th>Možnost</th><th>Kdo doplněk obdrží</th><th>Doporučené použití</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Jen já</strong></td>
+          <td>Pouze váš účet</td>
+          <td>Rychlé ověření před nasazením pro ostatní</td>
+        </tr>
+        <tr>
+          <td><strong>Celá organizace</strong></td>
+          <td>Všichni uživatelé ve vašem tenantovi Microsoft 365</td>
+          <td>Nasazení pro celou firmu</td>
+        </tr>
+        <tr>
+          <td><strong>Konkrétní uživatelé / skupiny</strong></td>
+          <td>Definovaný seznam jednotlivých uživatelů nebo bezpečnostních skupin</td>
+          <td>Cílené nebo postupné nasazení</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Pokud zvolíte <strong>Konkrétní uživatelé / skupiny</strong>, zadejte do vyhledávacího pole jméno nebo e-mail každého uživatele a přidejte ho do seznamu. Po dokončení klikněte na <strong>Další</strong>.</p>
+
+    <img src="images/deploy-step3-add-users.png"
+         alt="Krok přidání uživatelů zobrazující vybranou možnost Konkrétní uživatelé/skupiny se seznamem jednotlivých uživatelů"
+         class="manual-img">
+    <p class="img-caption">Vyberte „Konkrétní uživatelé/skupiny" a vyhledejte uživatele nebo skupiny, které chcete přidat.</p>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>Místo jednotlivých uživatelů můžete přidat bezpečnostní skupiny Microsoft 365. Správa přístupu je pak jednodušší — stačí přidávat nebo odebírat osoby ze skupiny, aniž byste museli měnit nastavení nasazení doplňku.</div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="section" id="step4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Kontrola a přijetí oprávnění</h2>
+    </div>
+
+    <p>Průvodce zobrazí souhrn všech <strong>oprávnění a schopností aplikace</strong>, které SingleCase požaduje. Před pokračováním je pečlivě zkontrolujte.</p>
+
+    <p>Doplněk SingleCase požaduje následující:</p>
+
+    <h3>Oprávnění aplikace</h3>
+    <ul class="sub">
+      <li>Čtení primární e-mailové adresy uživatelů</li>
+      <li>Umožnění přihlášení uživatelů pomocí pracovního nebo školního účtu (přístup k základnímu profilu)</li>
+      <li>Čtení základního profilu uživatele (jméno, fotografie, uživatelské jméno, e-mailová adresa)</li>
+    </ul>
+
+    <h3>Schopnosti aplikace</h3>
+    <ul class="sub">
+      <li><strong>ReadWriteMailbox</strong> — přístup ke čtení a zápisu položek poštovní schránky pro umožnění archivace</li>
+      <li><strong>SendReceiveData</strong> — odesílání a příjem dat na server SingleCase</li>
+      <li><strong>ProfileAccess</strong> — přístup k uživatelskému profilu pro ověřování identity</li>
+      <li>Aplikace se může spouštět automaticky při odeslání zprávy uživatelem</li>
+    </ul>
+
+    <img src="images/deploy-step4-permissions.png"
+         alt="Obrazovka přijetí požadavků na oprávnění zobrazující oprávnění a schopnosti SingleCase se stavem Oprávnění přijata"
+         class="manual-img">
+    <p class="img-caption">Zkontrolujte seznam oprávnění — před kliknutím na Další by měl stav zobrazovat „Oprávnění přijata".</p>
+
+    <p>Pokud se zobrazí dialog souhlasu Microsoft s žádostí o přijetí oprávnění jménem vaší organizace, klikněte na <strong>Accept</strong> (Přijmout). Tím udělíte aplikaci přístup pro všechny přiřazené uživatele, aniž by každý z nich musel souhlas udělovat samostatně.</p>
+
+    <img src="images/deploy-step4b-consent.png"
+         alt="Dialog souhlasu s oprávněními Microsoft pro doplněk SingleCase pro Outlook"
+         class="manual-img"
+         style="max-width: 45%;">
+    <p class="img-caption">Přijměte souhlas platný pro celou organizaci jménem svých uživatelů.</p>
+
+    <p>Pokračujte kliknutím na <strong>Další</strong>.</p>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="section" id="step5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Kontrola a dokončení nasazení</h2>
+    </div>
+
+    <p>Poslední obrazovka průvodce zobrazuje souhrn veškerého nastavení:</p>
+    <ul class="sub">
+      <li>Nasazovaná aplikace (<strong>SingleCase</strong> pro Outlook)</li>
+      <li>Přiřazení uživatelé nebo skupiny</li>
+    </ul>
+
+    <p>Potvrďte správnost údajů a klikněte na <strong>Dokončit nasazení</strong>.</p>
+
+    <img src="images/deploy-step5-review-finish.png"
+         alt="Obrazovka kontroly a dokončení nasazení zobrazující souhrn aplikace SingleCase a přiřazených uživatelů"
+         class="manual-img">
+    <p class="img-caption">Zkontrolujte souhrn a klikněte na „Dokončit nasazení" pro dokončení procesu.</p>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>Nasazení obvykle proběhne během několika minut, ale zobrazení doplňku v Outlooku u všech přiřazených uživatelů může trvat <strong>až 24 hodin</strong> — v závislosti na velikosti vašeho tenanta Microsoft 365 a cyklech obnovení mezipaměti.</div>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="section" id="step6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Ověření nasazení</h2>
+    </div>
+
+    <p>Po dokončení nasazení se SingleCase zobrazí v seznamu <strong>Nasazených aplikací</strong> na stránce Integrované aplikace se stavem <span style="color:var(--sc-green);font-weight:600">✔ OK</span>.</p>
+
+    <img src="images/deploy-step6-deployed-list.png"
+         alt="Seznam nasazených aplikací v Integrovaných aplikacích zobrazující SingleCase TEST se stavem OK"
+         class="manual-img">
+    <p class="img-caption">SingleCase se nyní zobrazuje v seznamu nasazených aplikací se stavem OK.</p>
+
+    <p>Kliknutím na řádek aplikace otevřete panel s podrobnostmi. Zde můžete:</p>
+    <ul class="sub">
+      <li>Zobrazit stav nasazení, typ aplikace a popis</li>
+      <li>Zkontrolovat, kteří uživatelé jsou přiřazeni</li>
+      <li>Pomocí <strong>Aktualizovat doplněk</strong> nahrát novou verzi manifestu</li>
+      <li>Pomocí <strong>Odebrat aplikaci</strong> odinstalovat doplněk od všech přiřazených uživatelů</li>
+    </ul>
+
+    <img src="images/deploy-step6-app-detail.png"
+         alt="Panel s podrobnostmi aplikace SingleCase zobrazující stav OK, hostitelský produkt Outlook, přiřazené uživatele a akční odkazy"
+         class="manual-img"
+         style="max-width: 50%;">
+    <p class="img-caption">Panel s podrobnostmi aplikace — spravujte přiřazené uživatele a aktualizujte nebo odeberte doplněk.</p>
+
+    <div class="success">
+      <span class="note-icon">✅</span>
+      <div>Nasazení je dokončeno. Při příštím otevření Outlooku se přiřazeným uživatelům automaticky zobrazí tlačítko <strong>SingleCase</strong> v jejich pásu karet — nevyžaduje se žádná instalace ani akce z jejich strany.</div>
+    </div>
+  </div>
+
+  <!-- After deployment -->
+  <div class="section" id="after">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Po nasazení</h2>
+    </div>
+
+    <h3>Uživatelský zážitek</h3>
+    <p>Přiřazení uživatelé uvidí tlačítko SingleCase ve svém pásu karet Outlooku (Windows, Mac) nebo ikonu aplikace v Outlooku na webu při příštím otevření Outlooku. Při prvním použití budou vyzváni k přihlášení do svého pracovního prostoru SingleCase — tento krok se provede pouze jednou.</p>
+
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <div><strong>Jako první se musí přihlásit administrátor SingleCase.</strong> Než se mohou běžní uživatelé přihlásit k doplňku, musí doplněk otevřít a přihlásit se přes svůj Microsoft účet uživatel s <strong>rolí administrátora v SingleCase</strong>. Tento jednorázový krok propojí Microsoft 365 tenant vaší organizace s vaším pracovním prostorem SingleCase. Jakmile se administrátor úspěšně přihlásí, mohou se ostatní uživatelé přihlašovat normálně. Pokud se běžný uživatel pokusí přihlásit před dokončením tohoto kroku, zobrazí se mu chyba.</div>
+    </div>
+
+    <h3>Automatické aktualizace</h3>
+    <p>Doplněk se aktualizuje automaticky. Jakmile SingleCase zveřejní novou verzi, všichni přiřazení uživatelé obdrží aktualizaci při příštím otevření Outlooku. Opakované nasazení není potřeba.</p>
+    <p>Výjimkou jsou změny metadat: protože je SingleCase doplněk pro firmu (LOB), musí administrátor nahrát nový soubor manifestu — vyberte doplněk a klikněte na tlačítko <strong>Aktualizovat</strong> v pravém dolním rohu; doplněk se pak aktualizuje při dalším spuštění Outlooku.</p>
+
+    <h3>Správa uživatelů po nasazení</h3>
+    <p>Chcete-li přidat nebo odebrat uživatele po počátečním nasazení, otevřete panel s podrobnostmi aplikace v části <strong>Nastavení → Integrované aplikace</strong> a přejděte na kartu <strong>Uživatelé</strong>. Změny se projeví v rámci standardní doby šíření.</p>
+
+    <h3>Odebrání doplňku</h3>
+    <p>Chcete-li doplněk odinstalovat od všech uživatelů, otevřete panel s podrobnostmi aplikace a klikněte na <strong>Odebrat aplikaci</strong>. Tím se doplněk odebere ze všech instalací Outlooku přiřazených uživatelů.</p>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>Potřebujete pomoc? Kontaktujte podporu SingleCase na adrese <a href="mailto:support@singlecase.com" style="color:var(--sc-blue)">support@singlecase.com</a>.</div>
+    </div>
+  </div>
+
+  <footer>
+    <p>SingleCase Outlook Add-in &mdash; Průvodce pro IT administrátory &mdash; duben 2026</p>
+    <p style="margin-top:4px"><a href="index-cs.html">← Zpět na uživatelskou příručku</a></p>
+  </footer>
+
+</main>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    menuToggle.classList.add('open');
+    menuToggle.setAttribute('aria-label', 'Zavřít navigaci');
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-label', 'Otevřít navigaci');
+  }
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+
+  sidebar.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+</script>
+
+<script>
+function forceDownload(e, url, filename) {
+  e.preventDefault();
+  fetch(url)
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+}
+</script>
+
+</body>
+</html>

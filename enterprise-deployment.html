@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise Deployment Guide — SingleCase Outlook Add-in</title>
+  <link rel="icon" type="image/svg+xml" href="images/SingleCaseLogo.svg" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sc-blue:       #001F47;
+      --sc-blue-light: #e6eaf1;
+      --sc-blue-mid:   #b8c8de;
+      --sc-green:      #1a7c4b;
+      --sc-green-bg:   #d1fae5;
+      --sc-gray:       #6b7280;
+      --sc-gray-bg:    #f3f4f6;
+      --sc-gray-label: #9ca3af;
+      --sc-border:     #e5e7eb;
+      --sc-text:       #111827;
+      --sc-subtext:    #4b5563;
+      --sc-note-bg:    #fffbeb;
+      --sc-note-border:#f59e0b;
+      --sc-warn-bg:    #fef2f2;
+      --sc-warn-border:#ef4444;
+      --sidebar-w:     260px;
+      --content-max:   820px;
+      --radius:        8px;
+      --font:          'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono:          'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--sc-text);
+      background: #f8fafc;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav#sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid var(--sc-border);
+      overflow-y: auto;
+      padding: 0 0 32px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--sc-border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-brand .brand-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--sc-text);
+      line-height: 1.2;
+    }
+
+    .sidebar-brand .brand-sub {
+      font-size: 11px;
+      color: var(--sc-gray);
+      margin-top: 2px;
+    }
+
+    nav#sidebar ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+
+    nav#sidebar ul li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--sc-subtext);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    nav#sidebar ul li a:hover {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+    }
+
+    nav#sidebar ul li a.active {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+      font-weight: 600;
+    }
+
+    nav#sidebar ul li a .nav-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--sc-gray-label);
+      width: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-back {
+      padding: 12px 20px 4px;
+      border-bottom: 1px solid var(--sc-border);
+    }
+
+    .sidebar-back a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--sc-blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .sidebar-back a:hover { text-decoration: underline; }
+
+    .sidebar-toc-label {
+      padding: 14px 20px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sc-gray-label);
+    }
+
+    nav#sidebar ul.toc li a {
+      font-size: 12px;
+      padding: 5px 20px;
+      border-left: 3px solid transparent;
+    }
+
+    nav#sidebar ul.toc li a:hover {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+    }
+
+    /* ── Main Content ── */
+    main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 0 48px 80px;
+      max-width: calc(var(--sidebar-w) + var(--content-max) + 96px);
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 48px 0 36px;
+      border-bottom: 1px solid var(--sc-border);
+      margin-bottom: 48px;
+    }
+
+    .page-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sc-blue);
+      margin-bottom: 10px;
+    }
+
+    .page-header h1 {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--sc-text);
+      margin-bottom: 14px;
+    }
+
+    .page-header p {
+      font-size: 15px;
+      color: var(--sc-subtext);
+      max-width: 640px;
+      margin-bottom: 20px;
+    }
+
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--sc-gray-bg);
+      color: var(--sc-subtext);
+      border: 1px solid var(--sc-border);
+    }
+
+    .badge.blue { background: var(--sc-blue-light); color: var(--sc-blue); border-color: var(--sc-blue-mid); }
+    .badge.green { background: var(--sc-green-bg); color: var(--sc-green); border-color: #6ee7b7; }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 56px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--sc-blue-light);
+    }
+
+    .section-num {
+      width: 32px; height: 32px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section h2 {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--sc-text);
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--sc-text);
+      margin: 24px 0 8px;
+    }
+
+    p { margin-bottom: 14px; color: var(--sc-subtext); }
+    p:last-child { margin-bottom: 0; }
+
+    strong { color: var(--sc-text); font-weight: 600; }
+
+    /* ── Steps ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps > li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 44px;
+      margin-bottom: 32px;
+    }
+
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 28px; height: 28px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .steps > li > p { margin: 0 0 10px; }
+    .steps > li > p:last-child { margin-bottom: 0; }
+
+    /* ── Sub-bullets ── */
+    ul.sub {
+      list-style: none;
+      margin: 6px 0 10px 20px;
+    }
+
+    ul.sub li {
+      display: block;
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--sc-subtext);
+    }
+
+    ul.sub li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--sc-gray-label);
+    }
+
+    /* ── Screenshots ── */
+    .manual-img {
+      display: block;
+      max-width: 80%;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin: 14px 0 6px;
+    }
+
+    .img-caption {
+      font-size: 12px;
+      color: var(--sc-gray);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    /* ── Notes / callouts ── */
+    .note {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-note-bg);
+      border: 1px solid var(--sc-note-border);
+      border-left: 4px solid var(--sc-note-border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #78350f;
+    }
+
+    .note .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .tip {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-blue-light);
+      border: 1px solid var(--sc-blue-mid);
+      border-left: 4px solid var(--sc-blue);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #001F47;
+    }
+
+    .tip .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .success {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-green-bg);
+      border: 1px solid #6ee7b7;
+      border-left: 4px solid var(--sc-green);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #065f46;
+    }
+
+    .success .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Code ── */
+    code {
+      font-family: var(--mono);
+      font-size: 13px;
+      background: var(--sc-gray-bg);
+      border: 1px solid var(--sc-border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: #be185d;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    thead th:first-child { border-radius: var(--radius) 0 0 0; }
+    thead th:last-child  { border-radius: 0 var(--radius) 0 0; }
+
+    tbody tr { border-bottom: 1px solid var(--sc-border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+
+    tbody td {
+      padding: 10px 14px;
+      color: var(--sc-subtext);
+      vertical-align: top;
+    }
+
+    tbody td strong { color: var(--sc-text); }
+
+    /* ── Prereq cards ── */
+    .prereq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0 24px;
+    }
+
+    .prereq-card {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .prereq-card .card-icon { font-size: 20px; margin-bottom: 8px; }
+    .prereq-card h4 { font-size: 13px; font-weight: 700; color: var(--sc-text); margin-bottom: 4px; }
+    .prereq-card p  { font-size: 13px; margin: 0; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--sc-border);
+      font-size: 13px;
+      color: var(--sc-gray);
+      text-align: center;
+    }
+
+    footer a { color: var(--sc-blue); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      padding: 7px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--sc-gray);
+      background: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .lang-btn + .lang-btn {
+      border-left: 1px solid var(--sc-border);
+    }
+
+    .lang-btn.active {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+    }
+
+    /* ── Mobile menu toggle (hidden on desktop) ── */
+    .menu-toggle {
+      display: none;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 150;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 12px;
+        left: 14px;
+        z-index: 300;
+        width: 40px;
+        height: 40px;
+        background: var(--sc-blue);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        border-radius: 2px;
+        transition: transform 0.2s, opacity 0.2s;
+      }
+
+      .menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .menu-toggle.open span:nth-child(2) { opacity: 0; }
+      .menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      nav#sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 200;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+      }
+
+      nav#sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.visible {
+        display: block;
+      }
+
+      main {
+        margin-left: 0;
+        padding: 72px 16px 60px;
+        max-width: 100%;
+      }
+
+      .lang-switcher {
+        top: 12px;
+        right: 14px;
+      }
+
+      .cover {
+        padding: 28px 0 24px;
+        margin-bottom: 28px;
+      }
+
+      .cover h1 { font-size: 26px; }
+
+      .section { margin-bottom: 40px; }
+
+      .manual-img { max-width: 100% !important; }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .steps > li { padding-left: 36px; }
+    }
+
+    @media print {
+      nav#sidebar { display: none; }
+      main { margin-left: 0; padding: 0; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Open navigation">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="lang-switcher">
+  <a href="enterprise-deployment.html" class="lang-btn active">EN</a>
+  <a href="enterprise-deployment-cs.html" class="lang-btn">CS</a>
+</div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-row">
+      <img src="images/SingleCaseLogo.svg" alt="SingleCase" style="width: 32px; height: 32px; flex-shrink: 0;">
+      <span class="brand-name">SingleCase</span>
+    </div>
+    <div class="brand-sub">Outlook Add-in · IT Guide</div>
+  </div>
+
+  <div class="sidebar-back">
+    <a href="index.html">← Back to User Manual</a>
+  </div>
+
+  <div class="sidebar-toc-label">On this page</div>
+
+  <ul class="toc">
+    <li><a href="#manifests">Manifest files</a></li>
+    <li><a href="#prereqs">Prerequisites</a></li>
+    <li><a href="#step1">1 — Open Integrated Apps</a></li>
+    <li><a href="#step2">2 — Upload the manifest</a></li>
+    <li><a href="#step3">3 — Assign users</a></li>
+    <li><a href="#step4">4 — Review permissions</a></li>
+    <li><a href="#step5">5 — Finish deployment</a></li>
+    <li><a href="#step6">6 — Verify &amp; manage</a></li>
+    <li><a href="#after">After deployment</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-eyebrow">IT Administrator Guide</div>
+    <h1>Enterprise Deployment</h1>
+    <p>Deploy the SingleCase Outlook Add-in to your entire organization — or to a specific set of users — through the Microsoft 365 Admin Center. No action is needed from end users once deployed.</p>
+  </div>
+
+  <!-- Manifest files -->
+  <div class="section" id="manifests">
+    <div class="section-header">
+      <h2>Manifest files</h2>
+    </div>
+    <p>Use the <a href="manifest-generator.html" style="color:var(--sc-blue);font-weight:600;">Manifest Generator</a> to get the correct manifest file for your environment. Enter your SingleCase workspace URL and download the file.</p>
+  </div>
+
+  <!-- Prerequisites -->
+  <div class="section" id="prereqs">
+    <div class="section-header">
+      <h2>Prerequisites</h2>
+    </div>
+    <p>Before you start, make sure you have the following:</p>
+    <div class="prereq-grid">
+      <div class="prereq-card">
+        <div class="card-icon">🔑</div>
+        <h4>Admin privileges</h4>
+        <p>A Microsoft 365 account with <strong>Global Administrator</strong> or <strong>Application Administrator</strong> role.</p>
+      </div>
+      <div class="prereq-card">
+        <div class="card-icon">📄</div>
+        <h4>Manifest file</h4>
+        <p>Use the <a href="manifest-generator.html" style="color:var(--sc-blue)">Manifest Generator</a> to download the correct file for your environment.</p>
+      </div>
+      <div class="prereq-card">
+        <div class="card-icon">🏢</div>
+        <h4>Microsoft 365 tenant</h4>
+        <p>Users must have Microsoft 365 accounts with Outlook access (Exchange Online or Outlook on the Web).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="section" id="step1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Open Integrated Apps in the Admin Center</h2>
+    </div>
+
+    <p>Sign in to the <strong>Microsoft 365 Admin Center</strong> at <a href="https://admin.microsoft.com" target="_blank" rel="noopener" style="color:var(--sc-blue)">admin.microsoft.com</a> and navigate to <strong>Settings → Integrated apps</strong> in the left sidebar.</p>
+    <p>On the <strong>Deployed apps</strong> tab, click <strong>Upload custom apps</strong> (for a manifest file) — or use the search box to find SingleCase in the Microsoft 365 App Store and select it.</p>
+
+    <img src="images/deploy-step1-integrated-apps.png"
+         alt="Microsoft 365 Admin Center showing the Integrated Apps page with the Upload custom apps button highlighted"
+         class="manual-img">
+    <p class="img-caption">Settings → Integrated apps — click "Upload custom apps" to begin.</p>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="section" id="step2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Upload the manifest file</h2>
+    </div>
+
+    <p>If uploading a manifest: in the <strong>Deploy New App</strong> wizard, select <strong>Office Add-in</strong> as the app type, then upload the manifest file you downloaded.</p>
+    <p>The Admin Center validates the file automatically. Wait for the green <strong>Manifest file validated</strong> confirmation, then click <strong>Next</strong>.</p>
+
+    <img src="images/deploy-step2-upload-manifest.png"
+         alt="Deploy New App wizard showing Office Add-in type selected and manifest file validated"
+         class="manual-img">
+    <p class="img-caption">Select "Office Add-in", upload the manifest, and wait for the green validation confirmation.</p>
+
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <div>If validation fails, check that you are using the correct manifest file and that it has not been modified. Contact <a href="mailto:support@singlecase.com" style="color:#92400e">SingleCase support</a> if the issue persists.</div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="section" id="step3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Assign users</h2>
+    </div>
+
+    <p>In the <strong>Add users</strong> step, choose who should receive the add-in:</p>
+
+    <table>
+      <thead>
+        <tr><th>Option</th><th>Who gets the add-in</th><th>Recommended use</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Just me</strong></td>
+          <td>Your account only</td>
+          <td>Quick validation before rolling out to others</td>
+        </tr>
+        <tr>
+          <td><strong>Entire organization</strong></td>
+          <td>All users in your Microsoft 365 tenant</td>
+          <td>Firm-wide rollout</td>
+        </tr>
+        <tr>
+          <td><strong>Specific users / groups</strong></td>
+          <td>A defined list of individual users or security groups</td>
+          <td>Targeted or phased rollout</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>If you choose <strong>Specific users / groups</strong>, type each user's name or email in the search box and add them to the list. Click <strong>Next</strong> when done.</p>
+
+    <img src="images/deploy-step3-add-users.png"
+         alt="Add users step showing Specific users/groups selected with individual users listed"
+         class="manual-img">
+    <p class="img-caption">Select "Specific users/groups" and search for users or groups to add.</p>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>You can add Microsoft 365 security groups rather than individual users. This makes it easy to manage access later — just add or remove people from the group without touching the add-in deployment.</div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="section" id="step4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Review and accept permissions</h2>
+    </div>
+
+    <p>The wizard shows a summary of all <strong>App Permissions and Capabilities</strong> that SingleCase requests. Review them carefully before proceeding.</p>
+
+    <p>The SingleCase add-in requests the following:</p>
+
+    <h3>App permissions</h3>
+    <ul class="sub">
+      <li>Read users' primary email address</li>
+      <li>Allow users to sign in with their work or school account (basic profile access)</li>
+      <li>Read basic user profile (name, picture, username, email address)</li>
+    </ul>
+
+    <h3>App capabilities</h3>
+    <ul class="sub">
+      <li><strong>ReadWriteMailbox</strong> — read and write access to mailbox items to enable filing</li>
+      <li><strong>SendReceiveData</strong> — send and receive data to the SingleCase server</li>
+      <li><strong>ProfileAccess</strong> — access user profile for authentication</li>
+      <li>The app can launch automatically when the user sends a message</li>
+    </ul>
+
+    <img src="images/deploy-step4-permissions.png"
+         alt="Accept permissions requests screen showing SingleCase permissions and capabilities with Permissions accepted status"
+         class="manual-img">
+    <p class="img-caption">Review the permissions list — the status should show "Permissions accepted" before you click Next.</p>
+
+    <p>If a Microsoft consent dialog appears asking you to accept permissions on behalf of your organization, click <strong>Accept</strong> (Přijmout). This grants the app access for all assigned users without requiring each person to consent individually.</p>
+
+    <img src="images/deploy-step4b-consent.png"
+         alt="Microsoft permissions consent dialog for SingleCase Outlook Add-in"
+         class="manual-img"
+         style="max-width: 45%;">
+    <p class="img-caption">Accept the organization-wide consent on behalf of your users.</p>
+
+    <p>Click <strong>Next</strong> to continue.</p>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="section" id="step5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Review and finish deployment</h2>
+    </div>
+
+    <p>The final wizard screen shows a summary of everything you configured:</p>
+    <ul class="sub">
+      <li>The app being deployed (<strong>SingleCase</strong> for Outlook)</li>
+      <li>The assigned users or groups</li>
+    </ul>
+
+    <p>Confirm the details are correct, then click <strong>Finish deployment</strong>.</p>
+
+    <img src="images/deploy-step5-review-finish.png"
+         alt="Review and finish deployment screen showing SingleCase app and assigned users summary"
+         class="manual-img">
+    <p class="img-caption">Review the summary and click "Finish deployment" to complete the process.</p>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>Deployment typically completes within a few minutes, but it can take <strong>up to 24 hours</strong> for the add-in to appear in Outlook for all assigned users, depending on your Microsoft 365 tenant size and cache refresh cycles.</div>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="section" id="step6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Verify the deployment</h2>
+    </div>
+
+    <p>Once the deployment completes, SingleCase will appear in the <strong>Deployed apps</strong> list on the Integrated apps page with a status of <span style="color:var(--sc-green);font-weight:600">✔ OK</span>.</p>
+
+    <img src="images/deploy-step6-deployed-list.png"
+         alt="Integrated Apps deployed apps list showing SingleCase TEST with OK status"
+         class="manual-img">
+    <p class="img-caption">SingleCase now appears in the deployed apps list with an OK status.</p>
+
+    <p>Click on the app row to open the detail panel. Here you can:</p>
+    <ul class="sub">
+      <li>See the deployment status, app type, and description</li>
+      <li>Review which users are assigned</li>
+      <li>Use <strong>Update add-in</strong> to push a new manifest version</li>
+      <li>Use <strong>Remove app</strong> to uninstall from all assigned users</li>
+    </ul>
+
+    <img src="images/deploy-step6-app-detail.png"
+         alt="SingleCase app detail panel showing status OK, host product Outlook, assigned users, and action links"
+         class="manual-img"
+         style="max-width: 50%;">
+    <p class="img-caption">The app detail panel — manage assigned users and update or remove the add-in from here.</p>
+
+    <div class="success">
+      <span class="note-icon">✅</span>
+      <div>Deployment is complete. The next time assigned users open Outlook, the <strong>SingleCase</strong> button will appear automatically in their ribbon — no installation or action required on their part.</div>
+    </div>
+  </div>
+
+  <!-- After deployment -->
+  <div class="section" id="after">
+    <div class="section-header">
+      <h2>After deployment</h2>
+    </div>
+
+    <h3>User experience</h3>
+    <p>Assigned users will see the SingleCase button in their Outlook ribbon (Windows, Mac) or the app icon in Outlook on the Web the next time they open Outlook. They will be prompted to sign in to their SingleCase workspace on first use — this is a one-time step.</p>
+
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <div><strong>A SingleCase administrator must sign in first.</strong> Before regular users can use the add-in, a user with the <strong>administrator role in SingleCase</strong> must open the add-in and sign in with their Microsoft account. This one-time step links your organisation's Microsoft 365 tenant to your SingleCase workspace. Once the administrator has signed in successfully, all other users can sign in normally. If a regular user attempts to sign in before this step is completed, they will see an error.</div>
+    </div>
+
+    <h3>Automatic updates</h3>
+    <p>The add-in updates automatically. When SingleCase publishes a new version, all assigned users receive the update the next time they open Outlook. No re-deployment is needed.</p>
+    <p>Metadata changes are the exception: because SingleCase is a line-of-business (LOB) add-in, the admin must upload the new manifest file — select the add-in and choose the <strong>Update</strong> button in the bottom-right corner, and the add-in updates the next time a user starts Outlook.</p>
+
+    <h3>Managing users after deployment</h3>
+    <p>To add or remove users after the initial deployment, open the app detail panel from <strong>Settings → Integrated apps</strong> and go to the <strong>Users</strong> tab. Changes take effect within the standard propagation window.</p>
+
+    <h3>Removing the add-in</h3>
+    <p>To uninstall the add-in from all users, open the app detail panel and click <strong>Remove app</strong>. This removes it from all assigned users' Outlook installations.</p>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>Need help? Contact SingleCase support at <a href="mailto:support@singlecase.com" style="color:var(--sc-blue)">support@singlecase.com</a>.</div>
+    </div>
+  </div>
+
+  <footer>
+    <p>SingleCase Outlook Add-in &mdash; IT Administrator Guide &mdash; April 2026</p>
+    <p style="margin-top:4px"><a href="index.html">← Back to User Manual</a></p>
+  </footer>
+
+</main>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    menuToggle.classList.add('open');
+    menuToggle.setAttribute('aria-label', 'Close navigation');
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-label', 'Open navigation');
+  }
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+
+  sidebar.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+</script>
+
+<script>
+function forceDownload(e, url, filename) {
+  e.preventDefault();
+  fetch(url)
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+}
+</script>
+
+</body>
+</html>

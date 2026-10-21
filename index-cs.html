@@ -1,0 +1,3597 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="images/SingleCaseLogo 2 500x500.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>SingleCase Outlook Add-in: Uživatelská příručka</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sc-blue:       #001F47;
+      --sc-blue-light: #e6eaf1;
+      --sc-blue-mid:   #b8c8de;
+      --sc-green:      #1a7c4b;
+      --sc-green-bg:   #d1fae5;
+      --sc-gray:       #6b7280;
+      --sc-gray-bg:    #f3f4f6;
+      --sc-gray-label: #9ca3af;
+      --sc-border:     #e5e7eb;
+      --sc-text:       #111827;
+      --sc-subtext:    #4b5563;
+      --sc-note-bg:    #fffbeb;
+      --sc-note-border:#f59e0b;
+      --sc-warn-bg:    #fef2f2;
+      --sc-warn-border:#ef4444;
+      --sidebar-w:     280px;
+      --content-max:   800px;
+      --radius:        8px;
+      --font:          'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono:          'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--sc-text);
+      background: #f8fafc;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav#sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid var(--sc-border);
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+      padding: 0 0 32px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav#sidebar::-webkit-scrollbar { width: 6px; }
+    nav#sidebar::-webkit-scrollbar-track { background: transparent; }
+    nav#sidebar::-webkit-scrollbar-thumb { background: var(--sc-border); border-radius: 3px; }
+
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--sc-border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-brand .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--sc-blue);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
+
+    .sidebar-brand .brand-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--sc-text);
+      line-height: 1.2;
+    }
+
+    .sidebar-brand .brand-sub {
+      font-size: 11px;
+      color: var(--sc-gray);
+      margin-top: 2px;
+    }
+
+    .sidebar-meta {
+      padding: 10px 20px 0;
+      font-size: 11px;
+      color: var(--sc-gray);
+      line-height: 1.5;
+    }
+
+    nav#sidebar ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+
+    nav#sidebar ul li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--sc-subtext);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    nav#sidebar ul li a:hover {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-left-color: var(--sc-blue);
+    }
+
+    nav#sidebar ul li a.active {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue) !important;
+      border-left-color: var(--sc-blue) !important;
+      font-weight: 600;
+    }
+
+    nav#sidebar ul li a.active .nav-num {
+      color: var(--sc-blue);
+    }
+
+    nav#sidebar ul li a .nav-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--sc-gray-label);
+      width: 18px;
+      flex-shrink: 0;
+    }
+
+    nav#sidebar ul.nav-sub {
+      padding: 0 0 4px 34px;
+    }
+
+    nav#sidebar ul.nav-sub li a {
+      font-size: 12px;
+      color: var(--sc-gray);
+      padding: 4px 8px;
+      border-left: none;
+    }
+
+    nav#sidebar ul.nav-sub li a:hover {
+      color: var(--sc-blue);
+      background: transparent;
+      border-left: none;
+    }
+
+    /* ── Main Content ── */
+    main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 0 48px 80px;
+      max-width: calc(var(--sidebar-w) + var(--content-max) + 96px);
+    }
+
+    /* ── Cover ── */
+    .cover {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--sc-border);
+      margin-bottom: 56px;
+    }
+
+    .cover-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sc-blue);
+      margin-bottom: 12px;
+    }
+
+    .cover h1 {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--sc-text);
+      margin-bottom: 16px;
+    }
+
+    .cover h1 span { color: #FF5014; }
+
+    .cover-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--sc-gray-bg);
+      color: var(--sc-subtext);
+      border: 1px solid var(--sc-border);
+    }
+
+    .badge.blue { background: var(--sc-blue-light); color: var(--sc-blue); border-color: var(--sc-blue-mid); }
+
+    /* ── Section Headings ── */
+    .section {
+      margin-bottom: 64px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--sc-blue-light);
+    }
+
+    .section-number {
+      width: 36px; height: 36px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--sc-text);
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--sc-text);
+      margin: 28px 0 10px;
+    }
+
+    p { margin-bottom: 14px; color: var(--sc-subtext); }
+    p:last-child { margin-bottom: 0; }
+
+    strong { color: var(--sc-text); font-weight: 600; }
+
+    /* ── Steps ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .steps > li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 40px;
+      margin-bottom: 18px;
+    }
+
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 26px; height: 26px;
+      background: var(--sc-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .steps > li > p { margin: 0 0 8px; }
+    .steps > li > p:last-child { margin-bottom: 0; }
+
+    /* ── Bullet list ── */
+    ul.bullets {
+      list-style: none;
+      margin: 10px 0 14px 0;
+    }
+
+    ul.bullets li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      color: var(--sc-subtext);
+    }
+
+    ul.bullets li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--sc-blue);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* ── Sub-bullets ── */
+    ul.sub {
+      list-style: none;
+      margin: 6px 0 6px 20px;
+    }
+
+    ul.sub li {
+      display: block;
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--sc-subtext);
+    }
+
+    ul.sub li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--sc-gray-label);
+    }
+
+    /* ── Screenshots ── */
+    .manual-img {
+      display: block;
+      max-width: 100%;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin: 12px 0 4px;
+    }
+
+    .img-caption {
+      font-size: 12px;
+      color: var(--sc-gray);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    /* ── Notes / callouts ── */
+    .note {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-note-bg);
+      border: 1px solid var(--sc-note-border);
+      border-left: 4px solid var(--sc-note-border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #78350f;
+    }
+
+    .note .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .tip {
+      display: flex;
+      gap: 12px;
+      background: var(--sc-blue-light);
+      border: 1px solid var(--sc-blue-mid);
+      border-left: 4px solid var(--sc-blue);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #001F47;
+    }
+
+    .tip .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Code ── */
+    code {
+      font-family: var(--mono);
+      font-size: 13px;
+      background: var(--sc-gray-bg);
+      border: 1px solid var(--sc-border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: #be185d;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    thead th:first-child { border-radius: var(--radius) 0 0 0; }
+    thead th:last-child  { border-radius: 0 var(--radius) 0 0; }
+
+    tbody tr { border-bottom: 1px solid var(--sc-border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+
+    tbody td {
+      padding: 10px 14px;
+      color: var(--sc-subtext);
+      vertical-align: top;
+    }
+
+    tbody td strong { color: var(--sc-text); }
+
+    /* ── Category labels ── */
+    .label-filed {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--sc-green-bg); color: var(--sc-green);
+      border: 1px solid #6ee7b7;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 12px; font-weight: 600;
+    }
+
+    .label-unfiled {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #e0f2fe; color: #0369a1;
+      border: 1px solid #7dd3fc;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 12px; font-weight: 600;
+    }
+
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: var(--sc-green); }
+    .dot.gray  { background: #7dd3fc; }
+
+    /* ── Feature cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0 24px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .card-icon { font-size: 22px; margin-bottom: 8px; }
+    .card h4 { font-size: 13px; font-weight: 700; color: var(--sc-text); margin-bottom: 4px; }
+    .card p  { font-size: 13px; margin: 0; }
+
+    /* ── FAQ ── */
+    details {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    details summary {
+      padding: 16px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sc-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      list-style: none;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    details summary:hover { background: var(--sc-gray-bg); }
+
+    details summary::-webkit-details-marker { display: none; }
+
+    details summary::after {
+      content: '+';
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--sc-gray);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    details[open] summary { border-bottom: 1px solid var(--sc-border); }
+    details[open] summary::after { content: '−'; }
+
+    .faq-body {
+      padding: 16px 18px;
+      font-size: 14px;
+      color: var(--sc-subtext);
+    }
+
+    .faq-body p { margin-bottom: 0; }
+
+    /* ── Troubleshooting ── */
+    .trouble-item {
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-left: 4px solid var(--sc-blue);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+
+    .trouble-item h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--sc-text);
+      margin: 0 0 10px;
+    }
+
+    .trouble-item p, .trouble-item ul { font-size: 14px; }
+
+    /* ── App Screenshot ── */
+    .app-screenshot {
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .app-screenshot img {
+      max-width: min(680px, 100%);
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.14);
+      border: 1px solid var(--sc-border);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .app-screenshot-caption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--sc-gray);
+      font-style: italic;
+    }
+
+    /* ── Overview Section ── */
+    .overview {
+      background: var(--sc-blue);
+      border-radius: 12px;
+      padding: 36px 40px;
+      margin-bottom: 56px;
+      color: #fff;
+    }
+
+    .overview-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 6px;
+    }
+
+    .overview h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+
+    .overview-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .overview-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+    }
+
+    .overview-list li:last-child { border-bottom: none; }
+
+    .overview-list .ov-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      width: 26px;
+      text-align: center;
+    }
+
+    .overview-list li strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .overview-list li em {
+      font-style: normal;
+      color: #FF5014;
+      font-weight: 600;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--sc-border);
+      font-size: 13px;
+      color: var(--sc-gray);
+      text-align: center;
+    }
+
+    /* ── Mobile menu toggle (hidden on desktop) ── */
+    .nav-toggle-input { display: none; }
+
+    .menu-toggle {
+      display: none;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 150;
+      cursor: pointer;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 12px;
+        left: 14px;
+        z-index: 300;
+        width: 40px;
+        height: 40px;
+        background: var(--sc-blue);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        border-radius: 2px;
+        transition: transform 0.2s, opacity 0.2s;
+      }
+
+      .nav-toggle-input:checked ~ .menu-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .nav-toggle-input:checked ~ .menu-toggle span:nth-child(2) { opacity: 0; }
+      .nav-toggle-input:checked ~ .menu-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      nav#sidebar {
+        width: min(var(--sidebar-w), 85vw);
+        left: -100vw;
+        transition: left 0.25s ease;
+        z-index: 200;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+      }
+
+      .nav-toggle-input:checked ~ nav#sidebar {
+        left: 0;
+      }
+
+      .nav-toggle-input:checked ~ .sidebar-overlay {
+        display: block;
+      }
+
+      main {
+        margin-left: 0;
+        padding: 72px 16px 60px;
+        max-width: 100%;
+      }
+
+      .lang-switcher {
+        top: 12px;
+        right: 14px;
+      }
+
+      .cover {
+        padding: 28px 0 24px;
+        margin-bottom: 28px;
+      }
+
+      .cover h1 { font-size: 26px; }
+
+      .overview {
+        padding: 22px 18px;
+        margin-bottom: 28px;
+        border-radius: 10px;
+      }
+
+      .overview h2 { font-size: 17px; margin-bottom: 18px; }
+
+      .section { margin-bottom: 40px; }
+
+      .manual-img { max-width: 100% !important; height: auto; display: block; margin: 8px auto; }
+
+      .table-wrap, table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .cards { grid-template-columns: 1fr; }
+
+      .steps > li { padding-left: 36px; }
+    }
+
+    @media print {
+      nav#sidebar { display: none; }
+      main { margin-left: 0; padding: 0; max-width: 100%; }
+      details { page-break-inside: avoid; }
+      details[open] summary::after { content: ''; }
+    }
+
+    /* ── Version pills (cover) ── */
+    .version-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .version-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #fff3ed;
+      color: #c93d00;
+      border: 1.5px solid #ffcdb4;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .version-pill:hover {
+      background: #ffe8d6;
+      border-color: #FF5014;
+      color: #FF5014;
+    }
+
+    .version-pill .pill-tag {
+      background: #FF5014;
+      color: #fff;
+      border-radius: 12px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Version divider ── */
+    .version-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 64px 0 48px;
+    }
+
+    .version-divider::before,
+    .version-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ffd4bc;
+    }
+
+    .version-divider-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff3ed;
+      border: 1.5px solid #ffcdb4;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #FF5014;
+      white-space: nowrap;
+    }
+
+    /* ── Confidence badge ── */
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--sc-gray-bg);
+      color: var(--sc-subtext);
+      border: 1px solid var(--sc-border);
+    }
+
+    .conf-badge.high {
+      background: var(--sc-green-bg);
+      color: var(--sc-green);
+      border-color: #6ee7b7;
+    }
+
+    /* ── Signal table ── */
+    .signal-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--sc-border);
+      font-size: 14px;
+    }
+
+    .signal-row:last-child { border-bottom: none; }
+
+    .signal-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      width: 28px;
+      text-align: center;
+      margin-top: 1px;
+    }
+
+    .signal-body { flex: 1; }
+    .signal-body strong { display: block; font-size: 14px; color: var(--sc-text); margin-bottom: 2px; }
+    .signal-body p { margin: 0; font-size: 13px; }
+
+    .signal-strength {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 3px;
+    }
+
+    .signal-strength.s-high  { background: var(--sc-green-bg); color: var(--sc-green); }
+    .signal-strength.s-mid   { background: #eff6ff; color: #1d4ed8; }
+    .signal-strength.s-low   { background: var(--sc-gray-bg); color: var(--sc-gray); }
+
+    /* ── Search Bar ── */
+    .sidebar-search {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--sc-border);
+    }
+
+    .sidebar-search-container {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .sidebar-search input {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 13px;
+      border: 1px solid var(--sc-border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--sc-text);
+      font-family: var(--font);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .sidebar-search input::placeholder {
+      color: var(--sc-gray-label);
+    }
+
+    .sidebar-search input:focus {
+      outline: none;
+      border-color: var(--sc-blue);
+      box-shadow: 0 0 0 3px var(--sc-blue-light);
+    }
+
+
+    .search-nav-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--sc-border);
+      border-radius: 5px;
+      background: #fff;
+      color: var(--sc-gray);
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .search-nav-btn:hover:not(:disabled) {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+      border-color: var(--sc-blue);
+    }
+
+    .search-nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .search-counter {
+      font-size: 12px;
+      color: var(--sc-gray);
+      white-space: nowrap;
+      min-width: 35px;
+      text-align: center;
+    }
+
+    /* Search result highlight */
+    .search-highlight {
+      background: #fff176;
+      padding: 2px 3px;
+      border-radius: 2px;
+      font-weight: 600;
+      box-shadow: 0 0 0 1px #f9c74f;
+    }
+
+    .search-highlight.current-highlight {
+      background: #ffa500;
+      box-shadow: 0 0 0 1px #ff8c00;
+      color: #fff;
+    }
+
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      background: #fff;
+      border: 1px solid var(--sc-border);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      padding: 7px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--sc-gray);
+      background: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .lang-btn + .lang-btn {
+      border-left: 1px solid var(--sc-border);
+    }
+
+    .lang-btn.active {
+      background: var(--sc-blue);
+      color: #fff;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: var(--sc-blue-light);
+      color: var(--sc-blue);
+    }
+
+    /* ── Platform Switcher ── */
+    .platform-only { display: none; }
+    .platform-only.visible { display: block; }
+
+    /* ── GitBook page navigation ── */
+    .page { display: none; }
+    .page.active { display: block; padding-top: 40px; }
+
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--sc-border);
+      gap: 12px;
+    }
+
+    .page-nav-btn {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 20px;
+      border: 1px solid var(--sc-border);
+      border-radius: 10px;
+      text-decoration: none;
+      background: #fff;
+      transition: border-color 0.15s, background 0.15s;
+      cursor: pointer;
+      max-width: 48%;
+    }
+
+    .page-nav-btn:hover {
+      border-color: var(--sc-blue);
+      background: var(--sc-blue-light);
+    }
+
+    .page-nav-btn.prev { align-items: flex-start; }
+    .page-nav-btn.next { align-items: flex-end; margin-left: auto; }
+
+    .page-nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--sc-gray-label);
+      margin-bottom: 4px;
+    }
+
+    .page-nav-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sc-text);
+    }
+
+    .page-nav-btn:hover .page-nav-title { color: var(--sc-blue); }
+
+    .vc-box { border: 2px solid var(--sc-border); border-radius: 10px; padding: 20px 22px; margin-top: 24px; background: #fff; }
+    .vc-platforms { display: flex; gap: 6px; margin-bottom: 12px; }
+    .vc-plat-btn { padding: 5px 16px; border-radius: 6px; border: 1.5px solid var(--sc-border); background: #fff; font-size: 13px; cursor: pointer; font-weight: 500; color: var(--sc-text); transition: all .15s; }
+    .vc-plat-btn.active { border-color: var(--sc-blue); background: #eff6ff; color: var(--sc-blue); }
+    .vc-plat-btn:hover:not(.active) { border-color: var(--sc-blue); }
+    .vc-row { display: flex; gap: 8px; align-items: stretch; }
+    .vc-row input { flex: 1; padding: 8px 12px; border: 1.5px solid var(--sc-border); border-radius: 6px; font-size: 13px; font-family: inherit; }
+    .vc-row input:focus { outline: none; border-color: var(--sc-blue); box-shadow: 0 0 0 3px #dbeafe; }
+    .vc-row button { padding: 0 20px; background: var(--sc-blue); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .vc-row button:hover { opacity: .9; }
+    .vc-result { margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+    .vc-result.yes  { background: #f0fdf4; border: 1.5px solid #86efac; }
+    .vc-result.no   { background: #fff7ed; border: 1.5px solid #fdba74; }
+    .vc-result.warn { background: #fffbeb; border: 1.5px solid #fcd34d; }
+    .vc-result.unknown { background: #f8fafc; border: 1.5px solid var(--sc-border); }
+    .vc-badge { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+
+    .page img:not(#vc-img) { cursor: zoom-in; }
+    .lb-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.88); z-index: 9999;
+      align-items: center; justify-content: center; cursor: zoom-out;
+    }
+    .lb-overlay.open { display: flex; }
+    .lb-overlay img {
+      max-width: 92vw; max-height: 92vh;
+      border-radius: 8px; box-shadow: 0 12px 48px rgba(0,0,0,.7);
+      cursor: default;
+    }
+    .lb-close {
+      position: absolute; top: 18px; right: 22px;
+      color: #fff; font-size: 28px; line-height: 1;
+      cursor: pointer; opacity: .7; user-select: none;
+    }
+    .lb-close:hover { opacity: 1; }
+
+    /* ── Role gate ── */
+    @keyframes rgFade { from { opacity:0; } to { opacity:1; } }
+    /* ── Role bar (sidebar) ── */
+  
+    /* ── Restructure: grouped navigation, inline platform tabs, start cards ── */
+    nav#sidebar ul li.nav-group { padding: 18px 20px 4px; font-size: 12px; font-weight: 600; color: var(--sc-text); line-height: 1.35; }
+    nav#sidebar ul li.nav-group:first-of-type { padding-top: 8px; }
+    nav#sidebar ul li a .nav-new { margin-left: auto; font-size: 10px; font-weight: 700; background: var(--sc-blue); color: #fff; border-radius: 10px; padding: 1px 7px; }
+    nav#sidebar ul li a.nav-ext { font-size: 12.5px; }
+    .ptabs { display: inline-flex; flex-wrap: wrap; gap: 4px; background: #f0f2f5; border-radius: 12px; padding: 4px; margin: 4px 0 18px; }
+    .ptab { border: 0; background: transparent; padding: 6px 12px; border-radius: 9px; font: 500 13px var(--font); color: var(--sc-subtext); cursor: pointer; }
+    .ptab.active { background: #fff; color: var(--sc-blue); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+    .ptab:focus-visible, .start-card:focus-visible { outline: 2px solid var(--sc-blue); outline-offset: 2px; }
+    .start { margin: 8px 0 48px; }
+    .start h2 { font-size: 20px; font-weight: 800; color: var(--sc-dark); margin-bottom: 16px; }
+    .start-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .start-card { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border: 1px solid var(--sc-border); border-radius: 10px; background: #fff; text-decoration: none; transition: border-color 0.15s, background 0.15s; }
+    .start-card:hover { border-color: var(--sc-blue); background: var(--sc-blue-light); }
+    .start-title { font-size: 15px; font-weight: 600; color: var(--sc-text); }
+    .start-desc { font-size: 13px; color: var(--sc-gray); }
+    .start-admin { margin-top: 14px; font-size: 13px; color: var(--sc-gray); }
+    @media (max-width: 640px) { .start-grid { grid-template-columns: 1fr; } }
+    nav#sidebar ul li a .nav-new.nav-soon { background: var(--sc-blue-light); color: var(--sc-blue); }
+    pre.folder-tree { background: var(--sc-gray-bg); border: 1px solid var(--sc-border); border-radius: 8px; padding: 12px 16px; font-size: 13px; line-height: 1.7; overflow-x: auto; margin: 12px 0 16px; }
+
+    /* ════════════════════════════════════════════════════════════════════
+       Theme layer — calm, glassy reading surface
+       Palette: canvas #F4F6FA · ink #0B1F3A · navy #001F47 · orange #FF5014
+       ════════════════════════════════════════════════════════════════════ */
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", monospace;
+      --sc-text: #0B1F3A;
+      --sc-subtext: #3E4B5F;
+      --sc-gray: #6A7587;
+      --sc-border: rgba(11, 31, 58, 0.09);
+      --canvas: #F4F6FA;
+      --glass: rgba(255, 255, 255, 0.62);
+      --glass-strong: rgba(255, 255, 255, 0.82);
+      --glass-edge: rgba(255, 255, 255, 0.75);
+      --hairline: rgba(11, 31, 58, 0.08);
+      --shadow-soft: 0 1px 2px rgba(11, 31, 58, 0.05), 0 8px 24px -12px rgba(11, 31, 58, 0.18);
+      --shadow-lift: 0 2px 4px rgba(11, 31, 58, 0.06), 0 18px 40px -16px rgba(11, 31, 58, 0.28);
+      --radius: 14px;
+      --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ease-spring: cubic-bezier(0.34, 1.36, 0.5, 1);
+    }
+
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.62;
+      color: var(--sc-subtext);
+      background: var(--canvas);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    /* Ambient light behind the glass */
+    body::before {
+      content: "";
+      position: fixed; inset: -20vh -20vw; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(38vw 38vw at 12% 8%, rgba(0, 31, 71, 0.10), transparent 70%),
+        radial-gradient(34vw 34vw at 92% 18%, rgba(255, 80, 20, 0.08), transparent 70%),
+        radial-gradient(44vw 44vw at 70% 96%, rgba(64, 120, 200, 0.10), transparent 70%);
+    }
+    ::selection { background: rgba(255, 80, 20, 0.18); }
+
+    /* ── Reading progress ── */
+    .read-progress {
+      position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 400; pointer-events: none;
+      transform-origin: 0 50%; transform: scaleX(0);
+      background: linear-gradient(90deg, #001F47, #2D5BA0 60%, #FF5014);
+    }
+
+    /* ── Sidebar: floating glass panel ── */
+    nav#sidebar {
+      background: var(--glass);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      backdrop-filter: blur(28px) saturate(180%);
+      border-right: none;
+      scrollbar-width: thin;
+    }
+    @media (min-width: 769px) {
+      nav#sidebar {
+        top: 12px; left: 12px; bottom: 12px; height: auto;
+        border-radius: 22px;
+        border: 1px solid var(--glass-edge);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--shadow-soft);
+      }
+      main { margin-left: calc(var(--sidebar-w) + 24px); padding: 0 56px 96px; }
+    }
+    .sidebar-brand { border-bottom: none; padding: 22px 20px 12px; }
+    .sidebar-brand .brand-name { font-family: var(--font-display); letter-spacing: -0.01em; }
+    .sidebar-search { border-bottom: none; padding: 6px 14px 10px; }
+    .sidebar-search input {
+      border-radius: 11px; border: 1px solid var(--hairline);
+      background: rgba(255, 255, 255, 0.7); padding: 9px 12px; font-size: 13.5px;
+      transition: box-shadow 0.2s var(--ease-out), border-color 0.2s var(--ease-out), background 0.2s;
+    }
+    .sidebar-search input:focus { outline: none; background: #fff; border-color: rgba(0, 31, 71, 0.25); box-shadow: 0 0 0 4px rgba(0, 31, 71, 0.08); }
+    .search-nav-btn { border-radius: 9px !important; border: 1px solid var(--hairline) !important; background: rgba(255, 255, 255, 0.7) !important; }
+    .sidebar-meta { padding: 0 20px 4px; font-size: 11.5px; }
+    nav#sidebar ul { padding: 6px 0 10px; }
+    nav#sidebar ul li a {
+      margin: 1px 10px; padding: 7px 12px; border-radius: 10px; border-left: none !important;
+      font-size: 13.5px; color: var(--sc-subtext);
+      transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out);
+    }
+    nav#sidebar ul li a:hover { background: rgba(0, 31, 71, 0.05); color: var(--sc-text); }
+    nav#sidebar ul li a.active {
+      background: var(--glass-strong); color: var(--sc-blue) !important; font-weight: 600;
+      box-shadow: 0 1px 2px rgba(11, 31, 58, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+    }
+    nav#sidebar ul li.nav-group { padding: 16px 22px 4px; font-size: 11.5px; color: var(--sc-gray); letter-spacing: 0.01em; }
+    nav#sidebar ul li a .nav-new { font-size: 10px; padding: 2px 8px; border-radius: 999px; }
+    nav#sidebar ul.nav-root { padding: 4px 0 12px; }
+    nav#sidebar ul.nav-items { padding: 0 0 6px; }
+    .nav-section { margin-top: 2px; }
+    .nav-group-btn {
+      width: calc(100% - 20px); margin: 0 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 9px 12px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; text-align: left;
+      font: 600 12.5px var(--font); letter-spacing: 0.005em; color: var(--sc-text);
+      transition: background 0.18s var(--ease-out);
+    }
+    .nav-group-btn:hover { background: rgba(0, 31, 71, 0.05); }
+    .nav-chev {
+      width: 7px; height: 7px; flex: 0 0 auto; margin-right: 3px;
+      border-right: 1.6px solid var(--sc-gray); border-bottom: 1.6px solid var(--sc-gray);
+      transform: rotate(-45deg); transition: transform 0.35s var(--ease-spring);
+    }
+    .nav-section.open .nav-chev { transform: translateY(-2px) rotate(45deg); }
+    .nav-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.38s var(--ease-out); }
+    .nav-collapse > ul { overflow: hidden; min-height: 0; opacity: 0; transition: opacity 0.25s var(--ease-out); }
+    .nav-section.open .nav-collapse { grid-template-rows: 1fr; }
+    .nav-section.open .nav-collapse > ul { opacity: 1; }
+    .nav-section.has-active:not(.open) .nav-group-btn span:first-child::after {
+      content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-radius: 50%; background: #FF5014; vertical-align: middle;
+    }
+    nav#sidebar ul.nav-items li a { padding-left: 22px; }
+
+    /* ── Floating controls ── */
+    .lang-switcher {
+      background: var(--glass); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-edge); border-radius: 999px; padding: 3px; box-shadow: var(--shadow-soft); overflow: visible;
+    }
+    .lang-btn { border-radius: 999px; padding: 6px 15px; letter-spacing: 0.04em; border-left: none !important; transition: background 0.25s var(--ease-out), color 0.25s var(--ease-out); }
+    .lang-btn.active { background: var(--sc-blue); color: #fff; box-shadow: 0 2px 8px rgba(0, 31, 71, 0.3); }
+    .menu-toggle {
+      background: var(--glass) !important; -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-edge) !important; border-radius: 14px !important; box-shadow: var(--shadow-soft);
+    }
+    .menu-toggle span { background: var(--sc-blue) !important; }
+    .sidebar-overlay { background: rgba(11, 31, 58, 0.25); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+    /* ── Reading column ── */
+    .page.active { padding-top: 56px; }
+    .page { max-width: 860px; }
+    .sidebar-search-container { min-width: 0; }
+    .sidebar-search input { min-width: 0; width: 100%; }
+    .page > p, .page > ul, .page > ol, .page > .tip, .page > .note, .page > h3, .page > details, .page > .trouble-item, .page > pre { max-width: 74ch; }
+    p { margin-bottom: 12px; }
+    .page p, .page li, .page td { font-size: 15px; }
+    .page .tip, .page .note { font-size: 14px; }
+    .page .tip p, .page .note p, .page .tip li, .page .note li { font-size: 14px; }
+    .page td, .page .card p, .page .faq-body p, .page .faq-body li { font-size: 13.5px; }
+    .page .app-screenshot-caption, .page .img-caption { font-size: 12.5px; }
+    .steps > li > p:first-child { font-size: 15px; }
+    a { color: #0A4FA6; text-decoration-color: rgba(10, 79, 166, 0.35); text-underline-offset: 3px; transition: color 0.15s, text-decoration-color 0.15s; }
+    a:hover { color: var(--sc-blue); text-decoration-color: currentColor; }
+    strong { color: var(--sc-text); font-weight: 600; }
+
+    .section-header { border-bottom: none; padding-bottom: 0; margin-bottom: 22px; }
+    .section h2 {
+      font-family: var(--font-display); font-size: clamp(28px, 3vw, 36px); line-height: 1.12;
+      font-weight: 700; letter-spacing: -0.028em; color: var(--sc-text);
+    }
+    h3 { font-family: var(--font-display); font-size: 18px; font-weight: 650; letter-spacing: -0.015em; color: var(--sc-text); margin: 40px 0 12px; }
+
+    /* ── Home cover ── */
+    .cover { border-bottom: none; padding: 72px 0 36px; margin-bottom: 24px; }
+    .cover-eyebrow { text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; color: #FF5014; }
+    .cover h1 { font-family: var(--font-display); font-size: clamp(40px, 5.2vw, 60px); line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; }
+    .cover p { font-size: 17px; line-height: 1.55; color: var(--sc-subtext); max-width: 56ch; }
+    .badge {
+      background: var(--glass); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-edge); border-radius: 999px; padding: 6px 12px; box-shadow: var(--shadow-soft);
+      text-decoration: none; transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-out);
+    }
+    a.badge:hover { transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+    .app-screenshot img#hero-img-desktop, .app-screenshot img#hero-img-web { height: auto; border-radius: 20px; box-shadow: 0 2px 6px rgba(11, 31, 58, 0.08), 0 40px 80px -30px rgba(11, 31, 58, 0.45); }
+
+    .start h2 { font-family: var(--font-display); letter-spacing: -0.02em; font-size: 24px; color: var(--sc-text); }
+    .start-card, .card, .page-nav-btn, details, .trouble-item, .vc-box {
+      background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid var(--glass-edge); border-radius: 18px; box-shadow: var(--shadow-soft);
+    }
+    .start-card { padding: 20px 22px; transition: transform 0.35s var(--ease-spring), box-shadow 0.35s var(--ease-out), background 0.2s; }
+    .start-title { font-size: 16px; letter-spacing: -0.01em; }
+    .card { padding: 20px; }
+    .card h4 { font-family: var(--font-display); font-size: 15.5px; letter-spacing: -0.01em; color: var(--sc-text); margin-bottom: 6px; }
+    .card p { font-size: 14px; line-height: 1.55; margin: 0; }
+    .card-icon {
+      width: 40px; height: 40px; display: grid; place-items: center; font-size: 20px; margin-bottom: 12px;
+      border-radius: 12px; background: rgba(255, 255, 255, 0.85); box-shadow: 0 1px 2px rgba(11, 31, 58, 0.08), inset 0 0 0 1px rgba(11, 31, 58, 0.04);
+    }
+    @media (hover: hover) {
+      .start-card:hover, .page-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); background: var(--glass-strong); border-color: var(--glass-edge); }
+    }
+
+    .overview {
+      border-radius: 26px; padding: 40px 44px;
+      background:
+        radial-gradient(120% 140% at 0% 0%, rgba(80, 140, 230, 0.35), transparent 55%),
+        radial-gradient(90% 120% at 100% 100%, rgba(255, 80, 20, 0.22), transparent 60%),
+        linear-gradient(160deg, #0B2C5C, #001F47 60%, #00142F);
+      box-shadow: 0 30px 60px -30px rgba(0, 31, 71, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+    .overview-eyebrow { text-transform: none; letter-spacing: 0; font-size: 13px; }
+    .overview h2 { font-family: var(--font-display); letter-spacing: -0.02em; font-size: 24px; }
+
+    /* ── Steps ── */
+    .steps > li { padding-left: 46px; margin-bottom: 22px; }
+    .steps > li::before {
+      width: 30px; height: 30px; top: -1px; font-size: 13px; font-weight: 650;
+      background: linear-gradient(160deg, #2D5BA0, #001F47);
+      box-shadow: 0 4px 10px -3px rgba(0, 31, 71, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    ul.bullets li::before { width: 6px; height: 6px; margin-top: 10px; background: #FF5014; opacity: 0.85; }
+
+    /* ── Callouts ── */
+    .tip, .note {
+      border: 1px solid var(--hairline); border-left: 1px solid var(--hairline); border-radius: 16px;
+      padding: 16px 18px; gap: 14px; line-height: 1.6;
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    }
+    .tip { background: linear-gradient(135deg, rgba(0, 31, 71, 0.055), rgba(64, 120, 200, 0.05)); }
+    .note { background: linear-gradient(135deg, rgba(255, 176, 32, 0.11), rgba(255, 80, 20, 0.05)); border-color: rgba(214, 140, 20, 0.22); }
+    .tip .note-icon, .note .note-icon {
+      flex: 0 0 32px; height: 32px; display: grid; place-items: center; font-size: 16px; margin-top: -3px;
+      border-radius: 10px; background: rgba(255, 255, 255, 0.8); box-shadow: 0 1px 2px rgba(11, 31, 58, 0.08);
+    }
+
+    /* ── Tables ── */
+    .page table {
+      border-collapse: separate; border-spacing: 0; border: 1px solid var(--hairline); border-radius: 16px; overflow: hidden;
+      background: var(--glass-strong); box-shadow: var(--shadow-soft); font-size: 13.5px;
+    }
+    .page thead tr { background: rgba(0, 31, 71, 0.045); color: var(--sc-text); }
+    .page thead th { font-weight: 650; font-size: 13px; color: var(--sc-text); padding: 12px 16px; border-bottom: 1px solid var(--hairline); }
+    .page tbody td { padding: 12px 16px; }
+    .page tbody tr { border-bottom: none; }
+    .page tbody tr + tr td { border-top: 1px solid var(--hairline); }
+
+    /* ── Images ── */
+    .app-screenshot img, .manual-img, .page img:not(#vc-img):not([src$=".svg"]) {
+      border-radius: 14px; border: 1px solid var(--hairline);
+      box-shadow: 0 1px 2px rgba(11, 31, 58, 0.06), 0 16px 36px -18px rgba(11, 31, 58, 0.3);
+    }
+    .app-screenshot-caption, .img-caption { font-style: normal; font-size: 13px; color: var(--sc-gray); }
+    .app-screenshot { margin-bottom: 32px; }
+
+    /* ── Platform tabs: segmented control with a sliding thumb ── */
+    .ptabs {
+      position: relative; isolation: isolate; background: rgba(11, 31, 58, 0.06); border-radius: 13px; padding: 3px;
+      box-shadow: inset 0 1px 2px rgba(11, 31, 58, 0.06);
+    }
+    .ptabs { display: inline-grid; grid-auto-flow: column; grid-auto-columns: auto; max-width: 100%; }
+    .ptab { white-space: nowrap; }
+    .ptab { position: relative; z-index: 1; border-radius: 10px; padding: 7px 14px; transition: color 0.25s var(--ease-out); }
+    .ptab.active { background: transparent; box-shadow: none; }
+    .ptab-thumb {
+      position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: 10px;
+      background: #fff; box-shadow: 0 1px 2px rgba(11, 31, 58, 0.1), 0 4px 12px -4px rgba(11, 31, 58, 0.2);
+      transition: transform 0.45s var(--ease-spring), width 0.45s var(--ease-spring);
+    }
+    .ptabs:not(.ready) .ptab-thumb { transition: none; }
+    .ptabs.ready .ptab.active { color: var(--sc-blue); }
+
+    /* ── FAQ ── */
+    details { border-radius: 16px; margin-bottom: 10px; transition: box-shadow 0.3s var(--ease-out), background 0.3s; }
+    details[open] { background: var(--glass-strong); box-shadow: var(--shadow-lift); }
+    details summary { padding: 15px 20px; font-size: 14.5px; font-weight: 600; letter-spacing: -0.005em; border-radius: 16px; }
+    details summary:hover { background: transparent; }
+    details[open] summary { border-bottom: 1px solid var(--hairline); border-radius: 16px 16px 0 0; }
+    details summary::after, details[open] summary::after {
+      content: ""; width: 9px; height: 9px; margin-left: 16px; flex: 0 0 auto;
+      border-right: 2px solid var(--sc-gray); border-bottom: 2px solid var(--sc-gray);
+      transform: translateY(-3px) rotate(45deg); transition: transform 0.35s var(--ease-spring);
+    }
+    details[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+    .faq-body { padding: 14px 20px 16px; font-size: 14px; }
+
+    .trouble-item { border-left: 1px solid var(--glass-edge); padding: 20px 22px; }
+    .trouble-item h3 { font-size: 16px; }
+
+    /* ── Page navigation ── */
+    .page-nav { border-top: none; margin-top: 72px; }
+    .page-nav-btn { padding: 16px 22px; transition: transform 0.35s var(--ease-spring), box-shadow 0.35s var(--ease-out), background 0.2s; }
+    .page-nav-label { text-transform: none; letter-spacing: 0; font-size: 12.5px; font-weight: 500; color: var(--sc-gray); }
+    .page-nav-title { font-size: 15px; letter-spacing: -0.01em; }
+
+    /* ── Inline code, keys, misc ── */
+    code { font-size: 0.88em; color: #8A1C3D; background: rgba(11, 31, 58, 0.05); border: 1px solid var(--hairline); border-radius: 6px; padding: 1px 6px; }
+    kbd {
+      font-family: var(--font); font-size: 0.85em; font-weight: 600; color: var(--sc-text); padding: 1px 7px; border-radius: 6px;
+      background: linear-gradient(#fff, #F1F3F7); border: 1px solid rgba(11, 31, 58, 0.14); box-shadow: 0 1px 0 rgba(11, 31, 58, 0.14);
+    }
+    pre.folder-tree { background: var(--glass-strong); border-radius: 14px; border: 1px solid var(--hairline); font-family: var(--mono); }
+    .search-highlight { background: rgba(255, 200, 60, 0.55); box-shadow: none; border-radius: 4px; }
+    .search-highlight.current-highlight { background: #FF5014; color: #fff; }
+    footer { color: var(--sc-gray); }
+
+    /* ── Version checker ── */
+    .vc-box { border-width: 1px; }
+    .vc-plat-btn { border-radius: 10px; }
+    .vc-row input, .vc-row button { border-radius: 10px; }
+
+    /* ── Lightbox ── */
+    .lb-overlay { background: rgba(8, 18, 36, 0.55); -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); }
+    .lb-overlay.open { animation: lbFade 0.3s var(--ease-out); }
+    .lb-overlay.open img { border-radius: 16px; animation: lbZoom 0.45s var(--ease-spring); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6); }
+    .lb-close {
+      width: 40px; height: 40px; display: grid; place-items: center; font-size: 18px; border-radius: 50%; opacity: 1;
+      background: rgba(255, 255, 255, 0.18); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* ── Focus ── */
+    a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid #2D5BA0; outline-offset: 2px; border-radius: 8px; }
+
+    /* ── Motion ── */
+    @keyframes pageIn { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes riseIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes lbZoom { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+    .page.page-enter { animation: pageIn 0.5s var(--ease-out) both; }
+    body.first-load #home.active .cover > *,
+    body.first-load #home.active .app-screenshot,
+    body.first-load #home.active .start { animation: riseIn 0.8s var(--ease-out) both; }
+    body.first-load #home.active .cover > *:nth-child(2) { animation-delay: 0.06s; }
+    body.first-load #home.active .cover > *:nth-child(3) { animation-delay: 0.12s; }
+    body.first-load #home.active .cover > *:nth-child(4) { animation-delay: 0.18s; }
+    body.first-load #home.active .app-screenshot { animation-delay: 0.26s; }
+    body.first-load #home.active .start { animation-delay: 0.38s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+    @media (max-width: 768px) {
+      main { padding: 0 18px 64px !important; }
+      .ptabs { display: grid; grid-auto-columns: 1fr; width: 100%; }
+      .ptab { padding: 8px 6px; font-size: 12.5px; }
+      .page.active { padding-top: 76px; }
+      .cover { padding-top: 32px; }
+      .overview { padding: 26px 22px; border-radius: 22px; }
+    }
+    @media print {
+      body::before, .read-progress { display: none; }
+      .tip, .note, .card, details, .page table { box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    }
+  </style>
+</head>
+<body>
+
+<input type="checkbox" id="navToggle" class="nav-toggle-input">
+<label for="navToggle" class="menu-toggle" aria-label="Otevřít navigaci">
+  <span></span><span></span><span></span>
+</label>
+
+<label for="navToggle" class="sidebar-overlay" id="sidebarOverlay"></label>
+
+<div class="lang-switcher">
+  <a href="index.html" class="lang-btn">EN</a>
+  <a href="index-cs.html" class="lang-btn active">CS</a>
+</div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-row">
+      <img src="images/SingleCaseLogo.svg" alt="SingleCase" style="width: 32px; height: 32px; flex-shrink: 0;">
+      <span class="brand-name">SingleCase</span>
+    </div>
+    <div class="brand-sub">Outlook Add-in · Příručka</div>
+  </div>
+  <div class="sidebar-search">
+    <div class="sidebar-search-container">
+      <input type="text" id="searchInput" placeholder="Hledat..." aria-label="Prohledat příručku">
+      <button class="search-nav-btn" id="searchPrev" title="Předchozí výsledek" aria-label="Předchozí výsledek">‹</button>
+      <button class="search-nav-btn" id="searchNext" title="Další výsledek" aria-label="Další výsledek">›</button>
+    </div>
+    <div class="search-counter" id="searchCounter"></div>
+  </div>
+  
+  
+  <div class="sidebar-meta">Verze 1.3.1.0 &nbsp;·&nbsp; Říjen 2026</div>
+  <ul class="nav-root">
+    <li><a href="#home">Přehled</a></li>
+    <li class="nav-section" data-group="start">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Začínáme</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#about">Co doplněk umí</a></li>
+          <li><a href="#install">Získání doplňku</a></li>
+          <li><a href="#open">Otevření doplňku</a></li>
+          <li><a href="#sign-in">Přihlášení a výběr workspace</a></li>
+          <li><a href="#platforms">Podporované platformy</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="read">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Režim čtení</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#file-email">Zařazení e-mailu</a></li>
+          <li><a href="#what-to-file">Výběr příloh, složky a názvu</a></li>
+          <li><a href="#after-filing">Po zařazení: otevření spisu a dokumentů</a></li>
+          <li><a href="#filing-status">Zařazené, přeskočené a odstraněné e-maily</a></li>
+          <li><a href="#move-to-folder">Přesun zařazených e-mailů do složek spisů<span class="nav-new nav-soon">Brzy</span></a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="compose">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Režim psaní</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#file-on-send">Zařazení při odeslání<span class="nav-new">Nové</span></a></li>
+          <li><a href="#case-address">Odeslání na e-mailovou adresu spisu</a></li>
+          <li><a href="#after-sending">Po odeslání: potvrzení a chyby</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="shared">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Funguje v obou režimech</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#find-case">Vyhledání spisu</a></li>
+          <li><a href="#suggestions">Návrhy spisů</a></li>
+          <li><a href="#categories">Stav zařazení v Outlooku</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="settings">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Nastavení</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#settings">Přehled všech nastavení</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="help">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Nápověda</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#faq">Časté dotazy</a></li>
+          <li><a href="#troubleshooting">Řešení problémů</a></li>
+          <li><a href="#whats-new">Novinky</a></li>
+      </ul></div>
+    </li>
+    <li class="nav-section" data-group="admin">
+      <button type="button" class="nav-group-btn" aria-expanded="false"><span>Pro IT správce</span><span class="nav-chev" aria-hidden="true"></span></button>
+      <div class="nav-collapse"><ul class="nav-items">
+          <li><a href="#admin-install">Instalace a aktualizace doplňku</a></li>
+          <li><a class="nav-ext" href="enterprise-deployment-cs.html" target="_blank" rel="noopener">Průvodce nasazením pro organizace ↗</a></li>
+          <li><a class="nav-ext" href="manifest-generator.html" target="_blank" rel="noopener">Generátor manifestu ↗</a></li>
+      </ul></div>
+    </li>
+  </ul>
+  <div style="padding: 16px 14px 12px; border-top: 1px solid var(--sc-border); margin-top: 8px;">
+    <a href="https://feedback.singlecase.com/" target="_blank" rel="noopener" style="display:block;font-size:12px;color:var(--sc-blue);text-decoration:none;font-weight:500;margin-bottom:6px;">Sdílet zpětnou vazbu →</a>
+    <a href="quickstart-cs.html" target="_blank" rel="noopener" style="display:block;font-size:12px;color:var(--sc-gray);text-decoration:none;">Rychlý průvodce</a>
+  </div>
+</nav>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main>
+
+  <div id="home" class="page active">
+  <!-- Cover -->
+  <div class="cover">
+    <div class="cover-eyebrow">Uživatelská příručka</div>
+    <h1>SingleCase <span>Outlook Add-in</span></h1>
+    <p>Zakládejte e-maily do spisů, sledujte, co bylo uloženo, a spravujte dokumenty – vše přímo z Outlooku.</p>
+    <div class="cover-badges">
+      <span class="badge blue">Verze 1.3.1.0</span>
+      <a href="#file-on-send" class="badge">
+        <span class="pill-tag" style="background:#001F47;color:#fff;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;letter-spacing:0.03em;">Novinka</span>
+        Zařazení při odeslání
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Screenshot aplikace ── -->
+  <div class="app-screenshot">
+    <img id="hero-img-desktop" src="images/hero/overview-cs-2040.png" srcset="images/hero/overview-cs-1360.png 1360w, images/hero/overview-cs-2040.png 2040w, images/hero/overview-cs-full.png 2850w" sizes="(max-width: 768px) calc(100vw - 36px), 680px" width="2850" height="1874" decoding="async" fetchpriority="high" alt="SingleCase Outlook Add-in — panel úloh v Outlook Desktop">
+    <img id="hero-img-web" src="images/webapp main.png" alt="SingleCase Outlook Add-in — panel úloh v Outlooku na webu" style="display:none;">
+    <p class="app-screenshot-caption">SingleCase Outlook Add-in — panel úloh vedle vaší schránky</p>
+  </div>
+
+  <div class="start">
+    <h2>Čím chcete začít?</h2>
+    <div class="start-grid">
+      <a class="start-card" href="#file-email"><span class="start-title">Zařadit přijatý nebo odeslaný e-mail</span><span class="start-desc">Otevřete e-mail, vyberte spis a zařaďte ho.</span></a>
+      <a class="start-card" href="#file-on-send"><span class="start-title">Zařadit e-mail už při psaní</span><span class="start-desc">Vyberte spis ještě před kliknutím na Odeslat.</span></a>
+      <a class="start-card" href="#install"><span class="start-title">Nastavit doplněk</span><span class="start-desc">Získejte doplněk, otevřete ho a přihlaste se.</span></a>
+      <a class="start-card" href="#troubleshooting"><span class="start-title">Něco nefunguje</span><span class="start-desc">Potíže s přihlášením, chyby a chybějící spisy.</span></a>
+    </div>
+    <p class="start-admin">Jste IT správce? Pokračujte na <a href="#admin-install">Instalace a aktualizace doplňku</a> nebo do <a href="enterprise-deployment-cs.html">Průvodce nasazením pro organizace</a>.</p>
+  </div>
+
+
+  <!-- ── Přehled ── -->
+  <div class="overview">
+    <div class="overview-eyebrow">Co je součástí</div>
+    <h2>Klíčové funkce na první pohled</h2>
+    <ul class="overview-list">
+      <li>
+        <span class="ov-icon">🖥️</span>
+        <span><strong>Funguje všude</strong> — Zobrazuje se jako panel na pravé straně Outlooku po otevření e-mailu. Podporováno v Outlooku pro Windows, Mac a Outlooku na webu.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔍</span>
+        <span><strong>Vyhledávání a návrhy spisů</strong> — Hledejte spis podle klienta, názvu nebo čísla. U e-mailů, které ještě nejsou zařazené, doplněk navrhne nejpravděpodobnější spisy dřív, než začnete psát.</span>
+      </li>
+      <li>
+        <span class="ov-icon">📎</span>
+        <span><strong>Plná kontrola nad přílohami</strong> — Vyberte, které přílohy se zařadí (ve výchozím stavu všechny), přejmenujte je a zvolte složku spisu, kam se uloží.</span>
+      </li>
+      <li>
+        <span class="ov-icon">✏️</span>
+        <span><strong>Přejmenování před uložením</strong> — Každou přílohu můžete před nahráním přejmenovat, aby se <code>scan0001.pdf</code> dostal do spisu pod názvem, který kolegům něco řekne. E-mail v Outlooku zůstává nedotčený.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔗</span>
+        <span><strong>Přímý přístup k dokumentům</strong> — Po zatřízení lze přímo prokliknout na spis nebo jednotlivé dokumenty a <strong>jedním klikem otevřít přílohy k editaci</strong> – změny se verzují přímo v SingleCase.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🏷️</span>
+        <span><strong>Viditelný stav zařazení</strong> — Zařazené e-maily dostanou v Outlooku kategorii <em>SC: Filed</em>, viditelnou na všech vašich zařízeních. Pokud už e-mail zařadil kolega, doplněk ho po otevření ukáže jako zařazený.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔒</span>
+        <span><strong>Upozornění na duplicity</strong> — Doplněk vás upozorní, než zařadíte e-mail, který už zařazený je.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🔑</span>
+        <span><strong>Přihlášení jen jednou</strong> — Žádné opakované přihlašování. Stačí jednorázová autorizace přes Microsoft SSO a doplněk vás udržuje přihlášené automaticky.</span>
+      </li>
+      <li>
+        <span class="ov-icon">🚀</span>
+        <span><strong>Hromadné nasazení přes IT</strong> — Nasaďte doplněk pro všechny uživatele najednou přes M365 Admin Center. Aktualizace probíhají automaticky na pozadí – bez nutnosti přeinstalace.</span>
+      </li>
+    </ul>
+  </div>
+  <div class="page-nav">
+      <div></div>
+      <a class="page-nav-btn next" href="#about">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Co doplněk umí</span>
+      </a>
+    </div>
+  </div>  <!-- /#home -->
+
+  <!-- ── about ── -->
+  <div class="section page" id="about">
+    <div class="section-header">
+      <h2>Co doplněk umí</h2>
+    </div>
+    <p>Doplněk SingleCase pro Outlook propojuje Outlook se SingleCase. Umožňuje ukládat e-maily a jejich přílohy do správného spisu, aniž byste opustili Outlook.</p>
+    <p>Doplněk se otevírá jako panel v pravé části Outlooku. Můžete ho používat dvěma způsoby:</p>
+    <ul class="bullets">
+      <li><div><strong>Při otevření e-mailu</strong> (<a href="#file-email">režim čtení</a>): doplněk zkontroluje, jestli už je e-mail zařazený, navrhne pravděpodobný spis a zařadí e-mail s přílohami, které vyberete.</div></li>
+      <li><div><strong>Při psaní e-mailu</strong> (<a href="#file-on-send">režim psaní</a>): spis vyberete ještě před odesláním a doplněk e-mail po kliknutí na Odeslat zařadí, automaticky nebo po vašem potvrzení.</div></li>
+    </ul>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">📨</div>
+        <h4>Zařazení přijatých i odeslaných e-mailů</h4>
+        <p>Vyberte spis a zařaďte otevřený e-mail z doručené pošty, Odeslané pošty nebo jakékoli jiné složky.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✉️</div>
+        <h4>Zařazení při odeslání</h4>
+        <p>Spis vyberete už při psaní. E-mail se zařadí po kliknutí na Odeslat, takže se nemusíte vracet do Odeslané pošty.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h4>Návrhy spisů</h4>
+        <p>Doplněk navrhuje pravděpodobné spisy podle vlákna e-mailu, čísel spisů a spisových značek v e-mailu a vaší historie zařazování.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📎</div>
+        <h4>Kontrola nad přílohami</h4>
+        <p>Vyberte, které přílohy zařadit, přejmenujte je před zařazením a zvolte složku, kam se uloží.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏷️</div>
+        <h4>Stav zařazení v Outlooku</h4>
+        <p>Zařazené e-maily dostanou štítek SC: Filed na všech vašich zařízeních a doplněk vás upozorní, než e-mail zařadíte podruhé.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h4>Otevření zařazených dokumentů</h4>
+        <p>Otevřete spis nebo kterýkoli zařazený dokument v SingleCase, případně dokument k úpravám, přímo z panelu.</p>
+      </div>
+    </div>
+    <p>Doplněk funguje v Outlooku pro Windows, Outlooku pro Mac a v Outlooku na webu. Které verze jsou podporované, najdete v článku <a href="#platforms">Podporované platformy</a>.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#home">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Přehled</span>
+      </a>
+      <a class="page-nav-btn next" href="#install">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Získání doplňku</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── install ── -->
+  <div class="section page" id="install">
+    <div class="section-header">
+      <h2>Získání doplňku</h2>
+    </div>
+    <span id="s3-get-addin"></span>
+    <p>Před použitím SingleCase musí být doplněk přítomen ve vašem Outlooku. Existují dva způsoby:</p>
+
+    <div class="tip" style="margin-bottom:16px;">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Nasazeno IT administrátorem</strong> — Tlačítko SingleCase je již ve vašem pásu karet Outlooku. Instalace není potřeba. Pokračujte k níže uvedeným krokům nastavení.</div>
+    </div>
+
+    <p><strong>Nebo nainstalujte sami</strong> (veřejná verze — dostupná v marketplace Microsoft AppSource):</p>
+
+    
+      <div class="ptabs" role="tablist"><button type="button" class="ptab" data-platform="windows" role="tab" onclick="setPlatform('windows')">🪟 Windows</button><button type="button" class="ptab" data-platform="mac" role="tab" onclick="setPlatform('mac')">🍎 Mac</button><button type="button" class="ptab" data-platform="web" role="tab" onclick="setPlatform('web')">🌐 Outlook na webu</button></div>
+      <div class="platform-only" data-platforms="windows">
+    <ol class="steps">
+      <li>
+        <p>Otevřete Outlook a klikněte na ikonu <strong>Aplikace</strong> v pásu karet.</p>
+        <img src="images/ribon get add-ins.png" data-win-src="images/Windows/ribbon.png" alt="Pás karet Outlooku se zvýrazněnou ikonou Aplikace" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Pás karet Outlooku – klikněte na ikonu <strong>Aplikace</strong> (zvýrazněna).</p>
+        <img src="images/get add-ins.png" data-win-src="images/Windows/stepw1.5.png" alt="Vyskakovací panel s nainstalovanými aplikacemi a odkazem Přidat aplikace" class="manual-img" style="width:260px;max-width:100%;height:auto;">
+        <p class="img-caption">V panelu, který se zobrazí, klikněte na <strong>Přidat aplikace</strong>.</p>
+      </li>
+      <li>
+        <p>Otevře se dialogové okno <strong>Další aplikace</strong>. Zadejte <strong>SingleCase</strong> do vyhledávacího pole a stiskněte Enter.</p>
+      </li>
+      <li>
+        <p>Klikněte na <strong>Přidat</strong> vedle položky SingleCase.</p>
+      </li>
+      <li>
+        <p>Doplněk je nainstalován. SingleCase se zobrazí pod záložkou <strong>Vytvořeno pro vaši organizaci</strong> a tlačítko se objeví v pásu karet při příštím otevření e-mailu.</p>
+        <img src="images/Get addin.png" data-win-src="images/Windows/stepw2.png" alt="Dialogové okno Další aplikace se zobrazením SingleCase pod záložkou Vytvořeno pro vaši organizaci" class="manual-img" style="width:700px;max-width:100%;height:auto;">
+        <p class="img-caption">SingleCase zobrazený pod záložkou <strong>Vytvořeno pro vaši organizaci</strong> po úspěšné instalaci.</p>
+      </li>
+    </ol>
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div>
+        <strong>Pokud se tlačítko SingleCase po instalaci nezobrazí v pásu karet</strong><br><br>Restartujte Outlook — tlačítko by se mělo zobrazit automaticky při příštím spuštění.
+      </div>
+    </div>
+    </div>
+
+    <div class="platform-only" data-platforms="mac">
+    <div class="note">
+      <span class="note-icon">🍎</span>
+      <div><strong>Je potřeba nový Outlook pro Mac.</strong> Ve starší verzi (Legacy Outlook pro Mac) SingleCase nefunguje. Pokud ji ještě používáte, nejdřív v Outlooku vypněte přepínač <strong>Legacy Outlook</strong>. Viz <a href="#platforms">Podporované platformy</a>.</div>
+    </div>
+    <ol class="steps">
+      <li>
+        <p>Otevřete Outlook a přejděte na: nabídka <strong>Nástroje</strong> → <strong>Získat doplňky</strong>.</p>
+      </li>
+      <li>
+        <p>Otevře se dialogové okno <strong>Další aplikace</strong>. Zadejte <strong>SingleCase</strong> do vyhledávacího pole a stiskněte Enter.</p>
+      </li>
+      <li>
+        <p>Klikněte na <strong>Přidat</strong> vedle položky SingleCase.</p>
+      </li>
+      <li>
+        <p>Doplněk je nainstalován. SingleCase se zobrazí pod záložkou <strong>Vytvořeno pro vaši organizaci</strong> a tlačítko se objeví v pásu karet při příštím otevření e-mailu.</p>
+      </li>
+    </ol>
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div>
+        <strong>Pokud se tlačítko SingleCase po instalaci nezobrazí v pásu karet</strong><br><br><div class="mac-only">Přidejte jej ručně pomocí možnosti <strong>Přizpůsobit panel nástrojů</strong>:
+        <ol style="margin: 10px 0 0 18px; line-height: 2;">
+          <li>Klikněte na <strong>…</strong> (nabídka přetečení s třemi tečkami) na pravém konci pásu karet a zvolte <strong>Přizpůsobit panel nástrojů…</strong></li>
+        </ol>
+        <img src="images/Customise toolbar.png" alt="Nabídka přetečení pásu karet Outlooku se zvýrazněnou možností Přizpůsobit panel nástrojů" class="manual-img" style="width:260px;max-width:100%;height:auto; margin: 10px 0 4px;">
+        <p class="img-caption" style="margin-bottom: 12px;">Klikněte na <strong>…</strong> v pásu karet a zvolte <strong>Přizpůsobit panel nástrojů…</strong></p>
+        <ol start="2" style="margin: 0 0 0 18px; line-height: 2;">
+          <li>V dialogovém okně <strong>Přizpůsobit panel nástrojů</strong> najděte <strong>SingleCase</strong> v části <strong>Nainstalované doplňky</strong> na pravé straně a <strong>přetáhněte jej</strong> do hlavní oblasti panelu nástrojů na levé straně.</li>
+          <li>Klikněte na <strong>Hotovo</strong> pro uložení změn.</li>
+        </ol>
+        <img src="images/Add to ribbon.png" alt="Dialogové okno Přizpůsobit panel nástrojů se SingleCase v panelu nainstalovaných doplňků připraveném k přetažení" class="manual-img" style="width:100%;height:auto; margin: 10px 0 4px;">
+        <p class="img-caption">Přetáhněte <strong>SingleCase</strong> ze seznamu nainstalovaných doplňků do panelu nástrojů.</p></div>
+      </div>
+    </div>
+    </div>
+
+    <div class="platform-only" data-platforms="web">
+      <ol class="steps">
+        <li>
+          <p>Otevřete libovolný e-mail v Outlooku na webu. Na pravé straně e-mailu se zobrazí malý panel aplikací. Klikněte na <strong>Přidat aplikace</strong> v dolní části tohoto panelu.</p>
+          <img src="images/stepw1.png" data-win-src="images/Windows/stepw1.png" alt="Outlook na webu s otevřeným e-mailem a zvýrazněným tlačítkem Přidat aplikace v panelu aplikací na pravé straně" class="manual-img" style="width:100%;height:auto;">
+          <p class="img-caption">Klikněte na <strong>Přidat aplikace</strong> v panelu aplikací na pravé straně e-mailu.</p>
+        </li>
+        <li>
+          <p>Otevře se obchod <strong>Aplikace</strong>. Zadejte <strong>SingleCase</strong> do vyhledávacího pole nahoře a stiskněte Enter.</p>
+          <img src="images/stepw2.png" data-win-src="images/Windows/stepw2.png" alt="Obchod Microsoft Apps s kategoriemi aplikací a vyhledávacím polem nahoře" class="manual-img" style="width:100%;height:auto;">
+          <p class="img-caption">Vyhledejte <strong>SingleCase</strong> v obchodě Aplikace.</p>
+        </li>
+        <li>
+          <p>Klikněte na výsledek <strong>SingleCase</strong> a poté klikněte na <strong>Otevřít</strong> pro instalaci doplňku.</p>
+          <img src="images/stepw3.png" alt="Stránka s detaily doplňku SingleCase s tlačítkem Otevřít" class="manual-img" style="width:640px;max-width:100%;height:auto;">
+          <p class="img-caption">Klikněte na <strong>Otevřít</strong> pro instalaci SingleCase.</p>
+        </li>
+      </ol>
+      <div class="tip">
+        <span class="note-icon">🔗</span>
+        <div><strong>Instalace platí na všech zařízeních automaticky.</strong> Protože jsou doplňky svázány s vaším účtem Microsoft, instalace SingleCase v Outlooku na webu ho zpřístupní i v Outlook Desktop (Windows a Mac) automaticky — není třeba instalovat na každém zařízení zvlášť.</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="note-icon">⚠️</span>
+      <div>V závislosti na zásadách Microsoft 365 vaší organizace může být samoobslužná instalace z obchodu omezena. Pokud je tlačítko <strong>Doplňky</strong> zašedlé nebo nedostupné, požádejte svého IT administrátora o nasazení doplňku.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#about">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Co doplněk umí</span>
+      </a>
+      <a class="page-nav-btn next" href="#open">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Otevření doplňku</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── open ── -->
+  <div class="section page" id="open">
+    <div class="section-header">
+      <h2>Otevření doplňku</h2>
+    </div>
+    <div class="ptabs" role="tablist"><button type="button" class="ptab" data-platform="windows" role="tab" onclick="setPlatform('windows')">🪟 Windows</button><button type="button" class="ptab" data-platform="mac" role="tab" onclick="setPlatform('mac')">🍎 Mac</button><button type="button" class="ptab" data-platform="web" role="tab" onclick="setPlatform('web')">🌐 Outlook na webu</button></div>
+      <div class="platform-only" data-platforms="mac windows">
+      <p>Otevřete e-mail a klikněte na tlačítko <strong>SingleCase</strong> na pásu karet pro otevření panelu.</p>
+
+      <div class="note" style="margin-bottom:20px;">
+        <span class="note-icon">⚠️</span>
+        <div><strong>Nejprve vyberte e-mail.</strong> Tlačítko doplňku je zašedlé, pokud žádný e-mail není otevřen — aktivuje se teprve po výběru e-mailu.</div>
+      </div>
+
+      <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;text-align:center;">
+          <img src="images/email not selected.png" alt="Outlook bez vybraného e-mailu — tlačítko SingleCase je zašedlé" style="max-width:100%;border-radius:6px;border:1px solid #e5e7eb;">
+          <p class="img-caption">Žádný e-mail — tlačítko zašedlé</p>
+        </div>
+        <div style="flex:1;min-width:160px;text-align:center;">
+          <img src="images/email selected.png" data-win-src="images/Windows/email selected.png" alt="Outlook s otevřeným e-mailem — tlačítko SingleCase je aktivní" style="max-width:100%;border-radius:6px;border:1px solid #e5e7eb;">
+          <p class="img-caption">E-mail vybrán — doplněk dostupný</p>
+        </div>
+      </div>
+
+      <p><strong>Udržení panelu otevřeného:</strong> klikněte na <strong>ikonu připnutí (📌)</strong> v pravém horním rohu panelu, aby zůstal viditelný při procházení e-mailů. Outlook sleduje stav připnutí odděleně pro čtení a psaní — v každém kontextu může být nutné připnout jednou.</p>
+      <img src="images/pin.png" alt="Ikona připnutí v pravém horním rohu panelu SingleCase" class="manual-img" style="width:240px;max-width:100%;height:auto;">
+      <p class="img-caption">Ikona připnutí v záhlaví panelu — kliknutím udržíte panel otevřený.</p>
+      <p style="font-size:13px;color:var(--sc-gray);">Stav připnutí se resetuje při restartu Outlooku — jedná se o <a href="https://github.com/OfficeDev/office-js/issues/4235" target="_blank" rel="noopener" style="color:var(--sc-gray);">známé omezení platformy</a>.</p>
+    </div>
+
+    <div class="platform-only" data-platforms="web">
+      <p>Otevřete libovolný e-mail. <strong>Ikona SingleCase</strong> se zobrazí v panelu nástrojů e-mailu vpravo nahoře — klikněte na ni pro otevření panelu.</p>
+      <img src="images/pinw2.png" alt="Panel nástrojů e-mailu v Outlooku na webu se zvýrazněnou ikonou SingleCase" class="manual-img" style="width:100%;height:auto;">
+      <p class="img-caption">Ikona SingleCase v panelu nástrojů e-mailu — klikněte pro otevření panelu.</p>
+
+      <div class="note" style="margin-bottom:20px;">
+        <span class="note-icon">ℹ️</span>
+        <div>Pokud ikonu nevidíte, může být skryta za <strong>nabídkou tří teček (⋯)</strong> — klikněte na ni a vyhledejte <strong>SingleCase</strong>.</div>
+      </div>
+
+      <p><strong>Udržení panelu otevřeného:</strong> klikněte na <strong>ikonu připnutí</strong> v pravém horním rohu záhlaví panelu (vedle tlačítka ×) pro zachování viditelnosti při přepínání mezi e-maily.</p>
+      <img src="images/pinw.png" data-win-src="images/Windows/pinw.png" alt="Záhlaví panelu SingleCase se zvýrazněnou ikonou připnutí" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+      <p class="img-caption">Ikona připnutí v záhlaví panelu — zde zobrazena v připnutém stavu.</p>
+      <p style="font-size:13px;color:var(--sc-gray);">Stav připnutí se resetuje při zavření Outlooku nebo odhlášení — jedná se o <a href="https://github.com/OfficeDev/office-js/issues/4235" target="_blank" rel="noopener" style="color:var(--sc-gray);">známé omezení platformy</a>.</p>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#install">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Získání doplňku</span>
+      </a>
+      <a class="page-nav-btn next" href="#sign-in">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Přihlášení a výběr workspace</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── sign-in ── -->
+  <div class="section page" id="sign-in">
+    <div class="section-header">
+      <h2>Přihlášení a výběr workspace</h2>
+    </div>
+    <h3 id="s3-first-open" style="margin-top:32px;">První otevření</h3>
+    <p>Toto stačí provést pouze jednou. Po nastavení vás doplněk udržuje přihlášené automaticky.</p>
+
+    <ol class="steps">
+      <li>
+        <p><strong>Zadejte adresu URL pracovního prostoru.</strong> Na uvítací obrazovce zadejte adresu pracovního prostoru SingleCase (například <code>vasefirma.singlecase.app</code>). Pokud si nejste jisti adresou, klikněte na <strong>Otevřít pracovní prostor</strong> a vyhledejte ji v prohlížeči.</p>
+        <img src="images/workspace URL.png" data-win-src="images/Windows/workspace URL.png" alt="Uvítací obrazovka SingleCase s polem pro zadání URL pracovního prostoru" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+        <p class="img-caption">Zadejte adresu pracovního prostoru na uvítací obrazovce.</p>
+      </li>
+      <li>
+        <p><strong>Přihlášení Microsoft</strong> (může se zobrazit jednou). Může se krátce zobrazit přihlašovací okno Microsoft — žádná akce není potřeba, okno se samo zavře.</p>
+        <img src="images/Grant Outlook permissions.png" alt="Přihlašovací okno Microsoft, které se může krátce zobrazit při nastavení" class="manual-img" style="width:480px;max-width:100%;height:auto;">
+        <p class="img-caption">Přihlašovací okno Microsoft.</p>
+      </li>
+    </ol>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>Po dokončení nastavení se již nebudete muset znovu přihlašovat. Pokud jste přihlášeni do Microsoft 365, doplněk vás přihlásí automaticky pokaždé, když otevřete Outlook.</div>
+    </div>
+
+    <div class="tip">
+      <span class="note-icon">⚠️</span>
+      <div>Pokud se přihlašovací okno Microsoftu zastaví na červené zprávě, že váš účet v tenantovi SingleCase neexistuje, není váš účet Microsoft dosud propojen s profilem v SingleCase. Postup najdete v části <a href="#s14-login" onclick="showSubSection('s14','s14-login');return false;">Nelze se přihlásit</a> v Řešení problémů.</div>
+    </div>
+  
+    <h3>Přihlášení a automatická obnova</h3>
+    <p>Doplněk používá stejný účet, který již používáte pro Outlook. Pokud jste přihlášeni do Outlooku, jste automaticky přihlášeni i do SingleCase — žádné heslo, žádné další kroky.</p>
+    <p>Ruční přihlášení může být vyžadováno v těchto situacích:</p>
+    <ul class="bullets">
+      <li><div>Používáte starší verzi Outlooku, která tiché přihlášení nepodporuje. V takovém případě se zobrazí tlačítko — klikněte na něj a přihlaste se přes vyskakovací okno:<strong style="display:block; margin-top:6px;">Přihlásit se přes Microsoft</strong></div></li>
+      <li>Vaše organizace vyžaduje dodatečný souhlas s novým oprávněním. Zpráva vás provede jednorázovým krokem.</li>
+    </ul>
+
+    <h3>Přepnutí workspace</h3>
+    <p>Pro připojení k jinému workspace SingleCase otevřete <a href="#settings">Nastavení</a>, klikněte na <strong>Změnit workspace</strong> a zadejte adresu nového workspace.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#open">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Otevření doplňku</span>
+      </a>
+      <a class="page-nav-btn next" href="#platforms">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Podporované platformy</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── platforms ── -->
+  <div class="section page" id="platforms">
+    <div class="section-header">
+      <h2>Podporované platformy</h2>
+    </div>
+    <span id="s2-compat"></span>
+    <p>Doplněk SingleCase vyžaduje <strong>Outlook připojený k Exchange Online</strong> (předplatné Microsoft 365 nebo samostatný Exchange Online). Lokální Exchange (on-premises) není podporován.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Platforma</th>
+          <th>Verze / Režim</th>
+          <th>Podporováno</th>
+          <th>Poznámky</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Windows group -->
+        <tr>
+          <td rowspan="5" style="vertical-align:middle;font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Windows</td>
+          <td>Outlook (M365) — klasický nebo nový Outlook</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Ano</td>
+          <td>Plně podporováno. Vyžaduje verzi 2206 (Build 15330+) nebo novější. <a href="https://learn.microsoft.com/en-us/office/dev/add-ins/outlook/outlook-add-ins-overview" target="_blank" rel="noopener" style="color:var(--sc-blue);">Dokumentace ↗</a></td>
+        </tr>
+        <tr>
+          <td>Outlook 2021 (trvalá licence — retail)</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Ano</td>
+          <td>Plně podporováno při aktuální instalaci.</td>
+        </tr>
+        <tr>
+          <td>Outlook 2021 LTSC (multilicence)</td>
+          <td style="color:#b45309;font-weight:600;">✗ Ne</td>
+          <td>Podporuje API doplňků pouze do verze 1.9; tento doplněk vyžaduje 1.12. Přejděte na M365.<br><span data-eos="2026-10-13"></span></td>
+        </tr>
+        <tr>
+          <td>Outlook 2019</td>
+          <td style="color:#b45309;font-weight:600;">✗ Ne</td>
+          <td>Podporuje API doplňků pouze do verze 1.6. Přejděte na M365 nebo Outlook 2021 (retail).<br><span data-eos="2025-10-14"></span></td>
+        </tr>
+        <tr>
+          <td>Outlook 2016</td>
+          <td style="color:#b45309;font-weight:600;">✗ Ne</td>
+          <td>Není podporováno. Prosím aktualizujte.<br><span data-eos="2025-10-14"></span></td>
+        </tr>
+        <!-- Mac group -->
+        <tr style="border-top:2px solid var(--sc-border);">
+          <td rowspan="3" style="vertical-align:middle;font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Mac</td>
+          <td>Outlook pro Mac M365, Nový Outlook (v16.38.506+)</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Ano</td>
+          <td>Plně podporováno. Vyžaduje Nový Outlook. <a href="https://learn.microsoft.com/en-us/office/dev/add-ins/outlook/compare-outlook-add-in-support-in-outlook-for-mac" target="_blank" rel="noopener" style="color:var(--sc-blue);">Dokumentace ↗</a></td>
+        </tr>
+        <tr>
+          <td>Outlook pro Mac M365, Legacy Outlook</td>
+          <td style="color:#b45309;font-weight:600;">✗ Ne</td>
+          <td>Legacy Outlook podporuje API doplňků pouze do verze 1.8; tento doplněk vyžaduje 1.12. V Outlooku vypněte přepínač <strong>Legacy Outlook</strong> pro přechod na Nový Outlook.</td>
+        </tr>
+        <tr>
+          <td>Outlook pro Mac pod verzí 16.38.506</td>
+          <td style="color:#b45309;font-weight:600;">✗ Ne</td>
+          <td>Aktualizujte Outlook na nejnovější verzi přes <strong>Nápověda → Vyhledat aktualizace</strong>.</td>
+        </tr>
+        <!-- Web group -->
+        <tr style="border-top:2px solid var(--sc-border);">
+          <td style="font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Web</td>
+          <td>Outlook na webu (Exchange Online)</td>
+          <td style="color:var(--sc-green);font-weight:600;">✓ Ano</td>
+          <td>Plně podporováno na <a href="https://outlook.office.com" target="_blank" rel="noopener" style="color:var(--sc-blue);">outlook.office.com</a>.</td>
+        </tr>
+        <!-- Mobile group -->
+        <tr style="border-top:2px solid var(--sc-border);">
+          <td style="font-weight:700;text-align:center;background:#f5f7ff;border-right:2px solid var(--sc-border);">Mobil</td>
+          <td>Outlook iOS / Android</td>
+          <td style="color:var(--sc-gray);font-weight:600;">⟳ Brzy</td>
+          <td>Podpora mobilních zařízení bude brzy k dispozici.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note" style="margin-top:20px;">
+      <span class="note-icon">ℹ️</span>
+      <div>Nevíte, kterou verzi Outlooku máte? V Outlook Desktop přejděte na <strong>Nápověda → O aplikaci Outlook</strong> (Windows) nebo <strong>Outlook → O aplikaci Outlook</strong> (Mac).</div>
+    </div>
+
+    <div class="vc-box">
+      <h4 style="margin:0 0 4px;font-size:15px;">Ověřit verzi Outlooku</h4>
+      <p style="margin:0 0 14px;font-size:13px;color:var(--sc-gray);">Nevíte, zda je váš Outlook kompatibilní? Vyberte platformu a vložte řetězec verze níže.</p>
+      <div class="vc-platforms">
+        <button class="vc-plat-btn active" onclick="vcSetPlatform('windows',this)">Windows</button>
+        <button class="vc-plat-btn" onclick="vcSetPlatform('mac',this)">Mac</button>
+        <button class="vc-plat-btn" onclick="vcSetPlatform('web',this)">Web</button>
+      </div>
+      <p id="vc-hint" style="font-size:12px;color:var(--sc-gray);margin:0 0 10px;">Najdete v <strong>Nápověda → O aplikaci Outlook</strong>. Vložte celý řetězec, např. <em>Version 2306 (Build 16.0.16529.20164)</em></p>
+      <div id="vc-input-row" class="vc-row">
+        <input type="text" id="vc-input" placeholder="např. Version 2306 (Build 16.0.16529.20164)" />
+        <button onclick="vcCheck()">Zkontrolovat →</button>
+      </div>
+      <div id="vc-result" class="vc-result" style="display:none;"></div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#sign-in">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Přihlášení a výběr workspace</span>
+      </a>
+      <a class="page-nav-btn next" href="#file-email">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Zařazení e-mailu</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── file-email ── -->
+  <div class="section page" id="file-email">
+    <div class="section-header">
+      <h2>Zařazení e-mailu</h2>
+    </div>
+    <p>Doplněk zařadí e-mail, který máte otevřený: přijatý e-mail z doručené pošty, nebo odeslaný e-mail ze složky <strong>Odeslaná pošta</strong>. Vždy zařadí jen tento jeden e-mail, ne celou konverzaci. Pokud potřebujete v SingleCase i další e-maily ze stejného vlákna, zařaďte každý zvlášť.</p>
+
+    <ol class="steps">
+      <li>
+        <p><strong>Otevřete e-mail, který chcete zařadit</strong>, v doručené poště, v Odeslané poště nebo v jiné složce.</p>
+      </li>
+      <li>
+        <p><strong>Otevřete panel SingleCase</strong> z pásu karet, pokud ještě není otevřený (viz <a href="#open">Otevření doplňku</a>).</p>
+      </li>
+      <li>
+        <p><strong>Podívejte se, co panel ukazuje.</strong> Doplněk nejdřív zkontroluje, jestli už e-mail zařazený není.</p>
+        <ul class="bullets">
+          <li><div><strong>Už zařazený:</strong> panel ukáže spis a zařazené dokumenty. Nic dalšího není potřeba.</div></li>
+          <li><div><strong>Zatím nezařazený:</strong> panel se zeptá <em>„Tento email ještě není zařazen. Chcete ho zařadit?“</em> Klikněte na <strong>Ano, zařadit</strong>.</div></li>
+        </ul>
+        <div class="app-screenshot">
+          <img src="images/File it.png" alt="Doplněk se ptá, zda e-mail zařadit" style="width:280px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Doplněk se zeptá, jestli chcete e-mail zařadit.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Vyberte spis.</strong> Navržené spisy jsou nahoře v seznamu a jakýkoli jiný spis můžete vyhledat. Viz <a href="#find-case">Vyhledání spisu</a> a <a href="#suggestions">Návrhy spisů</a>.</p>
+        <div class="app-screenshot">
+          <img src="images/select case.png" alt="Výběr spisu v doplňku" style="width:280px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Vyhledejte spis podle klienta, názvu nebo čísla.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Zvolte, co zařadit.</strong> Vyberte přílohy, cílovou složku a případně nové názvy souborů. Viz <a href="#what-to-file">Výběr příloh, složky a názvu</a>.</p>
+        <div class="app-screenshot">
+          <img src="images/what to file.png" alt="Výběr toho, co zařadit" style="width:280px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Vyberte přílohy, které se zařadí spolu s e-mailem.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Klikněte na Pokračovat.</strong> Doplněk nahraje vybrané soubory do SingleCase a zobrazí shrnutí. E-mail v Outlooku dostane štítek <strong>SC: Filed</strong>. Viz <a href="#after-filing">Po zařazení</a>.</p>
+      </li>
+    </ol>
+
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Co dalšího může panel ukázat.</strong> Pokud jsou všichni účastníci e-mailu z vaší organizace, doplněk místo toho nabídne označit e-mail jako přeskočený. Pokud byl e-mail dříve zařazen a v SingleCase pak smazán, nabídne jeho opětovné zařazení. Viz <a href="#filing-status">Zařazené, přeskočené a odstraněné e-maily</a>.</div>
+    </div>
+
+    <div class="tip">
+      <span class="note-icon">📌</span>
+      <div><strong>Zařazujete více e-mailů za sebou?</strong> Připněte panel, aby zůstal otevřený i při přecházení mezi e-maily. Outlook si připnutí pamatuje zvlášť pro čtení a zvlášť pro psaní e-mailů. Viz <a href="#open">Otevření doplňku</a>.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#platforms">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Podporované platformy</span>
+      </a>
+      <a class="page-nav-btn next" href="#what-to-file">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Výběr příloh, složky a názvu</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── what-to-file ── -->
+  <div class="section page" id="what-to-file">
+    <div class="section-header">
+      <h2>Výběr příloh, složky a názvu</h2>
+    </div>
+    <p>Po výběru spisu doplněk ukáže, co se zařadí. Samotný e-mail se zařadí vždy, jako soubor <code>.eml</code>. Pokud má e-mail přílohy, můžete navíc vybrat, které z nich zařadit, přejmenovat je a zvolit složku, kam se uloží. Pokud e-mail přílohy nemá, tyto možnosti se nezobrazí a tlačítko <strong>Pokračovat</strong> e-mail rovnou zařadí.</p>
+    <div class="app-screenshot">
+      <img src="images/Addin filing.png" alt="Obrazovka zařazení s přílohami a výběrem složky" style="width:280px;max-width:100%;height:auto;">
+    </div>
+
+    <h3>Výběr příloh</h3>
+    <p>V části <strong>Přílohy k zařazení</strong> má každá příloha zaškrtávací políčko a ve výchozím stavu jsou vybrané všechny. Zrušte zaškrtnutí u těch, které nepotřebujete. Pokud má e-mail víc než jednu přílohu, tlačítkem <strong>Vybrat vše</strong> / <strong>Zrušit výběr</strong> přepnete všechny najednou. Z jednoho e-mailu můžete zařadit nejvýše 50 příloh.</p>
+    <p>Až budete připraveni, klikněte na <strong>Pokračovat</strong>.</p>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div>Doplněk v Outlooku nemění e-mail ani jeho přílohy. Po zařazení jen přidá kategorii <strong>SC: Filed</strong>.</div>
+    </div>
+
+    <h3 id="s8-rename">Přejmenování přílohy před zařazením</h3>
+    <p>Přílohy často přicházejí s názvy, které ve spisu nic neříkají, například <code>scan0001.pdf</code> nebo <code>IMG_4821.jpg</code>. Přílohu můžete před zařazením přejmenovat, aby se v SingleCase objevila pod názvem, kterému kolegové porozumí.</p>
+    <ol class="steps">
+      <li>
+        <p><strong>Klikněte na ikonu tužky</strong> vedle přílohy.</p>
+        <div class="app-screenshot">
+          <img src="images/Mac/rename1.png" alt="Ikona tužky vedle přílohy" style="width:340px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Kliknutím na tužku vedle přílohy ji přejmenujete.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Napište nový název</strong> a stiskněte <kbd>Enter</kbd>, nebo klikněte mimo pole. Klávesou <kbd>Esc</kbd> změnu zahodíte.</p>
+        <div class="app-screenshot">
+          <img src="images/Mac/rename2.png" alt="Úprava názvu přílohy" style="width:340px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Měnit lze jen název. Přípona zůstává stejná.</p>
+        </div>
+      </li>
+      <li>
+        <p><strong>Klikněte na Pokračovat.</strong> Příloha se zařadí pod novým názvem a doplněk ho bude ukazovat při každém dalším otevření e-mailu.</p>
+        <div class="app-screenshot">
+          <img src="images/Mac/rename3.png" alt="Zařazený dokument pod novým názvem" style="width:360px;max-width:100%;height:auto;">
+          <p class="app-screenshot-caption">Shrnutí zařazení ukazuje dokument pod názvem, který jste mu dali.</p>
+        </div>
+      </li>
+    </ol>
+    <ul class="bullets">
+      <li><div><strong>Příponu změnit nelze</strong>, takže z <code>.pdf</code> zůstane <code>.pdf</code>.</div></li>
+      <li><div><strong>Prázdný název nic nezmění.</strong> Příloha si ponechá původní název.</div></li>
+      <li><div><strong>Dvě přílohy se stejným názvem přejmenovat nelze.</strong> Jejich ikona tužky je neaktivní a zobrazí <em>„Přílohu se stejným názvem jako jiná příloha nelze přejmenovat“</em>.</div></li>
+      <li><div><strong>E-mail v Outlooku zůstane beze změny.</strong> Nový název dostane jen kopie v SingleCase.</div></li>
+    </ul>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Přejmenovat lze jen před zařazením.</strong> Název už zařazeného dokumentu změníte v SingleCase.</div>
+    </div>
+
+    <h3 id="s8-folder">Výběr cílové složky</h3>
+    <p>Pod přílohami je řádek <strong>Složka</strong> se dvěma možnostmi:</p>
+    <ul class="bullets">
+      <li><div><strong>Výchozí</strong> (předvybraná): přílohy se uloží do výchozí složky spisu pro příchozí poštu, <strong>Korespondence → Přijaté</strong>.</div></li>
+      <li><div><strong>Vlastní</strong>: zvolíte libovolnou složku ve spisu.</div></li>
+    </ul>
+    <p>Při volbě <strong>Vlastní</strong> se pod řádkem zobrazí složky spisu. Kliknutím složku otevřete. Složka, ve které jste, je vybraná: zobrazuje se nahoře v seznamu se zaškrtnutím (✓). Složky s podsložkami mají šipku (→). O úroveň výš se vrátíte kliknutím na vybranou složku nahoře v seznamu (↵).</p>
+    <div class="app-screenshot">
+      <img src="images/Mac/Folder Select.png" alt="Výběr vlastní složky" style="width:360px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">Zaškrtnutí ukazuje složku, do které se přílohy uloží.</p>
+    </div>
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div>Složka platí pro všechny přílohy, které z e-mailu zařazujete. Samotný e-mail (<code>.eml</code>) se vždy uloží do <strong>Pošty spisu</strong>. Vidíte jen složky, které můžete v SingleCase otevřít.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#file-email">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Zařazení e-mailu</span>
+      </a>
+      <a class="page-nav-btn next" href="#after-filing">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Po zařazení: otevření spisu a dokumentů</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── after-filing ── -->
+  <div class="section page" id="after-filing">
+    <div class="section-header">
+      <h2>Po zařazení: otevření spisu a dokumentů</h2>
+    </div>
+    <p>Po dokončení uložení panel zobrazí souhrn:</p>
+    <img src="images/filed.png" data-win-src="images/Windows/filed.png" alt="Souhrnné zobrazení po uložení s názvem spisu, datem a uloženými dokumenty" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+    <p class="img-caption">Souhrnné zobrazení po úspěšném uložení.</p>
+    <ul class="bullets">
+      <li><div><strong>Název spisu</strong> (kliknutím otevřete spis v SingleCase)</div></li>
+      <li><div><strong>Datum a čas</strong> uložení</div></li>
+      <li><div><strong>Počet uložených dokumentů</strong></div></li>
+      <li><div>Každý <strong>uložený dokument</strong> uveden samostatně</div></li>
+    </ul>
+
+    <p>Ze souhrnu můžete také spravovat každý dokument:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Akce</th>
+          <th>Co dělá</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Otevřít spis v SingleCase</strong></td>
+          <td>Otevře spis, do kterého byl e-mail uložen, v SingleCase</td>
+        </tr>
+        <tr>
+          <td><strong>Otevřít dokument v SingleCase</strong></td>
+          <td>Otevře uložený dokument přímo v SingleCase</td>
+        </tr>
+        <tr>
+          <td><strong>Upravit přes SingleCase</strong></td>
+          <td>Otevře dokument v SingleCase k úpravám</td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+    <div class="note">
+      <span class="note-icon">🔒</span>
+      <div><strong>Dokument má otevřený někdo jiný.</strong> Pokud má dokument v SingleCase otevřený kolega, doplněk ho otevřít nemůže a zobrazí zprávu s jeho jménem, například <em>„Smlouva.docx je právě otevřen uživatelem [jméno kolegy] a nelze ho nyní otevřít.“</em> Počkejte, až ho zavře, a zkuste to znovu.</div>
+    </div>
+<h3>Kde najdete uložené položky v SingleCase</h3>
+    <p>Po uložení najdete e-mail a přílohy přímo ve spisu v SingleCase.</p>
+
+    <h4>E-mail — Pošta spisu</h4>
+    <p>Uložený e-mail se zobrazí v sekci <strong>Pošta spisu</strong> daného spisu.</p>
+    <img src="images/case mailbox.png" alt="Záložka Pošta spisu v SingleCase" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+    <img src="images/case mailbox 1.png" data-win-src="images/Windows/case mailbox 1.png" alt="Uložený e-mail zobrazený v Poště spisu v SingleCase" class="manual-img" style="width:100%;height:auto;">
+    <p class="img-caption">Uložený e-mail je viditelný v Poště spisu.</p>
+
+    <h4>Přílohy — Dokumenty</h4>
+    <p>Vybrané přílohy jsou uloženy v sekci <strong>Dokumenty</strong> spisu. Při výchozím nastavení složky míří do <strong>Doručených</strong> ve spisu, tedy do <em>Korespondence → Přijaté</em>. Pokud jste před uložením zvolili jinou složku (viz <a href="#s8-folder" onclick="showSubSection('s8','s8-folder');return false;">Výběr cílové složky</a>), najdete je v ní.</p>
+    <img src="images/documents.png" data-win-src="images/Windows/documents.png" alt="Sekce Dokumenty v SingleCase se zobrazenou přílohou pod Korespondencí › Přijaté" class="manual-img" style="width:100%;height:auto;">
+    <p class="img-caption">Uložené přílohy se zobrazí v Dokumentech pod Korespondence → Přijaté.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#what-to-file">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Výběr příloh, složky a názvu</span>
+      </a>
+      <a class="page-nav-btn next" href="#filing-status">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Zařazené, přeskočené a odstraněné e-maily</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── filing-status ── -->
+  <div class="section page" id="filing-status">
+    <div class="section-header">
+      <h2>Zařazené, přeskočené a odstraněné e-maily</h2>
+    </div>
+    <p>Po otevření e-mailu doplněk nejdřív zkontroluje jeho stav v SingleCase. Podle výsledku panel zobrazí jednu z následujících situací.</p>
+
+    <h3>Už zařazený</h3>
+    <p>Panel ukáže spis a zařazené dokumenty. Funguje to stejně, ať jste e-mail zařadili sami, zařadil ho kolega, nebo se zařadil při odeslání. E-mail v Outlooku zároveň dostane štítek <strong>SC: Filed</strong>. Co můžete dělat dál, popisuje článek <a href="#after-filing">Po zařazení</a>.</p>
+
+    <h3>Zatím nezařazený</h3>
+    <p>Panel se zeptá <em>„Tento email ještě není zařazen. Chcete ho zařadit?“</em></p>
+    <ul class="bullets">
+      <li><div><strong>Ano, zařadit</strong> otevře výběr spisu. Viz <a href="#file-email">Zařazení e-mailu</a>.</div></li>
+      <li><div><strong>Ne</strong> nechá e-mail nezařazený. Panel potvrdí <em>„Rozumím. Tento email teď nezařadím.“</em> a na tento e-mail se znovu zeptá až po dalším otevření panelu.</div></li>
+    </ul>
+
+    <h3>Interní e-maily</h3>
+    <p>Pokud jsou odesílatel i všichni příjemci z e-mailové domény vaší organizace (včetně jejích subdomén), panel se zeptá <em>„Toto mi připadá jako interní email. Označit jako přeskočené?“</em> Rozpoznání probíhá automaticky, žádné nastavení pro něj není.</p>
+    <ul class="bullets">
+      <li><div><strong>Ano</strong> označí e-mail jako přeskočený. E-mail dostane štítek <strong>SC: Skipped</strong> a panel zobrazí <em>„Označeno jako přeskočené. Stále ho můžete zařadit ručně.“</em></div></li>
+      <li><div><strong>Přesto zařadit</strong> otevře výběr spisu stejně jako u jakéhokoli jiného e-mailu.</div></li>
+    </ul>
+
+    <h3>Přeskočené e-maily</h3>
+    <p>Když otevřete e-mail označený jako přeskočený, panel zobrazí <em>„Tento email je označen jako přeskočený. Stále ho můžete zařadit ručně.“</em> Kliknutím na <strong>Zařadit ručně</strong> ho zařadíte do spisu.</p>
+
+    <h3>Odstraněné ze SingleCase</h3>
+    <p>Pokud byl e-mail zařazen, ale jeho dokumenty se v SingleCase později smazaly, panel zobrazí <em>„Email byl odstraněn ze SingleCase. Chcete ho zařadit znovu?“</em> Klikněte na <strong>Ano, zařadit</strong>, pokud ho chcete zařadit znovu, nebo na <strong>Ne</strong>.</p>
+
+    <h3>Opětovné zařazení stejného e-mailu</h3>
+    <p>Pokud zařazujete e-mail, který už zařazený je, panel zobrazí <em>„Tento email už byl zařazen. Klikněte znovu pro potvrzení.“</em> Klikněte znovu, jen pokud ho opravdu chcete zařadit podruhé.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#after-filing">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Po zařazení: otevření spisu a dokumentů</span>
+      </a>
+      <a class="page-nav-btn next" href="#move-to-folder">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Přesun zařazených e-mailů do složek spisů</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── move-to-folder ── -->
+  <div class="section page" id="move-to-folder">
+    <div class="section-header">
+      <h2>Přesun zařazených e-mailů do složek spisů</h2>
+    </div>
+    <div class="tip">
+      <span class="note-icon">🗓️</span>
+      <div><strong>Připravujeme pro verzi doplňku 1.4.</strong> Funkce je ve výchozím stavu vypnutá; zapnete si ji sami v Nastavení.</div>
+    </div>
+    <p>Zařazené e-maily běžně zůstávají v doručené poště jen se štítkem <strong>SC: Filed</strong>. Pokud chcete mít doručenou poštu čistou, doplněk může každý zařazený e-mail hned po zařazení přesunout do složky jeho spisu.</p>
+
+    <h3>Zapnutí</h3>
+    <ol class="steps">
+      <li><p>Otevřete <a href="#settings">Nastavení</a> (ikona ozubeného kola v panelu doplňku).</p></li>
+      <li><p>V části <strong>Organizace e-mailů</strong> zapněte přepínač <strong>Přesunout zatříděné e-maily do složky v Outlooku</strong>. Text pod ním zní: <em>„Po zatřízení e-mailu do SingleCase ho doplněk automaticky přesune do složky SingleCase - Plugin → [název spisu] ve vašem Outlooku.“</em></p></li>
+    </ol>
+    <p>Nastavení se vám uloží a zůstane zapnuté i po zavření a opětovném otevření doplňku. Když ho vypnete, další e-maily se už nepřesouvají; e-maily, které už byly přesunuté, zůstanou ve složkách spisů.</p>
+
+    <h3>Jak jsou složky uspořádané</h3>
+    <p>Doplněk vytvoří na nejvyšší úrovni vaší schránky, vedle Doručené pošty, složku <strong>SingleCase - Plugin</strong>. V ní je pro každý spis jedna složka s názvem <strong>číslo spisu · název spisu</strong>:</p>
+    <pre class="folder-tree">SingleCase - Plugin
+  2024-0003 · Ochrana životního prostředí
+  2025-0010 · Smith vs. Jones
+  2026-1348 · Jednorázový paušál</pre>
+    <ul class="bullets">
+      <li><div>Obě složky se vytvoří automaticky: <strong>SingleCase - Plugin</strong> při prvním přesunu e-mailu a složka spisu při prvním zařazení e-mailu do daného spisu.</div></li>
+      <li><div>Pokud spis nemá číslo, složka se jmenuje jen podle názvu spisu.</div></li>
+      <li><div>Znaky <code>/</code>, <code>\</code> a <code>:</code> v názvech spisů se nahradí pomlčkou a velmi dlouhé názvy se zkrátí.</div></li>
+      <li><div>Složky jsou ve vaší schránce, takže je v Outlooku uvidíte na všech svých zařízeních.</div></li>
+    </ul>
+
+    <h3>Které e-maily se přesouvají</h3>
+    <ul class="bullets">
+      <li><div><strong>Jen e-maily, které zařadíte doplňkem</strong>, a to v okamžiku zařazení. Žádného jiného e-mailu ve schránce se doplněk nedotkne.</div></li>
+      <li><div><strong>E-mail se přesune, nekopíruje.</strong> Zmizí ze složky, kde byl, a objeví se ve složce spisu, stále se štítkem <strong>SC: Filed</strong>.</div></li>
+      <li><div><strong>E-maily zařazené před zapnutím nastavení zůstanou, kde jsou.</strong> Zpětně se nic nepřesouvá.</div></li>
+    </ul>
+
+    <h3>Když se e-mail přesunout nepodaří</h3>
+    <p>Zařazení má vždy přednost. Pokud se přesun nepodaří, e-mail je v SingleCase přesto zařazený, zůstane v původní složce a doplněk vás na to upozorní. Přesunout ho pak můžete ručně.</p>
+
+    <h3>Přejmenování, přesunutí nebo smazání složek</h3>
+    <p>Doplněk hledá složku spisu podle jejího názvu uvnitř <strong>SingleCase - Plugin</strong> (na velikosti písmen nezáleží). Pokud složku spisu přejmenujete, přesunete jinam nebo smažete, při dalším zařazení e-mailu do daného spisu se vytvoří nová složka se standardním názvem. Totéž platí pro samotnou složku <strong>SingleCase - Plugin</strong>.</p>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#filing-status">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Zařazené, přeskočené a odstraněné e-maily</span>
+      </a>
+      <a class="page-nav-btn next" href="#file-on-send">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Zařazení při odeslání</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── file-on-send ── -->
+  <div class="section page" id="file-on-send">
+    <div class="section-header">
+      <h2>Zařazení při odeslání</h2>
+    </div>
+    <p>Při zařazení při odeslání vyberete spis <strong>už během psaní e-mailu</strong>. Po kliknutí na <strong>Odeslat</strong> doplněk odeslaný e-mail do tohoto spisu zařadí za vás, podle nastavení buď automaticky, nebo po vašem potvrzení. Nemusíte se pak vracet do složky <strong>Odeslaná pošta</strong>.</p>
+
+      <div class="app-screenshot"><img src="images/fos/cs-compose-warn-case.png" alt="Panel při psaní e-mailu s vybraným spisem a režimem Upozornit pokaždé" style="width:300px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Během psaní panel ukazuje spis a co se stane po kliknutí na Odeslat.</p></div>
+
+      <h3>Nastavte si chování při odeslání</h3>
+      <p>Otevřete <strong>Nastavení</strong> doplňku (viz <a href="#settings">Přehled všech nastavení</a>) a v položce <strong>Zařazení při odeslání</strong> zvolte jednu z možností:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Možnost</th>
+            <th>Během psaní</th>
+            <th>Po kliknutí na Odeslat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Upozornit pokaždé</strong> <span style="color:var(--sc-gray);">(výchozí)</span></td>
+            <td>Panel je zvýrazněný žlutě a zobrazuje text <em>„Po odeslání se zeptám, zda chcete email zařadit.“</em></td>
+            <td>E-mail se normálně odešle. Při dalším otevření panelu doplňku se zobrazí otázka <em>„Email odeslán. Chcete ho zařadit?“</em> spolu s názvem spisu. Klikněte na <strong>Zařadit nyní</strong>, nebo na <strong>Přeskočit</strong>, pokud ho zařadit nechcete. Dokud nekliknete na <strong>Zařadit nyní</strong>, nic se nezařadí.</td>
+          </tr>
+          <tr>
+            <td><strong>Vždy zařadit</strong></td>
+            <td>Panel zobrazuje text <em>„Po kliknutí na Odeslat email automaticky zařadím.“</em> a po výběru spisu zezelená.</td>
+            <td>E-mail se automaticky na pozadí zařadí do vybraného spisu. Žádné potvrzení není potřeba.</td>
+          </tr>
+          <tr>
+            <td><strong>Vypnuto</strong></td>
+            <td>Panel zobrazuje text <em>„Automatické zařazování je vypnuté.“</em> Tlačítkem <strong>Zapnout upozornění</strong> přepnete nastavení na <strong>Upozornit pokaždé</strong>.</td>
+            <td>Nic se nezařadí. E-mail můžete zařadit ručně ze složky Odeslaná pošta (viz <a href="#file-email">Zařazení e-mailu</a>).</td>
+          </tr>
+        </tbody>
+      </table>
+        <div class="app-screenshot"><img src="images/fos/cs-settings.png" alt="Nastavení s možnostmi zařazení při odeslání" style="width:310px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Chování zvolíte v Nastavení u položky Zařazení při odeslání.</p></div>
+        <div class="app-screenshot"><img src="images/fos/cs-compose-always.png" alt="Panel při psaní e-mailu v režimu Vždy zařadit" style="width:640px;max-width:100%;height:auto;"><p class="app-screenshot-caption">V režimu Vždy zařadit panel po výběru spisu zezelená.</p></div>
+
+      <h3>Jak na to</h3>
+      <ol class="steps">
+        <li>
+          <p><strong>Otevřete nový e-mail nebo odpověď</strong> a kliknutím na tlačítko <strong>SingleCase</strong> v pásu karet otevřete panel. Spis musí být v panelu vybraný ještě před odesláním. Pokud e-mail odešlete bez otevření panelu, při odeslání se nic nezařadí a e-mail můžete zařadit později ze složky Odeslaná pošta.</p>
+        </li>
+        <li>
+          <p><strong>Doplňte příjemce.</strong> Dokud není v poli <strong>Komu</strong> nebo <strong>Kopie</strong> alespoň jeden příjemce, panel zobrazuje <em>„Přidejte příjemce (Komu / Kopie)“</em>. Pokud e-mail posíláte na e-mailovou adresu spisu v SingleCase, spis se rozpozná okamžitě.</p>
+        
+        <div class="app-screenshot"><img src="images/fos/cs-add-recipient.png" alt="Nový e-mail bez příjemců; panel žádá o přidání příjemce" style="width:640px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Dokud e-mail nemá příjemce, panel vás vyzve k jeho přidání.</p></div></li>
+        <li>
+          <p><strong>Zkontrolujte spis.</strong> Panel ukazuje, do kterého spisu se e-mail zařadí. Pokud není správný, klikněte na <strong>Vybrat jiný spis</strong> a vyberte jiný ze seznamu nebo ho vyhledejte. Pokud doplněk nic nenavrhne, panel zobrazí <em>„Vyberte spis pro tento koncept.“</em> Klikněte na <strong>Vybrat spis</strong> a spis zvolte.</p>
+        
+        <div class="app-screenshot"><img src="images/fos/cs-select-case.png" alt="Panel s výzvou k výběru spisu pro koncept" style="width:340px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Zatím žádný návrh: klikněte na Vybrat spis.</p></div></li>
+        <li>
+          <p><strong>Pokračujte v psaní nebo panel zavřete.</strong> Vybraný spis zůstává u tohoto konceptu až do odeslání.</p>
+        </li>
+        <li>
+          <p><strong>Klikněte na Odeslat.</strong> E-mail se vždy odešle. V režimu <strong>Vždy zařadit</strong> se zařadí na pozadí. V režimu <strong>Upozornit pokaždé</strong> se vás doplněk zeptá při dalším otevření panelu.</p>
+        </li>
+      </ol>
+
+      <div class="tip">
+        <span class="note-icon">🔒</span>
+        <div><strong>Váš e-mail se vždy odešle.</strong> Zařazení při odeslání nikdy nezastaví ani nezdrží odchozí e-mail. Pokud zařazení v okamžiku odeslání není možné (například vypršelo přihlášení nebo vypadlo připojení), doplněk ho dokončí při dalším otevření panelu.</div>
+      </div>
+
+      <h3>Jak doplněk vybírá spis</h3>
+      <p>Během psaní doplněk rozhoduje, který spis připraví, v tomto pořadí:</p>
+      <ul class="bullets">
+        <li><div><strong>Spis, který jste vybrali sami,</strong> má vždy přednost.</div></li>
+        <li><div><strong>E-mailová adresa spisu mezi příjemci:</strong> pokud e-mail posíláte na e-mailovou adresu spisu v SingleCase, tento spis se vybere.</div></li>
+        <li><div><strong>Automatické rozpoznání:</strong> pokud e-mail patří do vlákna, které už je zařazené, předmět nebo text obsahuje číslo spisu, nebo adresa příjemce přesně odpovídá spisu, spis se vybere a panel zobrazí <em>„Navržený spis: …“</em>.</div></li>
+        <li><div><strong>Příjemci, se kterými jste už e-maily zařazovali:</strong> pokud jste dříve zařazovali e-maily se stejnými lidmi do určitého spisu, tento spis se nabídne v seznamu pod <strong>Vybrat jiný spis</strong>. Automaticky se nevybere.</div></li>
+      </ul>
+      <p>V seznamu pod <strong>Vybrat jiný spis</strong> je u každého návrhu uvedeno, proč byl nabídnut, například <em>„Stejné vlákno emailu“</em>, <em>„Číslo spisu v emailu“</em>, <em>„Emaily od tohoto odesílatele sem často zařazujete“</em> nebo <em>„Nedávno použitý spis“</em>.</p>
+      <p>Více o řazení spisů najdete v článku <a href="#suggestions">Návrhy spisů</a> a o adresách spisů v článku <a href="#case-address">Odeslání na e-mailovou adresu spisu</a>.</p>
+
+
+      <h3>Co se zařadí?</h3>
+      <p>Odeslaný e-mail se uloží jako dokument do kořene dokumentů vybraného spisu. Výběr příloh, cílové složky a přejmenování (viz <a href="#what-to-file">Výběr příloh, složky a názvu</a>) nejsou při zařazení při odeslání k dispozici. Pokud je potřebujete, spis v konceptu nevybírejte a e-mail po odeslání zařaďte ručně ze složky <strong>Odeslaná pošta</strong> (viz <a href="#file-email">Zařazení e-mailu</a>).</p>
+      <p>Pokud panel zobrazí <em>„Po odeslání ho můžete zařadit ze složky Odeslané.“</em>, doplněk nedokázal tento koncept na zařazení připravit. E-mail se normálně odešle, ale při odeslání se nic nezařadí. Zařaďte ho ručně ze složky Odeslaná pošta.</p>
+
+      <h3>Kdy použít zařazení při odeslání a kdy ruční zařazení</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Situace</th>
+            <th>Doporučený způsob</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Víte předem, do jakého spisu e-mail patří</td>
+            <td><strong>Zařazení při odeslání</strong>: vyberte spis před odesláním a ušetříte krok</td>
+          </tr>
+          <tr>
+            <td>Odpovídáte na e-mail, který je již zařazený ve spisu</td>
+            <td><strong>Zařazení při odeslání</strong>: doplněk vybere stejný spis automaticky</td>
+          </tr>
+          <tr>
+            <td>Chcete vybrat přílohy, složku nebo název dokumentu</td>
+            <td><strong>Ruční zařazení</strong> ze složky Odeslaná pošta po odeslání (viz <a href="#file-email">Zařazení e-mailu</a>)</td>
+          </tr>
+        </tbody>
+      </table>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#move-to-folder">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Přesun zařazených e-mailů do složek spisů</span>
+      </a>
+      <a class="page-nav-btn next" href="#case-address">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Odeslání na e-mailovou adresu spisu</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── case-address ── -->
+  <div class="section page" id="case-address">
+    <div class="section-header">
+      <h2>Odeslání na e-mailovou adresu spisu</h2>
+    </div>
+    <p>Každý spis v SingleCase má vlastní e-mailovou adresu ve tvaru <code>ID-SPISU@vasefirma.singlecase.app</code>. Když tuto adresu přidáte mezi příjemce e-mailu, který píšete, obvykle do <strong>Skrytá kopie</strong>, aby ji ostatní příjemci neviděli, doplněk spis okamžitě rozpozná.</p>
+    <ul class="bullets">
+      <li><div>Spis se v panelu vybere bez vyhledávání a panel ho uvede.</div></li>
+      <li><div>Adresa spisu se považuje za jistou. Má přednost před všemi návrhy; přednost před ní má jen spis, který vyberete sami.</div></li>
+      <li><div>Co se stane po kliknutí na Odeslat, určuje nastavení <a href="#file-on-send">Zařazení při odeslání</a>.</div></li>
+    </ul>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#file-on-send">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Zařazení při odeslání</span>
+      </a>
+      <a class="page-nav-btn next" href="#after-sending">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Po odeslání: potvrzení a chyby</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── after-sending ── -->
+  <div class="section page" id="after-sending">
+    <div class="section-header">
+      <h2>Po odeslání: potvrzení a chyby</h2>
+    </div>
+    <p>Výsledek se zobrazí nahoře v panelu doplňku při jeho dalším otevření, bez ohledu na to, který e-mail máte zrovna vybraný:</p>
+      <ul class="bullets">
+        <li><div><strong>Zařazeno:</strong> <em>„Odeslaná zpráva byla zatříděna do spisu [spis].“</em> Zpráva zůstane, dokud ji nezavřete. Pokud e-mail skončil v nesprávném spisu, klikněte na <strong>Změnit spis</strong> a spis se otevře v SingleCase. Přesunout už zařazený e-mail do jiného spisu doplněk neumí.
+        <div class="app-screenshot"><img src="images/fos/cs-filed.png" alt="Potvrzení, že odeslaná zpráva byla zařazena" style="width:300px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Potvrzení zůstane, dokud ho nezavřete.</p></div></div></li>
+        <li><div><strong>Už zařazeno jinde:</strong> pokud je stejný e-mail už zařazený v jiném spisu, znovu se nezařadí a zpráva uvede, ve kterém spisu už je.</div></li>
+        <li><div><strong>Nezdařilo se:</strong> <em>„Zatřídění se nezdařilo. Otevřete doplněk znovu, nebo zatřiďte ručně.“</em> Zobrazí se, když zařazení nemůže uspět, například když nemáte oprávnění zařazovat do daného spisu nebo vypršelo vaše přihlášení k Microsoftu. Dočasné potíže, jako výpadek sítě, se nehlásí. Doplněk to prostě zkusí znovu při dalším otevření panelu.</div></li>
+        <li><div><strong>Čeká na potvrzení (Upozornit pokaždé):</strong> pokud na otázku neodpovíte, zobrazí se znovu při každém otevření panelu po dobu 24 hodin. Poté e-mail zůstane nezařazený. Pokud jste odeslali více e-mailů, doplněk se ptá postupně, od nejstaršího.
+        <div class="app-screenshot"><img src="images/fos/cs-warn-after-send.png" alt="Dotaz, zda odeslaný e-mail zařadit" style="width:300px;max-width:100%;height:auto;"><p class="app-screenshot-caption">V režimu Upozornit pokaždé se doplněk před zařazením zeptá.</p></div></div></li>
+      </ul>
+
+      <div class="note">
+        <span class="note-icon">ℹ️</span>
+        <div><strong>Proč zpráva chvíli trvá.</strong> Doplněk zařazuje kopii e-mailu ze složky <strong>Odeslaná pošta</strong>. V klasickém Outlooku pro Windows se tato kopie může synchronizovat i desítky sekund, takže potvrzení se zobrazí o něco později než v Outlooku na webu nebo v novém Outlooku.</div>
+      </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#case-address">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Odeslání na e-mailovou adresu spisu</span>
+      </a>
+      <a class="page-nav-btn next" href="#find-case">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Vyhledání spisu</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── find-case ── -->
+  <div class="section page" id="find-case">
+    <div class="section-header">
+      <h2>Vyhledání spisu</h2>
+    </div>
+    <p>Seznam spisů má dvě zobrazení, mezi kterými přepínáte tlačítky nahoře: <strong>Vše</strong> a <strong>Oblíbené</strong>. Které se otevře jako první, určuje <a href="#settings">Nastavení</a> (<strong>Výchozí skupina spisů</strong>, výchozí je Vše).</p>
+
+    <h3>Vyhledání spisu</h3>
+    <p>V zobrazení <strong>Vše</strong> doplněk ukáže <a href="#suggestions">navržené spisy</a> a pod nimi vyhledávací pole. Napište alespoň 3 znaky; výsledky se zobrazují průběžně a při posouvání dolů se načítají další. U každého výsledku je název spisu, číslo spisu a klient. Klávesou <kbd>Enter</kbd> vyberete první výsledek, klávesou <kbd>Esc</kbd> hledání vymažete.</p>
+    <p>Celé názvy psát nemusíte; fungují i části slov a můžete je kombinovat:</p>
+    <table>
+      <thead>
+        <tr><th>Co napíšete</th><th>Příklad</th><th>Výsledek</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Název klienta (nebo jeho část)</td><td><code>nextpresso</code></td><td>Spisy tohoto klienta</td></tr>
+        <tr><td>Název spisu (nebo jeho část)</td><td><code>magenta</code></td><td>Spisy s tímto názvem</td></tr>
+        <tr><td>Číslo spisu</td><td><code>2025-100</code></td><td>Daný spis</td></tr>
+        <tr><td>Klient + název spisu</td><td><code>nextpresso magenta</code></td><td>Daný spis u daného klienta</td></tr>
+        <tr><td>Kombinace částí slov</td><td><code>next mag</code></td><td>Odpovídající klient a spis</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div><strong>Vyhledávání najde vaše spisy:</strong> spisy, u kterých jste odpovědnou osobou nebo členem. Pokud potřebujete spis, na kterém nejste, požádejte jeho odpovědnou osobu, aby vás v SingleCase přidala.</div>
+    </div>
+
+    <h3>Oblíbené</h3>
+    <p><strong>Oblíbené</strong> zobrazuje spisy, které máte v SingleCase označené hvězdičkou. Návrhy a vyhledávací pole jsou jen v zobrazení <strong>Vše</strong>; v Oblíbených vybíráte spis ze seznamu.</p>
+    <div class="app-screenshot">
+      <img src="images/favourites-en.png" alt="Přepínání mezi Vše a Oblíbené" style="width:280px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">Mezi zobrazeními Vše a Oblíbené přepínáte tlačítky nahoře.</p>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#after-sending">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Po odeslání: potvrzení a chyby</span>
+      </a>
+      <a class="page-nav-btn next" href="#suggestions">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Návrhy spisů</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── suggestions ── -->
+  <div class="section page" id="suggestions">
+    <div class="section-header">
+      <h2>Návrhy spisů</h2>
+    </div>
+    <p>Když zařazujete otevřený e-mail, doplněk se SingleCase zeptá, do kterých spisů e-mail nejspíš patří, a nad vyhledávacím polem ukáže až tři návrhy (v zobrazení <strong>Vše</strong>).</p>
+    <div class="app-screenshot">
+      <img src="images/suggestion.png" alt="Návrhy spisů v doplňku" style="width:360px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">Navržené spisy s mírou jistoty a důvodem návrhu.</p>
+    </div>
+
+    <h3>Co návrh ukazuje</h3>
+    <ul class="bullets">
+      <li><div>Název spisu a pod ním číslo spisu a klienta.</div></li>
+      <li><div>Míru jistoty v procentech.</div></li>
+      <li><div>Hlavní důvod návrhu: <em>„Stejné vlákno emailu“</em>, <em>„Číslo spisu v emailu“</em>, <em>„Emaily od tohoto odesílatele sem často zařazujete“</em>, <em>„Emaily z této organizace se obvykle zařazují sem“</em>, <em>„Propojený kontakt“</em>, <em>„Nedávno použitý spis“</em> nebo <em>„Navržená shoda“</em>.</div></li>
+    </ul>
+
+    <h3>Co doplněk zohledňuje</h3>
+    <p>SingleCase kombinuje několik vodítek. Každé vodítko spisu přidává body, takže spis, který splňuje víc z nich, je výš. Od nejsilnějšího po nejslabší:</p>
+    <ol class="steps">
+      <li><p><strong>Stejné vlákno.</strong> Jiný e-mail z této konverzace už je do spisu zařazený.</p></li>
+      <li><p><strong>Číslo spisu SingleCase</strong> v předmětu, v prvních 5 000 znacích textu nebo v názvu přílohy. Musí se shodovat jako celé číslo, ne jako část delšího čísla.</p></li>
+      <li><p><strong>Spisová značka soudu</strong> na stejných místech. Na oddělovačích nezáleží, takže <code>23-C-159</code>, <code>23/C/159</code> i <code>23 C 159</code> se shodují.</p></li>
+      <li><p><strong>Vaše historie s těmito adresami.</strong> Jak často a jak nedávno jste e-maily s odesílatelem a příjemci do spisu zařazovali.</p></li>
+      <li><p><strong>Historie organizace.</strong> E-maily ze stejné e-mailové domény zařazené do spisu. Počítá se mnohem méně než přesná adresa, a tím méně, čím víc spisů doména má. Doména vaší firmy a veřejné domény jako gmail.com se nezohledňují.</p></li>
+      <li><p><strong>Propojené kontakty.</strong> Účastník e-mailu odpovídá aktivnímu kontaktu propojenému se spisem v SingleCase. Pokud je kontakt propojený s více spisy, body se mezi ně rozdělí, takže kontakt na mnoha spisech o žádném z nich mnoho neříká. Kontakt propojený jen s jedním spisem má přednost před slabou historií odesílatele, ale zavedená historie (časté a nedávné zařazování) má přednost před ním.</p></li>
+      <li><p><strong>Nedávno použité spisy.</strong> Spisy, do kterých jste zařazovali za posledních 14 dní. Rozhoduje jen mezi spisy, které už našla jiná vodítka.</p></li>
+    </ol>
+    <p>Číslo spisu nebo spisová značka v e-mailu má vždy přednost před samotnou historií zařazování.</p>
+
+    <h3>Míra jistoty</h3>
+    <p>Procento odráží, jak silná vodítka jsou a jak daleko je spis před dalším v pořadí. Pokud mají dva spisy stejně silná vodítka, oba dostanou nižší procento. Jediné vodítko, ani přesné číslo spisu, nedosáhne 100 %. Spisy pod 10 % se nezobrazují.</p>
+
+    <h3>Doporučený spis</h3>
+    <p>Když je první spis jasně napřed, doplněk ho označí jako doporučený zeleným rámečkem a můžete rovnou kliknout na <strong>Pokračovat</strong>. Počítají se přitom jen silná vodítka: stejné vlákno, číslo spisu nebo spisová značka, nebo vaše historie s těmito adresami. Historie organizace a propojené kontakty samy o sobě spis doporučeným neudělají. Dokud nekliknete na <strong>Pokračovat</strong>, nic se nezařadí, a vždy můžete vybrat jiný spis.</p>
+
+    <h3>Návrhy jsou osobní</h3>
+    <p>Návrhy vycházejí ze spisů, ke kterým máte přístup, a z vaší vlastní historie zařazování, takže kolega může u stejného e-mailu vidět jiné návrhy. Každý zařazený e-mail zlepšuje další návrhy pro stejné lidi a organizace.</p>
+
+    <div class="tip">
+      <span class="note-icon">💡</span>
+      <div><strong>Žádný návrh nesedí?</strong> Použijte vyhledávací pole pod návrhy. Viz <a href="#find-case">Vyhledání spisu</a>.</div>
+    </div>
+
+    <div class="note">
+      <span class="note-icon">✉️</span>
+      <div><strong>Během psaní e-mailu</strong> doplněk podle stejných informací připraví spis ještě před odesláním. Jak to funguje, popisuje článek <a href="#file-on-send">Zařazení při odeslání</a>.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#find-case">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Vyhledání spisu</span>
+      </a>
+      <a class="page-nav-btn next" href="#categories">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Stav zařazení v Outlooku</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── categories ── -->
+  <div class="section page" id="categories">
+    <div class="section-header">
+      <h2>Stav zařazení v Outlooku</h2>
+    </div>
+    <p>Doplněk používá kategorie Outlooku k zobrazení stavu uložení každého e-mailu na první pohled. Tyto štítky se zobrazují ve složce Doručená pošta, Odeslaná pošta a v jakékoli složce, kde se e-mail nachází, a synchronizují se na všech vašich zařízeních.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Štítek</th>
+          <th>Význam</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="label-filed"><span class="dot green"></span>SC: Filed</span></td>
+          <td>E-mail byl úspěšně uložen v SingleCase</td>
+        </tr>
+        <tr>
+          <td><span class="label-unfiled"><span class="dot gray"></span>SC: Skipped</span></td>
+          <td>E-mail zatím není přiřazen k žádnému případu v SingleCase.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#suggestions">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Návrhy spisů</span>
+      </a>
+      <a class="page-nav-btn next" href="#settings">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Přehled všech nastavení</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── settings ── -->
+  <div class="section page" id="settings">
+    <div class="section-header">
+      <h2>Přehled všech nastavení</h2>
+    </div>
+    <p>Nastavení otevřete kliknutím na ikonu ozubeného kola (⚙) v pravém horním rohu panelu doplňku. Zavřete ho tlačítkem <strong>Hotovo</strong> nebo křížkem × vpravo nahoře.</p>
+    <div class="app-screenshot">
+      <img src="images/settings cog.png" alt="Ikona ozubeného kola v panelu doplňku" style="width:340px;max-width:100%;height:auto;">
+      <p class="app-screenshot-caption">Kliknutím na ozubené kolo otevřete Nastavení.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Nastavení</th><th>Možnosti</th><th>Co dělá</th><th>Kde se uplatní</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Výchozí skupina spisů</strong></td>
+          <td><strong>Vše</strong> (výchozí), <strong>Oblíbené</strong></td>
+          <td>Ve kterém zobrazení se seznam spisů otevře. Oblíbené jsou spisy označené v SingleCase hvězdičkou. Návrhy a vyhledávání jsou jen ve Vše. Viz <a href="#find-case">Vyhledání spisu</a>.</td>
+          <td>Oba režimy</td>
+        </tr>
+        <tr>
+          <td><strong>Zařazení při odeslání</strong></td>
+          <td><strong>Upozornit pokaždé</strong> (výchozí), <strong>Vždy zařadit</strong>, <strong>Vypnuto</strong></td>
+          <td>Zda se odeslaný e-mail zařadí automaticky, po vašem potvrzení, nebo vůbec. Viz <a href="#file-on-send">Zařazení při odeslání</a>.</td>
+          <td>Režim psaní</td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="app-screenshot"><img src="images/fos/cs-settings.png" alt="Okno Nastavení" style="width:310px;max-width:100%;height:auto;"><p class="app-screenshot-caption">Nastavení doplňku.</p></div>
+
+    <p>Ve spodní části Nastavení:</p>
+    <ul class="bullets">
+      <li><div><strong>Verze</strong> a <strong>Workspace</strong> ukazují verzi doplňku a workspace, ke kterému jste připojeni. Při kontaktu s podporou uveďte obojí.</div></li>
+      <li><div><strong>Změnit workspace</strong> připojí doplněk k jinému workspace SingleCase. Viz <a href="#sign-in">Přihlášení a výběr workspace</a>.</div></li>
+      <li><div><strong>Obnovit výchozí</strong> vrátí výchozí nastavení.</div></li>
+    </ul>
+
+    <div class="tip">
+      <span class="note-icon">🗓️</span>
+      <div><strong>Připravujeme pro verzi 1.4:</strong> novou část <strong>Organizace e-mailů</strong> s přepínačem <strong>Přesunout zatříděné e-maily do složky v Outlooku</strong> (ve výchozím stavu vypnuto). Viz <a href="#move-to-folder">Přesun zařazených e-mailů do složek spisů</a>.</div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#categories">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Stav zařazení v Outlooku</span>
+      </a>
+      <a class="page-nav-btn next" href="#faq">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Časté dotazy</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── faq ── -->
+  <div class="section page" id="faq">
+    <div class="section-header">
+      <h2>Časté dotazy</h2>
+    </div>
+    <h3>Zařazování e-mailů</h3>
+    <details>
+      <summary>Jak poznám, že byl e-mail již uložen?</summary>
+      <div class="faq-body">
+        <p>Otevřete e-mail a klikněte na tlačítko SingleCase. Pokud byl e-mail uložen, panel okamžitě zobrazí název spisu, datum uložení a odkazy na uložené dokumenty. Zelený štítek <strong>SC: Filed</strong> ve složce Doručená pošta také indikuje, že e-mail je v SingleCase.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Můžu stejný e-mail zařadit dvakrát?</summary>
+      <div class="faq-body">
+        <p>Doplněk vás nejdřív upozorní: <em>„Tento email už byl zařazen. Klikněte znovu pro potvrzení.“</em> Podruhé ho zařadí, jen pokud kliknete znovu. Viz <a href="#filing-status">Zařazené, přeskočené a odstraněné e-maily</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Co se stane, pokud uložím e-mail a poté ho přepošlu?</summary>
+      <div class="faq-body">
+        <p>Přeposílání vytvoří zcela nový e-mail. Přeposlaná kopie se automaticky neuloží. Pokud je to potřeba, musíte otevřít doplněk pro přeposlanou kopii a uložit ji samostatně.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Vynechal jsem některé přílohy. Změní se tím původní e-mail?</summary>
+      <div class="faq-body">
+        <p>Ne. Doplněk v Outlooku nemění e-mail ani jeho přílohy; jen přidá kategorii <strong>SC: Filed</strong>. Do SingleCase se nahrají jen soubory, které jste vybrali.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Omylem jsem uložil špatný e-mail. Co mám dělat?</summary>
+      <div class="faq-body">
+        <p>Uložení nelze vrátit z doplňku. Chcete-li odebrat chybně uložený dokument, přejděte na <strong>SingleCase → Spisy → Dokumenty</strong>, najděte dokument a odstraňte ho odtud. E-mail v Outlooku zůstane zcela nezměněn.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Proč je kategorie e-mailu v angličtině?</summary>
+      <div class="faq-body">
+        <p>Názvy kategorií <strong>SC: Filed</strong> a <strong>SC: Skipped</strong> jsou stejné ve všech jazycích, bez ohledu na jazyk Outlooku.</p>
+      </div>
+    </details>
+
+    <h3>Spisy a návrhy</h3>
+    <details>
+      <summary>Mezi návrhy nevidím spis, který potřebuji. Co mám dělat?</summary>
+      <div class="faq-body">
+        <p>Návrhy ukazují nejvýše tři spisy; jsou zkratkou, ne omezením. Použijte vyhledávací pole pod návrhy (v zobrazení <strong>Vše</strong>) a hledejte podle názvu klienta, názvu spisu nebo čísla spisu. Klávesou <kbd>Enter</kbd> vyberete první výsledek.</p>
+        <p>Pokud nic nenajde ani vyhledávání, zkontrolujte postupně:</p>
+        <ul class="bullets">
+          <li><div><strong>Zkuste kratší část názvu.</strong> Části slov fungují, ale dlouhý název s překlepem ne.</div></li>
+          <li><div><strong>Zkontrolujte workspace.</strong> Pokud má vaše firma víc workspace SingleCase, můžete být přihlášeni k jinému. Viz <a href="#sign-in">Přihlášení a výběr workspace</a>.</div></li>
+          <li><div><strong>Zkontrolujte, že jste na spisu.</strong> Vyhledávání najde spisy, u kterých jste odpovědnou osobou nebo členem. Požádejte odpovědnou osobu spisu, aby vás v SingleCase přidala.</div></li>
+          <li><div><strong>Nově vytvořený spis?</strong> Obnovte panel (pravým tlačítkem do panelu → <strong>Znovu načíst</strong>) a hledejte znovu.</div></li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Doplněk doporučil nesprávný spis. Co mám dělat?</summary>
+      <div class="faq-body">
+        <p>Doporučený spis je jen návrh. Dokud nekliknete na Pokračovat, nic se nezařadí, takže jednoduše vyberte nebo vyhledejte jiný spis. Doplněk spis doporučí, když je jasně napřed díky stejnému vláknu, číslu spisu nebo spisové značce v e-mailu, nebo vaší historii s těmito adresami. Číslo se ale může oprávněně objevit i v e-mailu, který patří jinam, například v přeposlaném vlákně.</p>
+        <p>Zařazení do správného spisu zlepší další návrhy pro stejné lidi. Viz <a href="#suggestions">Návrhy spisů</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Proč u některých e-mailů nevidím žádné návrhy?</summary>
+      <div class="faq-body">
+        <p>To je normální a vyhledávací pole je vždy k dispozici. Návrhy zůstanou prázdné, když není z čeho vycházet:</p>
+        <ul class="bullets">
+          <li><div>Žádný jiný e-mail z vlákna není zařazený a v předmětu, prvních 5 000 znacích textu ani v názvech příloh není číslo spisu nebo spisová značka.</div></li>
+          <li><div>S těmito lidmi ani touto organizací jste e-maily dosud nezařazovali. Veřejné domény jako gmail.com a doména vaší firmy se do historie organizace nepočítají.</div></li>
+          <li><div>Všechny spisy dostaly méně než 10 %, což je minimum, které doplněk zobrazí.</div></li>
+        </ul>
+      </div>
+    </details>
+
+    <h3>Přihlášení, aktualizace a dostupnost</h3>
+    <details>
+      <summary>Odhlásí mě doplněk automaticky?</summary>
+      <div class="faq-body">
+        <p>Obvykle ne. Doplněk vás udržuje přihlášené a relaci automaticky obnovuje na pozadí, takže se nemusíte přihlašovat při každém otevření Outlooku. Pokud vás přece jen odhlásí, například po změně hesla, přihlaste se znovu na úvodní obrazovce. Pro připojení k jinému workspace použijte <strong>Změnit workspace</strong> v <a href="#settings">Nastavení</a>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Jak získám nejnovější verzi doplňku?</summary>
+      <div class="faq-body">
+        <p>Doplněk se aktualizuje automaticky. Protože funguje jako webová aplikace v Outlooku, správce publikuje nové verze do Microsoft 365 a vy vždy obdržíte nejnovější verzi při příštím otevření Outlooku. Nemusíte nic instalovat ručně.</p>
+        <p>Pokud potřebujete načíst novou verzi ihned bez restartu Outlooku, můžete panel doplňku vynutit znovu načíst:</p>
+        <ul style="margin: 8px 0 8px 16px; line-height: 1.8;">
+          <li><strong>Outlook pro Mac:</strong> klikněte pravým tlačítkem kdekoliv v panelu SingleCase → <strong>Znovu načíst</strong>.</li>
+          <li><strong>Outlook pro Windows:</strong> klikněte pravým tlačítkem kdekoliv v panelu SingleCase → <strong>Znovu načíst</strong>.</li>
+          <li><strong>Outlook na webu (Mac):</strong> klikněte do panelu a stiskněte <strong>Cmd+Shift+R</strong>.</li>
+          <li><strong>Outlook na webu (Windows):</strong> klikněte do panelu a stiskněte <strong>Ctrl+Shift+R</strong>.</li>
+        </ul>
+        <img src="images/reload.png" alt="Kontextová nabídka po kliknutí pravým tlačítkem v panelu SingleCase s možností Znovu načíst" class="manual-img" style="width:280px;max-width:100%;height:auto;">
+        <p class="img-caption">Klikněte pravým tlačítkem v panelu a zvolte Znovu načíst pro okamžité načtení nejnovější verze.</p>
+        <p>Nainstalovanou verzi si můžete ověřit v části <strong>Moje doplňky</strong> v Outlooku:</p>
+        <ul style="margin: 8px 0 0 16px; line-height: 1.8;">
+          <li><strong>Outlook na webu:</strong> otevřete libovolný e-mail → klikněte na <strong>nabídku tří teček (⋯)</strong> → <strong>Získat doplňky</strong> → <strong>Moje doplňky</strong>. Najděte SingleCase v seznamu. Verze je zobrazena pod názvem doplňku.</li>
+          <li><strong>Outlook pro Mac:</strong> nabídka <strong>Nástroje</strong> → <strong>Získat doplňky</strong> → záložka <strong>Moje doplňky</strong>.</li>
+          <li><strong>Outlook pro Windows:</strong> <strong>Soubor</strong> → <strong>Správa doplňků</strong> (otevře stránku v prohlížeči) → záložka <strong>Moje doplňky</strong>.</li>
+        </ul>
+        <p style="margin-top: 10px;">Při hlášení problému uveďte číslo verze, aby vám váš IT administrátor nebo podpora SingleCase mohla pomoci.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Mohu doplněk používat na telefonu?</summary>
+      <div class="faq-body">
+        <p>Zatím ne. Podpora pro mobilní zařízení (iOS a Android) bude <strong>brzy</strong> k dispozici. O dostupnosti vás budeme informovat.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Funguje doplněk offline?</summary>
+      <div class="faq-body">
+        <p>Ne. Doplněk potřebuje pro komunikaci se SingleCase připojení k internetu. Bez připojení se zobrazí chyba připojení. Jakmile budete znovu online, zařaďte e-mail znovu.</p>
+      </div>
+    </details>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#settings">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Přehled všech nastavení</span>
+      </a>
+      <a class="page-nav-btn next" href="#troubleshooting">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Řešení problémů</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── troubleshooting ── -->
+  <div class="section page" id="troubleshooting">
+    <div class="section-header">
+      <h2>Řešení problémů</h2>
+    </div>
+    <div class="trouble-item">
+      <h3 id="s14-login">Nelze se přihlásit — Microsoft hlásí, že účet v tenantovi SingleCase neexistuje</h3>
+      <p>Kliknete na přihlášení a zobrazí se okno Microsoftu <strong>Vyberte účet</strong> s červenou zprávou:</p>
+      <p style="margin-left:16px; border-left:3px solid #e5e7eb; padding-left:12px; color:#4b5563;"><em>Vybraný uživatelský účet v tenantovi SingleCase neexistuje a nemá v něm přístup k aplikaci. Nejdříve je nutné účet přidat do tenanta jako externího uživatele. Použijte prosím jiný účet.</em></p>
+      <img src="images/tenant missing.png" alt="Dialog Microsoftu Vyberte účet s chybou, že vybraný účet v tenantovi SingleCase neexistuje" class="manual-img" style="width:380px;max-width:100%;height:auto;">
+      <p class="img-caption">Přihlášení se zastaví zde. Opakovaný výběr téhož účtu zprávu jen zobrazí znovu.</p>
+
+      <p>Nejde o problém s heslem a nevyřešíte ho z Outlooku. Doplněk vás přihlašuje přes Microsoft, takže váš profil v SingleCase musí vědět, který účet Microsoft vám patří. Dokud toto propojení neexistuje, nemá Microsoft k čemu přístup udělit a zobrazí uvedenou zprávu. Řešením je propojení v SingleCase vytvořit — nebo vytvořit znovu:</p>
+
+      <ol class="steps">
+        <li><p>Otevřete svůj pracovní prostor SingleCase <strong>v prohlížeči</strong> a přihlaste se běžným způsobem.</p></li>
+        <li><p>Přejděte do <strong>Můj profil</strong> a najděte sekci <strong>propojení účtu Microsoft</strong>.</p></li>
+        <li>
+          <p><strong>Pokud není propojen žádný účet</strong> — propojte ho. Přihlaste se <em>stejným</em> účtem Microsoft, který používáte v Outlooku, a potvrďte dotaz na oprávnění. Ve většině případů to chybu vyřeší.</p>
+        </li>
+        <li>
+          <p><strong>Pokud už je nějaký účet propojen</strong> — zrušte stávající propojení a vytvořte ho znovu. Propojení může přestat platit, například po změně e-mailové adresy, změně licence nebo migraci mezi tenanty Microsoftu — a neplatné propojení vede ke stejné chybě jako žádné.</p>
+        </li>
+        <li><p>Vraťte se do Outlooku, zavřete a znovu otevřete panel SingleCase a přihlaste se.</p></li>
+      </ol>
+
+      <div class="tip">
+        <span class="note-icon">⚠️</span>
+        <div>Propojte stejný účet Microsoft, kterým jste přihlášeni v Outlooku. Osobní účet Microsoft nebo druhý pracovní účet povede ke stejné zprávě i po propojení.</div>
+      </div>
+
+      <div class="tip">
+        <span class="note-icon">ℹ️</span>
+        <div>Pokud chyba přetrvává i po novém propojení, vyfoťte dialog včetně ID aplikace (dlouhý GUID) a pošlete jej svému IT administrátorovi nebo podpoře SingleCase. V takovém případě nejspíš doplněk není schválen v tenantovi Microsoftu vaší organizace, což může udělat pouze administrátor.</div>
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <h3>Panel úloh je prázdný nebo nekonečně zobrazuje načítání</h3>
+      <ol class="steps">
+        <li><p>Zavřete panel úloh a znovu ho otevřete z pásu karet.</p></li>
+        <li><p>Pokud to nepomůže, restartujte Outlook.</p></li>
+        <li><p>V Outlooku na webu zkuste obnovit stránku prohlížeče.</p></li>
+        <li><p>Pokud problém přetrvává, kontaktujte svého IT administrátora. Doplněk může být nutné znovu publikovat.</p></li>
+      </ol>
+    </div>
+
+    <div class="trouble-item">
+      <h3>„Workspace nenalezen“ při přihlášení</h3>
+    <p>Doplněk zobrazí zprávu, že workspace nenašel. Zkontrolujte adresu workspace. Správný formát je <code>vasefirma.singlecase.app</code>. Pokud si nejste jisti, požádejte svého správce SingleCase o přesnou adresu.</p>
+    </div>
+
+    <div class="trouble-item">
+      <h3>Kategorie po uložení (zelené/šedé štítky) se nezobrazují</h3>
+      <p>Kategorie vyžadují specifickou minimální verzi Outlooku. Ujistěte se, že je váš Outlook zcela aktuální. V Outlooku na webu může zobrazení kategorií po uložení trvat několik sekund.</p>
+    </div>
+
+    <div class="trouble-item">
+      <h3>Spis, který hledám, není v seznamu</h3>
+    <ul class="bullets">
+      <li><div>Přepněte z <strong>Oblíbené</strong> na <strong>Vše</strong>. Vyhledávací pole je jen v zobrazení Vše.</div></li>
+      <li><div>Vyhledejte podle čísla spisu (např. <code>2023-0001</code>).</div></li>
+      <li><div>Vyhledávání najde jen spisy, u kterých jste odpovědnou osobou nebo členem. Požádejte odpovědnou osobu spisu, aby vás v SingleCase přidala.</div></li>
+      <li><div>Spis vytvořený před chvílí se může objevit až po obnovení: klikněte pravým tlačítkem do panelu a zvolte <strong>Znovu načíst</strong>.</div></li>
+    </ul>
+    </div>
+
+    <div class="trouble-item">
+      <h3>Chyba „Uložení selhalo"</h3>
+      <p>Selhání uložení je obvykle způsobeno krátkým přerušením sítě nebo dočasným problémem serveru. Po několika sekundách to zkuste znovu. Pokud chyba přetrvává, ověřte, zda můžete otevřít pracovní prostor SingleCase v prohlížeči. Pokud je pracovní prostor dostupný, ale uložení stále selhává, kontaktujte podporu SingleCase.</p>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#faq">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Časté dotazy</span>
+      </a>
+      <a class="page-nav-btn next" href="#whats-new">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Novinky</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── whats-new ── -->
+  <div class="section page" id="whats-new">
+    <div class="section-header">
+      <h2>Novinky</h2>
+    </div>
+    <h3>Připravujeme pro verzi 1.4</h3>
+    <ul class="bullets">
+      <li><div><strong>Přesun zařazených e-mailů do složek spisů.</strong> Volitelné nastavení, které každý zařazený e-mail přesune do složky <strong>SingleCase - Plugin → spis</strong> v Outlooku. Viz <a href="#move-to-folder">Přesun zařazených e-mailů do složek spisů</a>.</div></li>
+    </ul>
+
+    <h3>Verze 1.3.1.0 · říjen 2026</h3>
+    <ul class="bullets">
+      <li><div><strong>Novinka: zařazení při odeslání.</strong> Vyberte spis už při psaní e-mailu a doplněk ho po kliknutí na Odeslat zařadí, automaticky nebo po vašem potvrzení. Viz <a href="#file-on-send">Zařazení při odeslání</a>.</div></li>
+    </ul>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#troubleshooting">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Řešení problémů</span>
+      </a>
+      <a class="page-nav-btn next" href="#admin-install">
+        <span class="page-nav-label">Další →</span>
+        <span class="page-nav-title">Instalace a aktualizace doplňku</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── admin-install ── -->
+  <div class="section page" id="admin-install">
+    <div class="section-header">
+      <h2>Instalace a aktualizace doplňku</h2>
+    </div>
+    <div class="tip">
+      <span class="note-icon">📘</span>
+      <div>Podrobný postup se snímky obrazovky najdete v <a href="enterprise-deployment-cs.html">Průvodci nasazením pro organizace</a>. Manifest pro váš workspace vytvoříte v <a href="manifest-generator.html">Generátoru manifestu</a>.</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:#f0f6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:13px;line-height:1.5;">
+      <span style="font-weight:600;color:var(--sc-blue);white-space:nowrap;">Pouze správou spravované nasazení</span>
+      <span style="color:var(--sc-gray);">—</span>
+      <span>Doplněk je distribuován přes centrum pro správu M365 a <strong>není k dispozici v AppSource</strong>. Pro vlastní instalaci viz <a href="#s3-get-addin" style="color:var(--sc-blue);">Získání doplňku →</a></span>
+    </div>
+
+    <p>Nasaďte SingleCase pro celou organizaci – nebo pro konkrétní uživatele či skupiny. Vyžaduje účet <strong>Globálního správce</strong> nebo <strong>Správce aplikací</strong>. Uživatelé obdrží doplněk automaticky v pásu karet Outlooku bez jakékoliv akce z jejich strany.</p>
+
+    <ol class="steps">
+      <li>
+        <p>Přihlaste se do <strong>Centra pro správu Microsoft 365</strong> na adrese <a href="https://admin.microsoft.com" target="_blank" rel="noopener">admin.microsoft.com</a>.</p>
+      </li>
+      <li>
+        <p>V levém postranním panelu přejděte na <strong>Nastavení</strong> → <strong>Integrované aplikace</strong>.</p>
+      </li>
+      <li>
+        <p>Klikněte na <strong>Nahrát vlastní aplikace</strong> pro nasazení přes soubor manifestu, nebo vyhledejte <strong>SingleCase</strong> v obchodě s aplikacemi a vyberte jej.</p>
+        <ul class="sub">
+          <li>Při nahrávání manifestu: vyberte <strong>Doplněk pro Office</strong> jako typ aplikace a nahrajte soubor manifestu.</li>
+        </ul>
+      </li>
+      <li>
+        <p>V kroku <strong>Přidat uživatele</strong> vyberte rozsah nasazení:</p>
+        <ul class="sub">
+          <li><strong>Jen já</strong> — pouze váš účet (vhodné pro testování)</li>
+          <li><strong>Celá organizace</strong> — všichni uživatelé ve vašem tenantovi M365</li>
+          <li><strong>Konkrétní uživatelé / skupiny</strong> — definovaný seznam nebo skupina zabezpečení</li>
+        </ul>
+      </li>
+      <li>
+        <p>Klikněte na <strong>Nasadit</strong> a potvrďte. Šíření může trvat až 24 hodin — z naší zkušenosti většinou do 12 hodin.</p>
+      </li>
+      <li>
+        <p>Tlačítko <strong>SingleCase</strong> se automaticky zobrazí v pásu karet každého přiřazeného uživatele při příštím spuštění Outlooku.</p>
+      </li>
+    </ol>
+
+    <div class="tip">
+      <span class="note-icon">ℹ️</span>
+      <div>
+        Po prvním nasazení se doplněk aktualizuje automaticky — při vydání nových verzí není potřeba opětovné nasazení. Uživatelé mohou doplněk také ručně najít pod záložkou <strong>Spravováno správcem</strong> v sekci <em>Získat doplňky</em> (není dostupné v Outlooku 2016, 2019 ani Legacy Outlooku pro Mac).
+      </div>
+    </div>
+
+    <p style="margin-top:16px">
+      <a href="enterprise-deployment-cs.html" style="display:inline-flex;align-items:center;gap:6px;background:var(--sc-blue);color:#fff;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">
+        Kompletní průvodce nasazením s obrázky →
+      </a>
+    </p>
+
+    <h3 id="s2-manifest" style="margin-top:32px;">Aktualizace manifestu</h3>
+    <p>Pokud SingleCase poskytne nový soubor manifestu (například při přechodu z Trial na Production nebo při změně URL doplňku), nahradíte jej v Centru pro správu bez nutnosti odstraňovat stávající nasazení. Vždy aktuální soubory manifestů jsou dostupné v <a href="enterprise-deployment-cs.html#manifests" style="color:var(--sc-blue);">Průvodci pro IT administrátory → Soubory manifestu ↗</a>.</p>
+    <ol class="steps">
+      <li>
+        <p>Přejděte na <strong>Nastavení → Integrované aplikace</strong> v <a href="https://admin.microsoft.com" target="_blank" rel="noopener">Centru pro správu Microsoft 365</a> a vyberte ze seznamu doplněk <strong>SingleCase</strong>. V panelu, který se otevře, klikněte v části <strong>Actions</strong> na <strong>Update add-in</strong>.</p>
+        <img src="images/Screenshot 1.png" alt="Panel s detailem doplňku SingleCase v Integrovaných aplikacích s akcí Update add-in" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Panel s detailem doplňku — klikněte na <strong>Update add-in</strong> v části <strong>Actions</strong>.</p>
+      </li>
+      <li>
+        <p>Na obrazovce <strong>Update file</strong> nechte vybranou možnost <strong>Upload manifest file (.xml) from device</strong>, klikněte na <strong>Choose File</strong> a vyberte nový manifest. Vyčkejte, než se zobrazí <strong>Manifest file validated</strong>, a klikněte na <strong>Next</strong>.</p>
+        <img src="images/Screenshot 2.png" alt="Obrazovka Update file s vybraným manifestem a potvrzením Manifest file validated" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Nahrajte nový manifest ze svého zařízení — než budete pokračovat, musí se zobrazit zelené potvrzení <strong>Manifest file validated</strong>.</p>
+      </li>
+      <li>
+        <p>Zkontrolujte obrazovku <strong>Updates</strong>, která uvádí oprávnění a funkce vyžadované novým manifestem, a klikněte na <strong>Accept and update</strong>.</p>
+        <img src="images/Screenshot 3.png" alt="Kontrolní obrazovka Updates se seznamem oprávnění a funkcí a tlačítkem Accept and update" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Zkontrolujte požadovaná oprávnění a funkce a poté klikněte na <strong>Accept and update</strong>.</p>
+      </li>
+      <li>
+        <p>Aktualizace se provede. Během zpracování se zobrazuje <strong>Update in progress…</strong> — panel můžete zavřít, aktualizace pokračuje na pozadí.</p>
+        <img src="images/Screenshot 4.png" alt="Obrazovka Update in progress se stavem In Progress u doplňku SingleCase" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Aktualizace se provádí na pozadí.</p>
+      </li>
+      <li>
+        <p>Hlášení <strong>Updated successfully</strong> potvrzuje, že je nový manifest nasazen. Klikněte na <strong>Done</strong>. Přiřazení uživatelů se přenese — není třeba nikoho přiřazovat znovu.</p>
+        <img src="images/Screenshot 5.png" alt="Potvrzovací obrazovka Updated successfully s doplňkem SingleCase označeným jako Updated" class="manual-img" style="width:100%;height:auto;">
+        <p class="img-caption">Potvrzení, že byl manifest aktualizován pro všechny přiřazené uživatele.</p>
+      </li>
+    </ol>
+    <p>Protože je SingleCase nasazen jako doplněk pro firmu (LOB), musí administrátor pro změny metadat nahrát nový manifest výše uvedeným postupem — doplněk se pak aktualizuje při dalším spuštění Outlooku.</p>
+    <div class="note">
+      <span class="note-icon">ℹ️</span>
+      <div>
+        Po nahrání nového manifestu může šíření ke všem uživatelům trvat <strong>až 72 hodin</strong> (maximální doba podle Microsoftu pro aktualizace) — z naší zkušenosti to většinou trvá do 12 hodin. Uživatelé musí <strong>restartovat Outlook</strong>, jakmile aktualizace dorazí.
+        <br><br>
+        <a href="https://learn.microsoft.com/en-us/microsoft-365/admin/manage/centralized-deployment-faq?view=o365-worldwide" target="_blank" rel="noopener" style="color:var(--sc-blue);">Nejčastější dotazy k centralizovanému nasazení Microsoft ↗</a>
+      </div>
+    </div>
+
+    <div class="page-nav">
+      <a class="page-nav-btn prev" href="#whats-new">
+        <span class="page-nav-label">← Předchozí</span>
+        <span class="page-nav-title">Novinky</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Potřebujete-li další pomoc, kontaktujte svého správce SingleCase nebo se obraťte na podporu SingleCase prostřednictvím <a href="https://www.singlecase.com/" target="_blank" rel="noopener">webového rozhraní SingleCase</a> nebo přes <a href="https://www.singlecase.com/contact" target="_blank" rel="noopener">kontaktní stránku</a>.</p>
+    <p style="margin-top:8px;">SingleCase Outlook Add-in · Uživatelská příručka · v1.3.1.0 aktuální · Říjen 2026</p>
+  </footer>
+
+</main>
+
+  <script>
+    // ── Page navigation ──
+    var PAGE_ORDER = ["home", "about", "install", "open", "sign-in", "platforms", "file-email", "what-to-file", "after-filing", "filing-status", "move-to-folder", "file-on-send", "case-address", "after-sending", "find-case", "suggestions", "categories", "settings", "faq", "troubleshooting", "whats-new", "admin-install"];
+    var LEGACY_HASH = {"s1": "about", "s2": "admin-install", "s3": "install", "s4": "open", "s5": "file-email", "s6": "file-email", "s7": "find-case", "s8": "what-to-file", "s9": "after-filing", "s10": "categories", "s11": "settings", "s12": "sign-in", "s13": "faq", "s14": "troubleshooting", "s15": "file-on-send", "s16": "file-on-send", "s2-compat": "platforms", "s2-manifest": "admin-install", "s11-case-display": "settings", "s3-first-open": "sign-in"};
+
+    // Resolve any hash (current page id, old #sN link or an anchor inside a page)
+    function resolveHash(hash) {
+      if (!hash) return { page: 'home' };
+      if (PAGE_ORDER.indexOf(hash) !== -1) return { page: hash };
+      if (LEGACY_HASH[hash]) return { page: LEGACY_HASH[hash] };
+      var el = document.getElementById(hash);
+      if (el) {
+        var pg = el.closest('.page');
+        if (pg) return { page: pg.id, anchor: hash };
+      }
+      var m = hash.match(/^(s\d+)-/);
+      if (m && LEGACY_HASH[m[1]]) return { page: LEGACY_HASH[m[1]] };
+      return null;
+    }
+
+    function showPage(id, opts) {
+      opts = opts || {};
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      var target = document.getElementById(id);
+      if (!target || !target.classList.contains('page')) { target = document.getElementById('home'); id = 'home'; }
+      target.classList.add('active');
+      document.querySelectorAll('nav#sidebar a').forEach(function(a) {
+        var href = a.getAttribute('href') || '';
+        a.classList.toggle('active', href === '#' + id);
+      });
+      var newHash = '#' + (opts.anchor || id);
+      try {
+        if (opts.replace) history.replaceState(null, '', newHash);
+        else if (opts.push !== false) history.pushState(null, '', newHash);
+      } catch (e) {}
+      if (opts.anchor) {
+        setTimeout(function() {
+          var el = document.getElementById(opts.anchor);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+      } else {
+        window.scrollTo(0, 0);
+      }
+      var nt = document.getElementById('navToggle'); if (nt) nt.checked = false;
+    }
+
+    document.addEventListener('click', function(e) {
+      var a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      var r = resolveHash(a.getAttribute('href').slice(1));
+      if (!r) return;
+      e.preventDefault();
+      showPage(r.page, { anchor: r.anchor });
+    });
+
+    (function init() {
+      var r = resolveHash(window.location.hash.replace('#', '')) || { page: 'home' };
+      showPage(r.page, { anchor: r.anchor, replace: true });
+    })();
+
+    window.addEventListener('popstate', function() {
+      var r = resolveHash(window.location.hash.replace('#', '')) || { page: 'home' };
+      showPage(r.page, { anchor: r.anchor, push: false });
+    });
+
+    // ── Platform switcher ──
+    function setPlatform(platform) {
+      document.querySelectorAll('.platform-tab, .ptab').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.platform === platform);
+      });
+      document.querySelectorAll('.platform-only').forEach(function(el) {
+        var platforms = (el.dataset.platforms || '').split(' ');
+        el.classList.toggle('visible', platforms.indexOf(platform) !== -1);
+      });
+      var imgDesktop = document.getElementById('hero-img-desktop');
+      var imgWeb = document.getElementById('hero-img-web');
+      if (imgDesktop && imgWeb) {
+        imgDesktop.style.display = platform === 'web' ? 'none' : '';
+        imgWeb.style.display = platform === 'web' ? '' : 'none';
+      }
+      try { localStorage.setItem('sc-manual-os', platform); } catch(e) {}
+    }
+
+    (function initPlatform() {
+      var platform = 'windows';
+      try { platform = localStorage.getItem('sc-manual-os') || 'windows'; } catch(e) {}
+      if (['windows', 'mac', 'web'].indexOf(platform) === -1) platform = 'windows';
+      setPlatform(platform);
+    })();
+
+    // ── OS-aware images (Windows only, cs manual) ──
+    function applyOsImages(isWin) {
+      document.querySelectorAll('[data-win-src]').forEach(function(img) {
+        if (!img.dataset.macSrc) img.dataset.macSrc = img.getAttribute('src');
+        img.src = isWin ? img.dataset.winSrc : img.dataset.macSrc;
+      });
+      document.querySelectorAll('.mac-only').forEach(function(el) {
+        el.style.display = isWin ? 'none' : '';
+      });
+      var macBtn = document.getElementById('os-tab-mac');
+      var winBtn = document.getElementById('os-tab-windows');
+      if (macBtn) macBtn.classList.toggle('active', !isWin);
+      if (winBtn) winBtn.classList.toggle('active', isWin);
+    }
+
+    function setOs(os) {
+      var isWin = os === 'windows';
+      applyOsImages(isWin);
+      try { localStorage.setItem('sc-manual-os', os); } catch(e) {}
+    }
+
+    (function initOsImages() {
+      var stored;
+      try { stored = localStorage.getItem('sc-manual-os'); } catch(e) {}
+      var isWin;
+      if (stored === 'windows' || stored === 'mac') {
+        isWin = stored === 'windows';
+      } else {
+        isWin = true; // default to Windows — most law firm users are on Outlook Desktop for Windows
+      }
+      applyOsImages(isWin);
+    })();
+
+    // ── Search ──
+    const searchInput = document.getElementById('searchInput');
+    let currentHighlightIndex = 0;
+    let highlights = [];
+
+    function updateCounter() {
+      const counter = document.getElementById('searchCounter');
+      const prevBtn = document.getElementById('searchPrev');
+      const nextBtn = document.getElementById('searchNext');
+      if (highlights.length === 0) {
+        counter.textContent = '';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+      } else {
+        counter.textContent = `${currentHighlightIndex + 1} of ${highlights.length}`;
+        prevBtn.disabled = highlights.length <= 1;
+        nextBtn.disabled = highlights.length <= 1;
+      }
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.search-highlight').forEach(span => {
+        while (span.firstChild) span.parentNode.insertBefore(span.firstChild, span);
+        span.parentNode.removeChild(span);
+      });
+      document.querySelector('main').normalize();
+      highlights = [];
+      currentHighlightIndex = 0;
+    }
+
+    function highlightMatches(text) {
+      clearHighlights();
+      if (!text.trim()) { updateCounter(); return; }
+      const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escapedText, 'gi');
+      const textNodes = [];
+      function collectTextNodes(node) {
+        if (node.nodeType === Node.TEXT_NODE) textNodes.push(node);
+        else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains('search-highlight'))
+          Array.from(node.childNodes).forEach(collectTextNodes);
+      }
+      // Search across ALL pages (not just active)
+      document.querySelectorAll('.page').forEach(collectTextNodes);
+      textNodes.forEach(node => {
+        const t = node.textContent;
+        searchRegex.lastIndex = 0;
+        if (searchRegex.test(t)) {
+          const span = document.createElement('span');
+          searchRegex.lastIndex = 0;
+          span.innerHTML = t.replace(searchRegex, '<span class="search-highlight">$&</span>');
+          node.parentNode.replaceChild(span, node);
+          span.querySelectorAll('.search-highlight').forEach(h => highlights.push(h));
+        }
+      });
+      if (highlights.length > 0) scrollToHighlight(0);
+      updateCounter();
+    }
+
+    function scrollToHighlight(index) {
+      if (!highlights.length) return;
+      highlights.forEach((h, i) => h.classList.toggle('current-highlight', i === index));
+      currentHighlightIndex = index;
+      // Find which page this highlight belongs to and show it
+      var el = highlights[index];
+      var pageEl = el.closest('.page');
+      if (pageEl && !pageEl.classList.contains('active')) {
+        showPage(pageEl.id);
+      }
+      highlights[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      updateCounter();
+    }
+
+    searchInput.addEventListener('input', e => highlightMatches(e.target.value));
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); if (highlights.length) scrollToHighlight((currentHighlightIndex + 1) % highlights.length); }
+    });
+    document.getElementById('searchPrev').addEventListener('click', () => { if (highlights.length) scrollToHighlight((currentHighlightIndex - 1 + highlights.length) % highlights.length); });
+    document.getElementById('searchNext').addEventListener('click', () => { if (highlights.length) scrollToHighlight((currentHighlightIndex + 1) % highlights.length); });
+
+    // ── Quick start search handoff (?q=) ──
+    (function() {
+      var urlQ = new URLSearchParams(window.location.search).get('q');
+      if (urlQ) {
+        searchInput.value = urlQ;
+        highlightMatches(urlQ);
+        if (highlights.length) scrollToHighlight(0);
+      }
+    })();
+
+    // ── Mobile sidebar — close when a nav link is tapped ──
+    var navToggle = document.getElementById('navToggle');
+    document.querySelectorAll('nav#sidebar a').forEach(function(link) {
+      link.addEventListener('click', function() { if (navToggle) navToggle.checked = false; });
+    });
+
+    // EOS countdown badges
+    document.querySelectorAll('[data-eos]').forEach(function(el) {
+      var eosDate = new Date(el.getAttribute('data-eos'));
+      var now = new Date();
+      var days = Math.round((eosDate - now) / 86400000);
+      var label, color;
+      if (days < 0) {
+        label = 'Podpora Microsoftu skončila ' + eosDate.toLocaleDateString('cs-CZ', {day:'numeric',month:'long',year:'numeric'});
+        color = '#b45309';
+      } else if (days <= 90) {
+        label = 'Podpora Microsoftu končí ' + eosDate.toLocaleDateString('cs-CZ', {day:'numeric',month:'long',year:'numeric'}) + ' — zbývá ' + days + ' dní';
+        color = '#dc2626';
+      } else {
+        label = 'Podpora Microsoftu končí ' + eosDate.toLocaleDateString('cs-CZ', {day:'numeric',month:'long',year:'numeric'}) + ' — zbývá ' + days + ' dní';
+        color = '#b45309';
+      }
+      el.innerHTML = '<span style="display:inline-block;margin-top:4px;font-size:11px;font-weight:600;color:' + color + ';background:#fef3c7;border:1px solid #fcd34d;border-radius:4px;padding:2px 7px;">⏱ ' + label + '</span>';
+    });
+
+    // ── Kontrola verze ───────────────────────────────────────────────
+    var vcPlatform = 'windows';
+    var vcHints = {
+      windows: 'Najdete v <strong>Nápověda → O aplikaci Outlook</strong>. Vložte celý řetězec, např. <em>Version 2306 (Build 16.0.16529.20164)</em>',
+      mac:     'Najdete v <strong>Outlook → O aplikaci Microsoft Outlook</strong>. Vložte verzi, např. <em>16.92 (24112031)</em>',
+    };
+
+    function vcSetPlatform(p, btn) {
+      vcPlatform = p;
+      document.querySelectorAll('.vc-plat-btn').forEach(function(b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      var inputRow = document.getElementById('vc-input-row');
+      var hintEl   = document.getElementById('vc-hint');
+      var resultEl = document.getElementById('vc-result');
+      var inputEl  = document.getElementById('vc-input');
+      resultEl.style.display = 'none';
+      if (p === 'web') {
+        inputRow.style.display = 'none';
+        hintEl.innerHTML = '';
+        resultEl.style.display = 'block';
+        resultEl.className = 'vc-result yes';
+        resultEl.innerHTML = '<div class="vc-badge" style="color:#16a34a;">✓ Podporováno</div>Outlook na webu (<a href="https://outlook.office.com" target="_blank">outlook.office.com</a>) je plně podporován — žádná omezení verze se nevztahují.';
+      } else {
+        inputRow.style.display = 'flex';
+        hintEl.innerHTML = vcHints[p];
+        inputEl.value = '';
+        inputEl.placeholder = p === 'windows' ? 'např. Version 2306 (Build 16.0.16529.20164)' : 'např. 16.92 (24112031)';
+      }
+    }
+
+    function vcCheck() {
+      var v = (document.getElementById('vc-input').value || '').trim();
+      var resultEl = document.getElementById('vc-result');
+      if (!v) {
+        resultEl.style.display = 'block';
+        resultEl.className = 'vc-result unknown';
+        resultEl.innerHTML = 'Vložte prosím řetězec verze Outlooku.';
+        return;
+      }
+      var r = vcPlatform === 'windows' ? vcCheckWindows(v) : vcCheckMac(v);
+      resultEl.style.display = 'block';
+      resultEl.className = 'vc-result ' + r.status;
+      var colour = r.status === 'yes' ? '#16a34a' : r.status === 'no' ? '#b45309' : '#92400e';
+      var icon   = r.status === 'yes' ? '✓ Podporováno' : r.status === 'no' ? '✗ Nepodporováno' : '⚠ Nelze určit';
+      resultEl.innerHTML = '<div class="vc-badge" style="color:' + colour + ';">' + icon + '</div>' + r.message;
+    }
+
+    function vcCheckWindows(v) {
+      var chanMatch  = v.match(/version\s+(\d{4})/i) || v.match(/\b(2[012]\d{2})\b/);
+      var buildMatch = v.match(/(?:build\s+)?16\.0\.(\d{4,})/i);
+
+      if (chanMatch) {
+        var ver = parseInt(chanMatch[1]);
+        if (ver >= 2206) {
+          if (buildMatch && parseInt(buildMatch[1]) < 15330) {
+            return { status: 'no', message: 'Verze <strong>' + ver + '</strong> je detekována, ale číslo buildu je nižší než 15330 — tento konkrétní build není podporován. Spusťte aktualizaci přes <strong>Soubor → Účet sady Office → Možnosti aktualizace → Aktualizovat nyní</strong>.' };
+          }
+          return { status: 'yes', message: 'Verze <strong>' + ver + '</strong> je podporována. Vše je v pořádku.' };
+        }
+        if (ver < 2206 && ver >= 2000) {
+          return { status: 'no', message: 'Verze <strong>' + ver + '</strong> je nižší než požadované minimum (2206). Aktualizujte přes <strong>Soubor → Účet sady Office → Možnosti aktualizace → Aktualizovat nyní</strong>.' };
+        }
+      }
+
+      if (buildMatch) {
+        var build = parseInt(buildMatch[1]);
+        if (build >= 15000) {
+          return { status: 'warn', message: 'Build <strong>' + build + '</strong> odpovídá Outlooku 2021, ale nelze rozlišit verzi retail od LTSC pouze podle čísla buildu.<br><br>• <strong>Outlook 2021 (retail, jednorázový nákup)</strong> — ✓ Podporováno<br>• <strong>Outlook 2021 LTSC (hromadná licence)</strong> — ✗ Nepodporováno (API 1.9 max; doplněk vyžaduje 1.12). Přejděte na Microsoft 365.<br><br>Zkontrolujte <strong>Soubor → Účet sady Office</strong>: pokud je uvedeno „Microsoft Office LTSC", jedná se o LTSC verzi.' };
+        }
+        if (build >= 10000) {
+          return { status: 'no', message: 'Build <strong>' + build + '</strong> odpovídá <strong>Outlooku 2019</strong>, který není podporován (API doplňků max. 1.6; doplněk vyžaduje 1.12).<br><br><strong>Doporučení:</strong> přejděte na Microsoft 365.' };
+        }
+        return { status: 'no', message: 'Build <strong>' + build + '</strong> odpovídá <strong>Outlooku 2016 nebo staršímu</strong>, který není podporován.<br><br><strong>Doporučení:</strong> přejděte na Microsoft 365.' };
+      }
+
+      return { status: 'unknown', message: 'Nepodařilo se zpracovat řetězec verze. Zkuste vložit celý text z <strong>Nápověda → O aplikaci Outlook</strong>, například:<br><em>Version 2306 (Build 16.0.16529.20164)</em>' };
+    }
+
+    function vcCheckMac(v) {
+      var m = v.match(/16\.(\d+)(?:\.(\d+))?/);
+      if (!m) return { status: 'unknown', message: 'Nepodařilo se zpracovat verzi. Zkuste vložit text z <strong>Outlook → O aplikaci Microsoft Outlook</strong>, například: <em>16.92 (24112031)</em>' };
+      var minor = parseInt(m[1]);
+      var patch = m[2] ? parseInt(m[2]) : 0;
+      var ok = (minor > 38) || (minor === 38 && patch >= 506);
+      if (ok) {
+        return { status: 'yes', message: 'Verze <strong>16.' + minor + (m[2] ? '.' + patch : '') + '</strong> je podporována.<br><br>Ujistěte se, že používáte <strong>Nový Outlook</strong>, nikoli Legacy Outlook. Pokud vidíte přepínač <strong>Legacy Outlook</strong> v pravém horním rohu Outlooku, vypněte jej.' };
+      }
+      return { status: 'no', message: 'Verze <strong>16.' + minor + (m[2] ? '.' + patch : '') + '</strong> je nižší než požadované minimum (16.38.506).<br><br><strong>Doporučení:</strong> aktualizujte Outlook přes <strong>Nápověda → Vyhledat aktualizace</strong>.' };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var inp = document.getElementById('vc-input');
+      if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') vcCheck(); });
+
+      // ── Lightbox ─────────────────────────────────────────────────
+      var lb = document.createElement('div');
+      lb.className = 'lb-overlay';
+      lb.innerHTML = '<span class="lb-close">&#x2715;</span><img>';
+      document.body.appendChild(lb);
+      var lbImg = lb.querySelector('img');
+
+      document.querySelectorAll('.page img:not(#vc-img)').forEach(function(img) {
+        img.addEventListener('click', function() {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lb.classList.add('open');
+        });
+      });
+
+      function closeLb() { lb.classList.remove('open'); }
+      lb.addEventListener('click', function(e) { if (e.target !== lbImg) closeLb(); });
+      lb.querySelector('.lb-close').addEventListener('click', closeLb);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLb(); });
+    });
+
+    // ── Role gate ──
+  </script>
+
+  
+
+
+  <script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // One orchestrated entrance on first load of the overview; ordinary navigation uses the page transition.
+    document.body.classList.add('first-load');
+    setTimeout(function () { document.body.classList.remove('first-load'); }, 1400);
+
+    // Page transition
+    if (typeof window.showPage === 'function') {
+      var baseShowPage = window.showPage;
+      window.showPage = function (id, opts) {
+        var before = document.querySelector('.page.active');
+        baseShowPage(id, opts);
+        var now = document.querySelector('.page.active');
+        if (now && now !== before && !reduce) {
+          now.classList.remove('page-enter'); void now.offsetWidth; now.classList.add('page-enter');
+        }
+        requestAnimationFrame(function () { placeThumbs(); updateProgress(); syncNav(); });
+      };
+    }
+
+    // Collapsible navigation groups: only the group of the open article is expanded by default.
+    var NAV_KEY = 'sc-manual-nav-open';
+    var manual = {};
+    try { manual = JSON.parse(localStorage.getItem(NAV_KEY) || '{}'); } catch (e) {}
+    function setOpen(sec, open) {
+      sec.classList.toggle('open', open);
+      var btn = sec.querySelector('.nav-group-btn'); if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    function syncNav() {
+      var hash = (location.hash || '#home').slice(1);
+      var activePage = document.querySelector('.page.active');
+      var id = activePage ? activePage.id : hash;
+      document.querySelectorAll('.nav-section').forEach(function (sec) {
+        var has = !!sec.querySelector('a[href="#' + id + '"]');
+        sec.classList.toggle('has-active', has);
+        var g = sec.dataset.group;
+        if (has) setOpen(sec, true);
+        else setOpen(sec, manual[g] === true);
+      });
+    }
+    document.querySelectorAll('.nav-group-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var sec = btn.closest('.nav-section'), open = !sec.classList.contains('open');
+        setOpen(sec, open);
+        manual[sec.dataset.group] = open;
+        try { localStorage.setItem(NAV_KEY, JSON.stringify(manual)); } catch (e) {}
+      });
+    });
+    syncNav();
+
+    // Segmented platform control: sliding thumb
+    function placeThumbs() {
+      document.querySelectorAll('.ptabs').forEach(function (bar) {
+        var thumb = bar.querySelector('.ptab-thumb');
+        if (!thumb) { thumb = document.createElement('span'); thumb.className = 'ptab-thumb'; thumb.setAttribute('aria-hidden', 'true'); bar.prepend(thumb); }
+        var active = bar.querySelector('.ptab.active');
+        if (!active || !bar.offsetParent) return;
+        thumb.style.width = active.offsetWidth + 'px';
+        thumb.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+        if (!bar.classList.contains('ready')) requestAnimationFrame(function () { bar.classList.add('ready'); });
+      });
+    }
+    if (typeof window.setPlatform === 'function') {
+      var baseSetPlatform = window.setPlatform;
+      window.setPlatform = function (p) { baseSetPlatform(p); placeThumbs(); };
+    }
+    window.addEventListener('resize', placeThumbs);
+    placeThumbs();
+
+    // Reading progress
+    var bar = document.createElement('div'); bar.className = 'read-progress'; document.body.appendChild(bar);
+    function updateProgress() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, window.scrollY / h) : 0) + ')';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // FAQ: animate open and close
+    document.querySelectorAll('details').forEach(function (d) {
+      var summary = d.querySelector('summary'), body = d.querySelector('.faq-body');
+      if (!summary || !body || reduce || !body.animate) return;
+      summary.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (d.dataset.animating) return;
+        d.dataset.animating = '1';
+        if (!d.open) {
+          d.open = true;
+          var h = body.scrollHeight;
+          body.animate([{ height: '0px', opacity: 0 }, { height: h + 'px', opacity: 1 }], { duration: 380, easing: 'cubic-bezier(0.2,0.8,0.2,1)' })
+            .onfinish = function () { delete d.dataset.animating; };
+        } else {
+          var h2 = body.scrollHeight;
+          body.animate([{ height: h2 + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 260, easing: 'cubic-bezier(0.4,0,1,1)' })
+            .onfinish = function () { d.open = false; delete d.dataset.animating; };
+        }
+      });
+      body.style.overflow = 'hidden';
+    });
+  })();
+  </script>
+</body>
+</html>
